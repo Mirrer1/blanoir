@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 import FadeIn from '@/components/common/FadeIn'
@@ -45,7 +46,16 @@ const LandingHero = () => {
         </div>
       </FadeIn>
       <FadeIn delay={0.4} className="w-full">
-        <div className="bg-muted/40 mx-auto mt-20 aspect-video w-full max-w-4xl rounded-lg border" />
+        <div className="relative mt-20 aspect-[4/3] w-full overflow-hidden rounded-lg border">
+          <Image
+            src="/hero.jpg"
+            alt="Blanoir 에디터 미리보기"
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 976px"
+            className="object-cover"
+          />
+        </div>
       </FadeIn>
     </section>
   )

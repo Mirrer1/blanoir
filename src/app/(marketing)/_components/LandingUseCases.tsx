@@ -1,3 +1,5 @@
+import FadeIn from '@/components/common/FadeIn'
+
 const USE_CASES = [
   { title: '자기소개 · 포트폴리오', description: '나를 보여주는 한 페이지' },
   { title: '카페 · 매장 소개', description: '메뉴와 위치를 깔끔하게' },
@@ -10,15 +12,19 @@ const USE_CASES = [
 const LandingUseCases = () => {
   return (
     <section className="mx-auto max-w-5xl px-6 py-32">
-      <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
-        무엇이든 만들 수 있어요
-      </h2>
+      <FadeIn>
+        <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
+          무엇이든 만들 수 있어요
+        </h2>
+      </FadeIn>
       <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {USE_CASES.map(({ title, description }) => (
-          <div key={title} className="flex flex-col gap-2 rounded-lg border p-8">
-            <h3 className="font-heading text-lg font-bold">{title}</h3>
-            <p className="text-muted-foreground">{description}</p>
-          </div>
+        {USE_CASES.map(({ title, description }, index) => (
+          <FadeIn key={title} delay={index * 0.08}>
+            <div className="hover:border-foreground/30 flex flex-col gap-2 rounded-lg border p-8 transition-all hover:-translate-y-1">
+              <h3 className="font-heading text-lg font-bold">{title}</h3>
+              <p className="text-muted-foreground">{description}</p>
+            </div>
+          </FadeIn>
         ))}
       </div>
     </section>

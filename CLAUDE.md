@@ -4,9 +4,9 @@
 
 ## 현재 상태
 
-✅ 설계 완료
+Phase 1 기반 셋업 거의 완료 (소셜 OAuth 키와 `MONGODB_URI` 발급 후 인증 동작 확인 필요).
 
-**다음 작업: Phase 1 — 기반 셋업**
+**다음 작업: Phase 2 — 랜딩 + 인증 UI**
 
 ## 문서 안내
 
@@ -67,7 +67,7 @@
 - [x] `.env.local` 작성, `.env.example` git에 올림
 - [x] MongoDB 연결 (`lib/mongodb.ts`, 서버리스 커넥션 캐싱 패턴 적용)
 - [x] User/Page 스키마 (`models/`)
-- [ ] NextAuth 셋업 + 소셜 로그인 (`lib/auth.ts`, `api/auth/[...nextauth]`)
+- [x] NextAuth v5 셋업 (`lib/auth.ts`, `auth.config.ts`, route, `proxy.ts` 가드)
 - [ ] 공용 컴포넌트 (Header/Footer 등, Phase 2에서 본격)
 
 ### Phase 2: 랜딩 + 인증

@@ -94,37 +94,27 @@ const handleSubmit = async () => {
 
 ### 주석 스타일
 
-| 위치                         | 주석               |
-| ---------------------------- | ------------------ |
-| 인터페이스/타입 필드         | 필드 뒤 `// 한 줄` |
-| 컴포넌트/유틸/콜백/useEffect | 위에 `// 한 줄`    |
-| state / 일반 변수 / JSX      | 주석 X             |
+주석은 **꼭 필요하거나 핵심적인 부분, 헷갈릴 수 있는 부분에만** 단다. 코드로 자명한 곳엔 달지 않는다.
 
-**원칙:**
-
-- 한 문장으로 끝내기
-- 괄호 `()` 부연설명 X
-- 특수문자 장식 X (`── ──`, `=`, `+`, `*` 등)
-- 다른 코드 관계/비교 언급 X (예: "~와 동일" 금지)
-- JSDoc(`/** */`) 사용 안 함 (TS 타입으로 충분)
+- 달 가치 있을 때: 의도/이유가 코드에 안 드러날 때, 비직관적 로직, 함정·주의점, 도메인 맥락
+- 달지 않음: 이름만 봐도 뻔한 변수/함수/필드, 단순 위임, 자명한 JSX
+- 형식: 한 문장, 괄호 `()` 부연설명 X, 특수문자 장식 X (`── ──` 등), JSDoc(`/** */`) 안 씀 (TS 타입으로 충분)
 
 **예시:**
 
 ```tsx
 interface User {
-  email: string                // 로그인 이메일
-  password: string | null      // 로컬 가입시 bcrypt 해시
-  tempPwdYn: "Y" | "N"         // Y면 로그인 시 강제 변경
+  email: string
+  password: string | null // 소셜 가입은 null
+  tempPwdYn: 'Y' | 'N' // Y면 로그인 시 비번 변경 강제
 }
 
-// 회원가입 페이지
 const SignUpPage = () => {
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState('')
 
-  // 폼 제출 처리
   const handleSubmit = async () => { ... }
 
-  // 페이지 진입 시 자동 포커스
+  // Safari 자동완성 깨짐 회피용 지연 포커스
   useEffect(() => { ... }, [])
 
   return <form>...</form>

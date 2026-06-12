@@ -1,5 +1,7 @@
 import { type InferSchemaType, type Model, Schema, model, models } from 'mongoose'
 
+export type Provider = 'google' | 'kakao' | 'naver' | 'local'
+
 const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true }, // 로그인 이메일

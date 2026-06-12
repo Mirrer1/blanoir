@@ -1,3 +1,4 @@
+import LandingFAQ from './_components/LandingFAQ'
 import LandingFeatures from './_components/LandingFeatures'
 import LandingFinalCTA from './_components/LandingFinalCTA'
 import LandingHero from './_components/LandingHero'
@@ -11,6 +12,7 @@ const LandingPage = () => {
       <LandingFeatures />
       <LandingHowItWorks />
       <LandingUseCases />
+      <LandingFAQ />
       <LandingFinalCTA />
     </>
   )

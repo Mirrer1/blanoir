@@ -5,32 +5,42 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
+import { registerUser } from '@/actions/auth'
 import FieldErrorText from '@/components/common/FieldErrorText'
 import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { type SignupValues, signupSchema } from '@/types/auth'
 
-const loginSchema = z.object({
-  email: z.string().min(1, '이메일을 입력해 주세요').email('올바른 이메일 형식이 아니에요'),
-  password: z.string().min(1, '비밀번호를 입력해 주세요'),
-})
-
-type LoginValues = z.infer<typeof loginSchema>
-
-const LoginForm = () => {
+const SignupForm = () => {
   const router = useRouter()
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
-  } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) })
+  } = useForm<SignupValues>({ resolver: zodResolver(signupSchema) })
 
-  const onSubmit = async ({ email, password }: LoginValues) => {
-    const res = await signIn('credentials', { email, password, redirect: false })
-    if (res?.error) {
-      toast.error('이메일 또는 비밀번호를 확인해 주세요')
+  const onSubmit = async (values: SignupValues) => {
+    const result = await registerUser(values)
+    if (!result.ok) {
+      if (result.field) {
+        setError(result.field, { message: result.message })
+      } else {
+        toast.error(result.message)
+      }
+      return
+    }
+
+    const login = await signIn('credentials', {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    })
+    if (login?.error) {
+      toast.error('가입은 됐지만 자동 로그인에 실패했어요. 로그인 페이지에서 다시 시도해 주세요')
+      router.push('/login')
       return
     }
 
@@ -40,6 +50,17 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-3">
+        <Field>
+          <FieldLabel htmlFor="name">닉네임</FieldLabel>
+          <Input
+            id="name"
+            placeholder="닉네임을 입력해 주세요"
+            autoComplete="nickname"
+            aria-invalid={!!errors.name}
+            {...register('name')}
+          />
+          <FieldErrorText message={errors.name?.message} />
+        </Field>
         <Field>
           <FieldLabel htmlFor="email">이메일</FieldLabel>
           <Input
@@ -57,19 +78,19 @@ const LoginForm = () => {
           <Input
             id="password"
             type="password"
-            placeholder="비밀번호를 입력해 주세요"
-            autoComplete="current-password"
+            placeholder="8자 이상 입력해 주세요"
+            autoComplete="new-password"
             aria-invalid={!!errors.password}
             {...register('password')}
           />
           <FieldErrorText message={errors.password?.message} />
         </Field>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? '로그인 중…' : '로그인'}
+          {isSubmitting ? '가입 중…' : '회원가입'}
         </Button>
       </FieldGroup>
     </form>
   )
 }
 
-export default LoginForm
+export default SignupForm

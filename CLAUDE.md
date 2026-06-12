@@ -1,9 +1,8 @@
 # Blanoir
 
 비개발자도 5분 안에 자기 홈페이지를 만들고 배포할 수 있는 **한글 노코드 페이지 빌더**.
-개인 사이드 프로젝트 (취업 포폴용).
 
-## 현재 상태 (2026-06-12)
+## 현재 상태
 
 ✅ 설계 완료
 
@@ -61,15 +60,15 @@
 
 **코드 작업:**
 
-- [ ] 프로젝트 초기화 (`create-next-app`), 라이브러리 설치
-- [ ] Tailwind + shadcn 설정
-- [ ] Prettier + Husky + lint-staged 설정
+- [x] 프로젝트 초기화 (`create-next-app`), 라이브러리 설치
+- [x] Tailwind + shadcn 설정
+- [x] Prettier + Husky + lint-staged 설정
+- [x] 디자인 시스템 (모노톤 neutral 테마, Pretendard, next-themes 다크모드 토글)
 - [ ] `.env.local` 작성, `.env.example` git에 올림
 - [ ] MongoDB 연결 (`lib/mongodb.ts`, 서버리스 커넥션 캐싱 패턴 적용)
 - [ ] User/Page 스키마 (`models/`)
 - [ ] NextAuth 셋업 + 소셜 로그인 (`lib/auth.ts`, `api/auth/[...nextauth]`)
-- [ ] 공용 컴포넌트 (shadcn 기반)
-- [ ] 디자인 시스템 (컬러, 폰트, 다크모드 토글)
+- [ ] 공용 컴포넌트 (Header/Footer 등, Phase 2에서 본격)
 
 ### Phase 2: 랜딩 + 인증
 

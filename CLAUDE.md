@@ -57,7 +57,7 @@
 - [ ] Kakao Developers OAuth 등록
 - [ ] Naver Developers OAuth 등록
 - [ ] Resend 계정 생성 + API 키 발급 (도메인 인증은 Phase 6에서)
-- [ ] GitHub 레포지토리 생성 + main/develop 브랜치 셋업
+- [ ] GitHub 레포지토리 생성 (main 단일 브랜치, 바로 push·배포)
 
 **코드 작업:**
 

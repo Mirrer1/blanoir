@@ -12,11 +12,11 @@
 
 이 저장소의 문서는 3개로 나뉜다.
 
-| 문서                  | 내용                                                     |
-| --------------------- | -------------------------------------------------------- |
-| `CLAUDE.md` (이 파일) | 현황 + 기술 스택 + 작업 순서 + 길잡이                    |
-| `docs/AGENT.md`       | 어떻게 일하고 코드 짜는지 (협업 규칙, 코딩 컨벤션, 셋업) |
-| `docs/DECISIONS.md`   | 무엇을 왜 만들기로 했나 (제품/설계 결정)                 |
+| 문서                  | 내용                                     |
+| --------------------- | ---------------------------------------- |
+| `CLAUDE.md` (이 파일) | 현황 + 기술 스택 + 작업 순서 + 길잡이    |
+| `docs/AGENT.md`       | 코딩 컨벤션, 명명 규칙, Git, 초기 셋업   |
+| `docs/DECISIONS.md`   | 무엇을 왜 만들기로 했나 (제품/설계 결정) |
 
 > 코드 작성 규칙은 반드시 `docs/AGENT.md`를 따른다. 기능/스펙 관련 결정은 `docs/DECISIONS.md`를 근거로 한다.
 
@@ -64,9 +64,9 @@
 - [x] Tailwind + shadcn 설정
 - [x] Prettier + Husky + lint-staged 설정
 - [x] 디자인 시스템 (모노톤 neutral 테마, Pretendard, next-themes 다크모드 토글)
-- [ ] `.env.local` 작성, `.env.example` git에 올림
-- [ ] MongoDB 연결 (`lib/mongodb.ts`, 서버리스 커넥션 캐싱 패턴 적용)
-- [ ] User/Page 스키마 (`models/`)
+- [x] `.env.local` 작성, `.env.example` git에 올림
+- [x] MongoDB 연결 (`lib/mongodb.ts`, 서버리스 커넥션 캐싱 패턴 적용)
+- [x] User/Page 스키마 (`models/`)
 - [ ] NextAuth 셋업 + 소셜 로그인 (`lib/auth.ts`, `api/auth/[...nextauth]`)
 - [ ] 공용 컴포넌트 (Header/Footer 등, Phase 2에서 본격)
 

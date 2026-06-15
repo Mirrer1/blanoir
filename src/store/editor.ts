@@ -3,7 +3,7 @@ import { create } from 'zustand'
 
 import type { Section, SectionType, TextStyle } from '@/types/section'
 
-export type SaveStatus = 'saved' | 'unsaved' | 'saving'
+export type SaveStatus = 'saved' | 'unsaved'
 
 export interface EditorInitialPage {
   pageId: string
@@ -20,6 +20,7 @@ interface EditorState {
   selectedSectionId: string | null
   isDirty: boolean
   saveStatus: SaveStatus
+  savedSnapshot: string
 
   initialize: (page: EditorInitialPage) => void
   setTitle: (title: string) => void
@@ -30,7 +31,16 @@ interface EditorState {
   removeSection: (id: string) => void
   moveSection: (fromIndex: number, toIndex: number) => void
   setSaveStatus: (status: SaveStatus) => void
-  markSaved: () => void
+  markSaved: (savedSnapshot: string) => void
+}
+
+export const serializeContent = (title: string, sections: Section[]) =>
+  JSON.stringify({ title, sections })
+
+// 저장본 스냅샷과 비교해 실제 변경 여부로 dirty 계산
+const dirtyFrom = (title: string, sections: Section[], savedSnapshot: string) => {
+  const isDirty = serializeContent(title, sections) !== savedSnapshot
+  return { isDirty, saveStatus: (isDirty ? 'unsaved' : 'saved') as SaveStatus }
 }
 
 const DEFAULT_TEXT_STYLE: TextStyle = {
@@ -55,8 +65,6 @@ const createSection = (type: SectionType): Section => {
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
-const dirty = { isDirty: true, saveStatus: 'unsaved' as const }
-
 const useEditorStore = create<EditorState>((set) => ({
   pageId: '',
   title: '',
@@ -65,6 +73,7 @@ const useEditorStore = create<EditorState>((set) => ({
   selectedSectionId: null,
   isDirty: false,
   saveStatus: 'saved',
+  savedSnapshot: '',
 
   initialize: (page) =>
     set({
@@ -75,57 +84,66 @@ const useEditorStore = create<EditorState>((set) => ({
       selectedSectionId: null,
       isDirty: false,
       saveStatus: 'saved',
+      savedSnapshot: serializeContent(page.title, page.sections),
     }),
 
-  setTitle: (title) => set({ title, ...dirty }),
+  setTitle: (title) => set((s) => ({ title, ...dirtyFrom(title, s.sections, s.savedSnapshot) })),
 
   selectSection: (id) => set({ selectedSectionId: id }),
 
   addSection: (type, index) =>
-    set((state) => {
+    set((s) => {
       const section = createSection(type)
-      const sections = [...state.sections]
+      const sections = [...s.sections]
       sections.splice(index ?? sections.length, 0, section)
-      return { sections, selectedSectionId: section.id, ...dirty }
+      return {
+        sections,
+        selectedSectionId: section.id,
+        ...dirtyFrom(s.title, sections, s.savedSnapshot),
+      }
     }),
 
   updateSectionContent: (id, content) =>
-    set((state) => ({
-      sections: state.sections.map((s) =>
-        s.id === id ? { ...s, content: { ...s.content, ...content } } : s,
-      ),
-      ...dirty,
-    })),
+    set((s) => {
+      const sections = s.sections.map((section) =>
+        section.id === id ? { ...section, content: { ...section.content, ...content } } : section,
+      )
+      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot) }
+    }),
 
   updateSectionStyle: (id, style) =>
-    set((state) => ({
-      sections: state.sections.map((s) =>
-        s.id === id ? { ...s, style: { ...s.style, ...style } } : s,
-      ),
-      ...dirty,
-    })),
+    set((s) => {
+      const sections = s.sections.map((section) =>
+        section.id === id ? { ...section, style: { ...section.style, ...style } } : section,
+      )
+      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot) }
+    }),
 
   removeSection: (id) =>
-    set((state) => ({
-      sections: state.sections.filter((s) => s.id !== id),
-      selectedSectionId: state.selectedSectionId === id ? null : state.selectedSectionId,
-      ...dirty,
-    })),
+    set((s) => {
+      const sections = s.sections.filter((section) => section.id !== id)
+      return {
+        sections,
+        selectedSectionId: s.selectedSectionId === id ? null : s.selectedSectionId,
+        ...dirtyFrom(s.title, sections, s.savedSnapshot),
+      }
+    }),
 
   moveSection: (fromIndex, toIndex) =>
-    set((state) => {
-      const sections = [...state.sections]
+    set((s) => {
+      const sections = [...s.sections]
       const [moved] = sections.splice(fromIndex, 1)
       if (!moved) {
-        return state
+        return s
       }
       sections.splice(toIndex, 0, moved)
-      return { sections, ...dirty }
+      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot) }
     }),
 
   setSaveStatus: (saveStatus) => set({ saveStatus }),
 
-  markSaved: () => set({ isDirty: false, saveStatus: 'saved' }),
+  markSaved: (savedSnapshot) =>
+    set((s) => ({ savedSnapshot, ...dirtyFrom(s.title, s.sections, savedSnapshot) })),
 }))
 
 export default useEditorStore

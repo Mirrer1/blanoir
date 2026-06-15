@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorStylePanel from './EditorStylePanel'
+import useAutoSave from '@/hooks/useAutoSave'
 import useEditorStore, { type EditorInitialPage } from '@/store/editor'
 
 const EditorShell = ({ page }: { page: EditorInitialPage }) => {
@@ -23,6 +24,8 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
 
   // 에디터 상태 초기화
   useEffect(() => () => selectSection(null), [selectSection])
+
+  useAutoSave()
 
   return (
     <div className="flex h-screen flex-col">

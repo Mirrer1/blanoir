@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import AuthCardMotion from './_components/AuthCardMotion'
 import ThemeToggle from '@/components/common/ThemeToggle'
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
@@ -11,7 +12,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <Link href="/" className="font-heading mb-8 text-2xl font-extrabold tracking-tight">
         Blanoir
       </Link>
-      {children}
+      <AuthCardMotion>{children}</AuthCardMotion>
     </div>
   )
 }

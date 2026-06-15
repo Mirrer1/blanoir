@@ -43,29 +43,42 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (account?.provider === 'credentials') {
         return true
       }
-      if (!user.email) {
+      if (!account) {
         return false
       }
 
+      // 카카오 등 이메일 미제공 소셜은 provider+계정ID로 식별용 이메일을 합성한다.
+      const email = user.email ?? `${account.provider}_${account.providerAccountId}@social.local`
+
       await connectDB()
-      const existing = await User.findOne({ email: user.email })
+      const existing = await User.findOne({ email })
       if (!existing) {
+        const base = generateHandle(user.name ?? email)
+        let handle = base
+        let suffix = 2
+        while (await User.exists({ handle })) {
+          handle = `${base}_${suffix}`
+          suffix += 1
+        }
+
         await User.create({
-          email: user.email,
+          email,
           name: user.name ?? '사용자',
-          handle: generateHandle(user.name ?? user.email),
+          handle,
           profileImage: user.image ?? '',
-          provider: (account?.provider ?? 'local') as Provider,
+          provider: account.provider as Provider,
         })
       }
 
       return true
     },
     // 로그인 시 토큰에 DB의 id/handle 추가
-    jwt: async ({ token, user }) => {
-      if (user?.email) {
+    jwt: async ({ token, user, account }) => {
+      if (user) {
+        const email =
+          user.email ?? `${account?.provider}_${account?.providerAccountId}@social.local`
         await connectDB()
-        const dbUser = await User.findOne({ email: user.email })
+        const dbUser = await User.findOne({ email })
         if (dbUser) {
           token.id = String(dbUser._id)
           token.handle = dbUser.handle

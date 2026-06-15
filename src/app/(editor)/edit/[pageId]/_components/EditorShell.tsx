@@ -7,6 +7,7 @@ import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorStylePanel from './EditorStylePanel'
 import useAutoSave from '@/hooks/useAutoSave'
+import useUnsavedGuard from '@/hooks/useUnsavedGuard'
 import useEditorStore, { type EditorInitialPage } from '@/store/editor'
 
 const EditorShell = ({ page }: { page: EditorInitialPage }) => {
@@ -26,6 +27,7 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
   useEffect(() => () => selectSection(null), [selectSection])
 
   useAutoSave()
+  useUnsavedGuard()
 
   return (
     <div className="flex h-screen flex-col">

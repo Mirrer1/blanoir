@@ -1,10 +1,9 @@
 'use client'
 
-import { ArrowLeft } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import Link from 'next/link'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import EditorLeaveGuard from './EditorLeaveGuard'
+import { Button } from '@/components/ui/button'
 import { saveNow } from '@/hooks/useAutoSave'
 import useEditorStore, { type SaveStatus } from '@/store/editor'
 
@@ -23,13 +22,7 @@ const EditorHeader = () => {
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
       <div className="flex min-w-0 items-center gap-2">
-        <Link
-          href="/dashboard"
-          aria-label="대시보드로 나가기"
-          className={buttonVariants({ variant: 'ghost', size: 'icon' })}
-        >
-          <ArrowLeft />
-        </Link>
+        <EditorLeaveGuard />
         <span className="truncate text-sm font-medium">{displayTitle}</span>
       </div>
       <div className="flex shrink-0 items-center gap-3">

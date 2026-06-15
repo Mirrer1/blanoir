@@ -175,6 +175,14 @@ export default SignUpPage
 - 로딩 → `formState.isSubmitting`
 - zod 스키마는 폼 파일 옆 또는 `types/`에 둠
 
+### 클릭 요소 커서
+
+Tailwind v4부터 `<button>` 기본 커서가 `pointer`가 아니라 실제 클릭 요소엔 `cursor-pointer`를 명시한다.
+
+- 공용 `Button`엔 베이스에 포함돼 있어 별도 처리 불필요
+- 네이티브 `<button>`, `onClick` 단 `div`/`span`, `role="button"`은 직접 `cursor-pointer` 추가
+- `<a>`/`<Link>`, 비클릭 표시용 요소엔 붙이지 않음
+
 ## 명명 / 위치 규칙
 
 ### 파일/폴더 명명
@@ -251,8 +259,9 @@ npm install cloudinary next-cloudinary
 npm install bcryptjs
 npm install -D @types/bcryptjs
 
-# 이메일 (Resend + React Email)
-npm install resend react-email @react-email/components
+# 이메일 (Gmail SMTP)
+npm install nodemailer
+npm install -D @types/nodemailer
 
 # shadcn/ui 초기화
 npx shadcn@latest init
@@ -384,9 +393,9 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
 
-# Resend (이메일 발송)
-RESEND_API_KEY=
-EMAIL_FROM=noreply@blanoir.com
+# Gmail SMTP (비밀번호 재설정 메일). 비우면 콘솔 출력으로 폴백
+GMAIL_USER=
+GMAIL_APP_PASSWORD=
 ```
 
 > 배포용(`.env.production`)은 Vercel 대시보드 환경 변수에 등록. 로컬에선 `.env.local`만 사용.

@@ -134,7 +134,9 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
   _id: ObjectId,
   email: String,           // 로그인 이메일 (unique)
   password: String,        // 로컬 가입시만 (bcrypt 해시). 소셜 가입은 null
-  tempPwdYn: String,       // "Y" | "N" — 임시 비번 발급 상태 (로그인 시 강제 변경 트리거)
+  resetCode: String,       // 비번 재설정 인증코드 (bcrypt 해시). 미발급시 null
+  resetCodeExpiresAt: Date,// 인증코드 만료 시각
+  resetCodeAttempts: Number,// 인증코드 검증 실패 횟수 (5회 초과 시 코드 폐기)
   name: String,            // 닉네임 (한글 OK, 화면 표시용)
   handle: String,          // URL용 (영문+숫자+언더바, 자동 생성)
   profileImage: String,    // 프로필 이미지 URL (소셜은 자동, 로컬은 기본 이미지)
@@ -241,6 +243,7 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 | `/`                       | 랜딩 페이지                                 |
 | `/login`                  | 로그인 페이지                               |
 | `/signup`                 | 회원가입 페이지                             |
+| `/forgot-password`        | 비밀번호 재설정 (이메일 인증코드)           |
 | `/dashboard`              | 내 페이지 목록                              |
 | `/edit/[pageId]`          | 에디터 (페이지 만들기/수정)                 |
 | `/user/[handle]`          | 사용자 프로필 + 페이지 목록 (공개 페이지만) |
@@ -302,20 +305,19 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 - NextAuth `CredentialsProvider` 사용
 - 이메일 + 비번 → bcrypt 검증 → JWT 발급
 
-### 비번 찾기 (MVP 포함) — 임시 비번 방식
+### 비밀번호 재설정 (MVP 포함) — 이메일 인증코드 방식
 
 1. 사용자가 이메일 입력
-2. 이메일이 DB에 있으면 → **난수 임시 비번 생성** (영문+숫자 10자)
-3. 임시 비번 bcrypt 해싱 → DB의 `password` 업데이트 + `tempPwdYn = "Y"` 마킹
-4. 임시 비번을 이메일로 발송 (Resend)
-5. 사용자가 임시 비번으로 로그인
-6. 로그인 시 `tempPwdYn === "Y"` 감지 → **비번 변경 모달/페이지 강제 진입**
-7. 새 비번 입력 → bcrypt 해싱 → DB 업데이트 + `tempPwdYn = "N"` 리셋
+2. 이메일이 DB에 있으면(local 계정) → **6자리 숫자 인증코드 생성**
+3. 인증코드 bcrypt 해싱 → DB의 `resetCode` 저장 + `resetCodeExpiresAt`(10분) 설정
+4. 인증코드를 이메일로 발송 (Gmail SMTP / nodemailer, 키 없으면 콘솔 폴백)
+5. 사용자가 인증코드 입력 → 검증 (일치 + 미만료)
+6. 통과 시 새 비밀번호 입력 → bcrypt 해싱 → `password` 업데이트 + `resetCode`/`resetCodeExpiresAt` 폐기
 
-> User 스키마에 `tempPwdYn: "Y" | "N"` 필드 추가 필요
+> 미가입/소셜 계정이면 토스트로 안내하고 발송 중단 (데모 — UX 우선, 계정 열거 노출은 감수. 운영 시 항상 성공 응답으로 가릴 수 있음)
 > 이메일 = ID이므로 **아이디 찾기는 없음**
-> 이메일 인증은 V2 (MVP는 가입 시 이메일 인증 안 함)
-> 닉네임/handle 변경은 V2 설정 페이지에서
+> 인증코드 **5회 오입력 시 폐기**(brute-force 방지) — `resetCodeAttempts`로 카운트
+> 이메일 인증(가입 시)은 V2, 닉네임/handle 변경은 V2 설정 페이지에서
 
 ## 에디터 UX
 

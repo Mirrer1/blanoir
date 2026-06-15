@@ -1,23 +1,25 @@
+'use client'
+
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorStylePanel from './EditorStylePanel'
+import useEditorStore, { type EditorInitialPage } from '@/store/editor'
 
-interface EditorPage {
-  pageId: string
-  title: string
-  isPublic: boolean
-  sections: unknown[]
-}
+const EditorShell = ({ page }: { page: EditorInitialPage }) => {
+  const initialize = useEditorStore((s) => s.initialize)
+  const currentPageId = useEditorStore((s) => s.pageId)
+  const selectedSectionId = useEditorStore((s) => s.selectedSectionId)
 
-const EditorShell = ({ page }: { page: EditorPage }) => {
-  // 선택된 섹션 ID
-  const selectedSectionId: string | null = null
+  // 서버 데이터로 store 초기화
+  if (currentPageId !== page.pageId) {
+    initialize(page)
+  }
 
   return (
     <div className="flex h-screen flex-col">
-      <EditorHeader title={page.title} isPublic={page.isPublic} />
+      <EditorHeader />
       <div className="flex flex-1 overflow-hidden">
-        <EditorCanvas sections={page.sections} />
+        <EditorCanvas />
         {selectedSectionId && <EditorStylePanel />}
       </div>
     </div>

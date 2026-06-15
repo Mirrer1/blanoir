@@ -5,6 +5,8 @@ import EditorShell from './_components/EditorShell'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import Page from '@/models/Page'
+import type { EditorInitialPage } from '@/store/editor'
+import type { Section } from '@/types/section'
 
 interface EditPageProps {
   params: Promise<{ pageId: string }>
@@ -32,11 +34,11 @@ const EditPage = async ({ params }: EditPageProps) => {
     notFound()
   }
 
-  const initialPage = {
+  const initialPage: EditorInitialPage = {
     pageId: page.pageId,
     title: page.title,
     isPublic: page.isPublic,
-    sections: page.sections,
+    sections: page.sections as Section[],
   }
 
   return <EditorShell page={initialPage} />

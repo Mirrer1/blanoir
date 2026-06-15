@@ -1,8 +1,9 @@
-interface EditorCanvasProps {
-  sections: unknown[]
-}
+'use client'
 
-const EditorCanvas = ({ sections }: EditorCanvasProps) => {
+import useEditorStore from '@/store/editor'
+
+const EditorCanvas = () => {
+  const sections = useEditorStore((s) => s.sections)
   const isEmpty = sections.length === 0
 
   return (

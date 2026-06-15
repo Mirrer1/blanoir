@@ -21,10 +21,7 @@ const NewPageButton = () => {
       return
     }
 
-    // 에디터 구현(Phase 3) 후 router.push(`/edit/${result.pageId}`)로 변경
-    toast.success('새 페이지가 생성됐어요')
-    router.refresh()
-    setPending(false)
+    router.push(`/edit/${result.pageId}`)
   }
 
   return (

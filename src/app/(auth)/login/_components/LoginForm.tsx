@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -67,6 +68,12 @@ const LoginForm = () => {
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
           {isSubmitting ? '로그인 중…' : '로그인'}
         </Button>
+        <Link
+          href="/forgot-password"
+          className="text-muted-foreground hover:text-foreground text-center text-sm"
+        >
+          비밀번호를 잊으셨나요?
+        </Link>
       </FieldGroup>
     </form>
   )

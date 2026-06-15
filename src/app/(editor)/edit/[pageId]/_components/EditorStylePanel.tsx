@@ -2,6 +2,7 @@
 
 import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, type LucideIcon } from 'lucide-react'
 
+import { FONT_OPTIONS } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { Section, TextAlign, TextSize } from '@/types/section'
@@ -36,12 +37,27 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
 
 const EditorStylePanel = ({ section }: { section: Section }) => {
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
-  const { size, align, bold, italic, color } = section.style
+  const { size, align, bold, italic, color, font } = section.style
   const isCustom = color !== '' && !COLOR_PALETTE.includes(color)
 
   return (
     <div className="border-border flex h-full w-72 flex-col gap-6 overflow-y-auto border-l p-4">
       <p className="text-sm font-semibold">스타일</p>
+
+      <Field label="폰트">
+        <div className="grid grid-cols-2 gap-1">
+          {FONT_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => updateSectionStyle(section.id, { font: option.value })}
+              style={{ fontFamily: option.cssVar }}
+              className={cn(SEG_BASE, font === option.value ? SEG_ON : SEG_OFF)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </Field>
 
       <Field label="크기">
         <div className="grid grid-cols-2 gap-1">

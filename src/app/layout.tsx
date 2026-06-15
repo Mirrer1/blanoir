@@ -5,6 +5,7 @@ import localFont from 'next/font/local'
 import './globals.css'
 import Providers from '@/components/Providers'
 import { Toaster } from '@/components/ui/sonner'
+import { koreanFontVariables } from '@/lib/fonts'
 
 const pretendard = localFont({
   src: './fonts/PretendardVariable.woff2',
@@ -28,7 +29,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     <html
       lang="ko"
       suppressHydrationWarning
-      className={`${pretendard.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${pretendard.variable} ${geistMono.variable} ${koreanFontVariables} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Providers>{children}</Providers>

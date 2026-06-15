@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
+import { fontFamilyOf } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { TextStyle } from '@/types/section'
@@ -36,7 +37,7 @@ const SectionText = ({
 }: SectionTextProps) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { align, bold, italic, color } = style
+  const { align, bold, italic, color, font } = style
 
   const typoClass = cn(
     sizeClass,
@@ -45,7 +46,7 @@ const SectionText = ({
     italic && 'italic',
     leadingClass,
   )
-  const colorStyle = color ? { color } : undefined
+  const textStyle = { fontFamily: fontFamilyOf(font), ...(color ? { color } : {}) }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     updateSectionContent(sectionId, { text: e.target.value })
@@ -78,7 +79,7 @@ const SectionText = ({
           onChange={handleChange}
           rows={1}
           placeholder={placeholder}
-          style={colorStyle}
+          style={textStyle}
           className={cn(
             typoClass,
             'placeholder:text-muted-foreground/40 w-full resize-none overflow-hidden bg-transparent outline-none',
@@ -86,7 +87,7 @@ const SectionText = ({
         />
       ) : (
         <Tag
-          style={colorStyle}
+          style={textStyle}
           className={cn(typoClass, 'whitespace-pre-wrap', !text && 'text-muted-foreground/40')}
         >
           {text || placeholder}

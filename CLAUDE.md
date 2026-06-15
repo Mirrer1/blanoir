@@ -4,9 +4,11 @@
 
 ## 현재 상태
 
-Phase 2(랜딩 + 인증) 완료. 랜딩, 로컬/소셜(구글·카카오·네이버) 로그인, 회원가입, 대시보드, 비밀번호 재설정까지 **실제 DB·메일 연동으로 동작 검증 완료**. 외부 셋업은 MongoDB Atlas·소셜 3종 OAuth·Gmail SMTP까지 연결됨(`.env.local`에 값 채워져 있음).
+Phase 3(에디터 코어) 완료. `(editor)` 그룹 + 자체 헤더 레이아웃, Zustand 스토어, 제목·문단 섹션 인라인 편집, 스타일 패널(크기/정렬/강조/색상+사용자지정), 섹션 추가 메뉴·삭제·순서변경(dnd-kit), 5초 디바운스 자동저장(+변경 감지·수동 저장 버튼), 미저장 이탈 보호(확인 모달 + `beforeunload`)까지 동작.
 
-**다음 작업: Phase 3 — 에디터 코어**
+Phase 2(랜딩 + 인증)도 완료 상태(랜딩·로컬/소셜 로그인·회원가입·비밀번호 재설정·대시보드, 실제 DB·메일 연동 검증). 외부 셋업은 MongoDB Atlas·소셜 3종 OAuth·Gmail SMTP 연결됨(`.env.local`).
+
+**다음 작업: Phase 3 곁가지(폰트·섹션 사이 추가) → Phase 4 — 섹션 확장**
 
 ## 문서 안내
 
@@ -84,15 +86,21 @@ Phase 2(랜딩 + 인증) 완료. 랜딩, 로컬/소셜(구글·카카오·네이
 
 ### Phase 3: 에디터 코어
 
-- [ ] 에디터 레이아웃 (인라인 편집 베이스)
-- [ ] Zustand editor store
-- [ ] 제목 섹션 + 인라인 편집 UI
-- [ ] 제목 스타일 패널 (크기/색/정렬/굵게/기울임/폰트)
-- [ ] 문단 섹션
-- [ ] 섹션 추가 (`[+ 섹션 추가]` 버튼 + 종류 메뉴)
-- [ ] 섹션 삭제 / 순서 변경 (dnd-kit)
-- [ ] 자동저장 (5초 디바운스, isDirty 플래그) + Server Action
-- [ ] 페이지 이탈 경고 (beforeunload + 라우터 가로채기)
+- [x] 에디터 레이아웃 (`(editor)` 그룹, 자체 EditorHeader)
+- [x] Zustand editor store (`store/editor.ts`)
+- [x] 제목 섹션 + 인라인 편집 UI (`SectionText` 공통화)
+- [x] 제목 스타일 패널 (크기/색/정렬/굵게/기울임) — **폰트는 곁가지로 미룸**
+- [x] 문단 섹션
+- [x] 섹션 추가 (`AddSectionMenu` — base-ui Menu, 종류 메뉴)
+- [x] 섹션 삭제 / 순서 변경 (dnd-kit)
+- [x] 자동저장 (5초 디바운스 + 스냅샷 변경 감지) + Server Action `savePage` (+ 수동 저장 버튼)
+- [x] 페이지 이탈 경고 (`beforeunload` + base-ui AlertDialog 확인 모달 + 언마운트 flush)
+
+**미룬 곁가지 (Phase 4 전 또는 함께):**
+
+- [ ] 폰트 컨트롤 (스타일 패널 폰트 + 한글 폰트 로딩 인프라)
+- [ ] 섹션 사이 호버 추가 (`AddSectionMenu`의 `index` prop 활용)
+- [ ] 캔버스 다크모드 절연 (Phase 5 다크 토글과 함께 — `DECISIONS.md` 참조)
 
 ### Phase 4: 섹션 확장
 

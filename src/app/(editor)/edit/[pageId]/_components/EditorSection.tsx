@@ -1,5 +1,6 @@
 'use client'
 
+import SectionParagraph from './SectionParagraph'
 import SectionTitle from './SectionTitle'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
@@ -24,6 +25,9 @@ const EditorSection = ({ section }: { section: Section }) => {
       )}
     >
       {section.type === 'title' && <SectionTitle section={section} isSelected={isSelected} />}
+      {section.type === 'paragraph' && (
+        <SectionParagraph section={section} isSelected={isSelected} />
+      )}
     </div>
   )
 }

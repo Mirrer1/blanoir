@@ -1,7 +1,7 @@
 'use client'
 
 import { Menu } from '@base-ui/react/menu'
-import { type LucideIcon, Plus, Type } from 'lucide-react'
+import { type LucideIcon, Pilcrow, Plus, Type } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
@@ -9,6 +9,7 @@ import type { SectionType } from '@/types/section'
 
 const SECTION_TYPES: { type: SectionType; label: string; icon: LucideIcon }[] = [
   { type: 'title', label: '제목', icon: Type },
+  { type: 'paragraph', label: '문단', icon: Pilcrow },
 ]
 
 const AddSectionMenu = ({ index }: { index?: number }) => {

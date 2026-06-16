@@ -9,11 +9,6 @@ import type { TextStyle } from '@/types/section'
 
 const ALIGN_CLASS = { left: 'text-left', center: 'text-center', right: 'text-right' } as const
 
-const resize = (el: HTMLTextAreaElement) => {
-  el.style.height = 'auto'
-  el.style.height = `${el.scrollHeight}px`
-}
-
 interface SectionTextProps {
   sectionId: string
   text: string
@@ -45,13 +40,10 @@ const SectionText = ({
     bold ? 'font-bold' : 'font-normal',
     italic && 'italic',
     leadingClass,
+    'col-start-1 row-start-1 min-w-0 break-words whitespace-pre-wrap',
   )
   const textStyle = { fontFamily: fontFamilyOf(font), ...(color ? { color } : {}) }
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    updateSectionContent(sectionId, { text: e.target.value })
-    resize(e.target)
-  }
+  const mirrorText = `${text || placeholder} `
 
   // 선택되면 편집 textarea로 포커스 이동
   useEffect(() => {
@@ -62,42 +54,30 @@ const SectionText = ({
     }
   }, [isSelected])
 
-  // 선택 직후·크기 변경 시 높이 재계산
-  useEffect(() => {
-    const el = textareaRef.current
-    if (isSelected && el) {
-      resize(el)
-    }
-  }, [isSelected, sizeClass])
-
   return (
-    <>
+    <div className="grid grid-cols-1">
+      <div aria-hidden style={textStyle} className={cn(typoClass, 'invisible')}>
+        {mirrorText}
+      </div>
       {isSelected ? (
         <textarea
           ref={textareaRef}
           value={text}
-          onChange={handleChange}
+          onChange={(e) => updateSectionContent(sectionId, { text: e.target.value })}
           rows={1}
           placeholder={placeholder}
           style={textStyle}
           className={cn(
             typoClass,
-            'placeholder:text-muted-foreground/40 w-full resize-none overflow-hidden bg-transparent outline-none',
+            'placeholder:text-muted-foreground/40 resize-none border-0 bg-transparent p-0 outline-none',
           )}
         />
       ) : (
-        <Tag
-          style={textStyle}
-          className={cn(
-            typoClass,
-            'break-words whitespace-pre-wrap',
-            !text && 'text-muted-foreground/40',
-          )}
-        >
+        <Tag style={textStyle} className={cn(typoClass, !text && 'text-muted-foreground/40')}>
           {text || placeholder}
         </Tag>
       )}
-    </>
+    </div>
   )
 }
 

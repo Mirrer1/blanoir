@@ -1,7 +1,14 @@
 import { nanoid } from 'nanoid'
 import { create } from 'zustand'
 
-import type { DividerStyle, Section, SectionStyle, SectionType, TextStyle } from '@/types/section'
+import type {
+  ButtonStyle,
+  DividerStyle,
+  Section,
+  SectionStyle,
+  SectionType,
+  TextStyle,
+} from '@/types/section'
 
 export type SaveStatus = 'idle' | 'saved' | 'unsaved'
 
@@ -71,6 +78,14 @@ const DEFAULT_DIVIDER_STYLE: DividerStyle = {
   color: '',
 }
 
+const DEFAULT_BUTTON_STYLE: ButtonStyle = {
+  color: '',
+  shape: 'rounded',
+  size: 'medium',
+  width: 'auto',
+  align: 'left',
+}
+
 const createSection = (type: SectionType): Section => {
   const id = nanoid(8)
   if (type === 'title') {
@@ -83,6 +98,9 @@ const createSection = (type: SectionType): Section => {
   }
   if (type === 'divider') {
     return { id, type, content: {}, style: { ...DEFAULT_DIVIDER_STYLE } }
+  }
+  if (type === 'button') {
+    return { id, type, content: { text: '버튼', url: '' }, style: { ...DEFAULT_BUTTON_STYLE } }
   }
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }

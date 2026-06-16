@@ -40,6 +40,25 @@ export interface DividerSection {
   style: DividerStyle
 }
 
-export type Section = TitleSection | ParagraphSection | DividerSection
+export type ButtonShape = 'square' | 'rounded'
+export type ButtonSize = 'small' | 'medium' | 'large'
+export type ButtonWidth = 'auto' | 'wide' | 'full'
+
+export interface ButtonStyle {
+  color: string // 빈 문자열이면 기본 버튼색
+  shape: ButtonShape
+  size: ButtonSize
+  width: ButtonWidth
+  align: TextAlign
+}
+
+export interface ButtonSection {
+  id: string
+  type: 'button'
+  content: { text: string; url: string }
+  style: ButtonStyle
+}
+
+export type Section = TitleSection | ParagraphSection | DividerSection | ButtonSection
 export type SectionType = Section['type']
 export type SectionStyle = Section['style']

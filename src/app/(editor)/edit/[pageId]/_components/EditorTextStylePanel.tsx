@@ -1,25 +1,21 @@
 'use client'
 
-import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, type LucideIcon } from 'lucide-react'
+import { Bold, Italic } from 'lucide-react'
 
+import EditorAlignField from './EditorAlignField'
 import EditorColorField from './EditorColorField'
 import EditorStyleField from './EditorStyleField'
 import { ICON_BASE, SEG_BASE, SEG_OFF, SEG_ON } from './editorControlStyles'
 import { FONT_OPTIONS } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
-import type { ParagraphSection, TextAlign, TextSize, TitleSection } from '@/types/section'
+import type { ParagraphSection, TextSize, TitleSection } from '@/types/section'
 
 const SIZE_OPTIONS: { value: TextSize; label: string }[] = [
   { value: 'small', label: '작게' },
   { value: 'medium', label: '보통' },
   { value: 'large', label: '크게' },
   { value: 'xlarge', label: '매우 크게' },
-]
-const ALIGN_OPTIONS: { value: TextAlign; icon: LucideIcon; label: string }[] = [
-  { value: 'left', icon: AlignLeft, label: '왼쪽 정렬' },
-  { value: 'center', icon: AlignCenter, label: '가운데 정렬' },
-  { value: 'right', icon: AlignRight, label: '오른쪽 정렬' },
 ]
 
 const EditorTextStylePanel = ({ section }: { section: TitleSection | ParagraphSection }) => {
@@ -57,20 +53,10 @@ const EditorTextStylePanel = ({ section }: { section: TitleSection | ParagraphSe
         </div>
       </EditorStyleField>
 
-      <EditorStyleField label="정렬">
-        <div className="flex gap-1">
-          {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
-            <button
-              key={value}
-              aria-label={label}
-              onClick={() => updateSectionStyle(section.id, { align: value })}
-              className={cn(ICON_BASE, align === value ? SEG_ON : SEG_OFF)}
-            >
-              <Icon className="size-4" />
-            </button>
-          ))}
-        </div>
-      </EditorStyleField>
+      <EditorAlignField
+        align={align}
+        onChange={(value) => updateSectionStyle(section.id, { align: value })}
+      />
 
       <EditorStyleField label="강조">
         <div className="flex gap-1">

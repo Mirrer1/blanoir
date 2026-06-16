@@ -88,7 +88,11 @@ const SectionText = ({
       ) : (
         <Tag
           style={textStyle}
-          className={cn(typoClass, 'whitespace-pre-wrap', !text && 'text-muted-foreground/40')}
+          className={cn(
+            typoClass,
+            'break-words whitespace-pre-wrap',
+            !text && 'text-muted-foreground/40',
+          )}
         >
           {text || placeholder}
         </Tag>

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { create } from 'zustand'
 
-import type { Section, SectionType, TextStyle } from '@/types/section'
+import type { DividerStyle, Section, SectionStyle, SectionType, TextStyle } from '@/types/section'
 
 export type SaveStatus = 'idle' | 'saved' | 'unsaved'
 
@@ -29,7 +29,7 @@ interface EditorState {
   selectSection: (id: string | null) => void
   addSection: (type: SectionType, index?: number) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
-  updateSectionStyle: (id: string, style: Partial<TextStyle>) => void
+  updateSectionStyle: (id: string, style: Partial<SectionStyle>) => void
   removeSection: (id: string) => void
   moveSection: (fromIndex: number, toIndex: number) => void
   setSaveStatus: (status: SaveStatus) => void
@@ -65,6 +65,12 @@ const DEFAULT_TEXT_STYLE: TextStyle = {
   font: 'pretendard',
 }
 
+const DEFAULT_DIVIDER_STYLE: DividerStyle = {
+  variant: 'solid',
+  thickness: 'thin',
+  color: '',
+}
+
 const createSection = (type: SectionType): Section => {
   const id = nanoid(8)
   if (type === 'title') {
@@ -74,6 +80,9 @@ const createSection = (type: SectionType): Section => {
       content: { text: '' },
       style: { ...DEFAULT_TEXT_STYLE, size: 'large', bold: true },
     }
+  }
+  if (type === 'divider') {
+    return { id, type, content: {}, style: { ...DEFAULT_DIVIDER_STYLE } }
   }
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
@@ -134,7 +143,9 @@ const useEditorStore = create<EditorState>((set) => ({
   updateSectionContent: (id, content) =>
     set((s) => {
       const sections = s.sections.map((section) =>
-        section.id === id ? { ...section, content: { ...section.content, ...content } } : section,
+        section.id === id
+          ? ({ ...section, content: { ...section.content, ...content } } as Section)
+          : section,
       )
       return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
     }),
@@ -143,7 +154,9 @@ const useEditorStore = create<EditorState>((set) => ({
   updateSectionStyle: (id, style) =>
     set((s) => {
       const sections = s.sections.map((section) =>
-        section.id === id ? { ...section, style: { ...section.style, ...style } } : section,
+        section.id === id
+          ? ({ ...section, style: { ...section.style, ...style } } as Section)
+          : section,
       )
       return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
     }),

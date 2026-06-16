@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
 
+import SectionDivider from './SectionDivider'
 import SectionParagraph from './SectionParagraph'
 import SectionTitle from './SectionTitle'
 import { cn } from '@/lib/utils'
@@ -43,7 +44,7 @@ const EditorSection = ({ section }: { section: Section }) => {
     >
       <div
         className={cn(
-          'absolute top-1.5 right-1.5 z-10 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100',
+          'absolute top-1.5 right-0 z-10 flex translate-x-[calc(100%+0.375rem)] gap-0.5 opacity-0 transition-opacity group-hover:opacity-100',
           isSelected && 'opacity-100',
         )}
       >
@@ -67,6 +68,7 @@ const EditorSection = ({ section }: { section: Section }) => {
       {section.type === 'paragraph' && (
         <SectionParagraph section={section} isSelected={isSelected} />
       )}
+      {section.type === 'divider' && <SectionDivider section={section} />}
     </div>
   )
 }

@@ -24,5 +24,22 @@ export interface ParagraphSection {
   style: TextStyle
 }
 
-export type Section = TitleSection | ParagraphSection
+export type DividerVariant = 'solid' | 'dashed' | 'dotted'
+export type DividerThickness = 'thin' | 'medium' | 'thick'
+
+export interface DividerStyle {
+  variant: DividerVariant
+  thickness: DividerThickness
+  color: string // 빈 문자열이면 기본 보더색
+}
+
+export interface DividerSection {
+  id: string
+  type: 'divider'
+  content: Record<string, never>
+  style: DividerStyle
+}
+
+export type Section = TitleSection | ParagraphSection | DividerSection
 export type SectionType = Section['type']
+export type SectionStyle = Section['style']

@@ -40,6 +40,22 @@ export interface DividerSection {
   style: DividerStyle
 }
 
+export type ImageSize = 'small' | 'medium' | 'large'
+export type ImageShape = 'square' | 'rounded' | 'circle'
+
+export interface ImageStyle {
+  size: ImageSize
+  shape: ImageShape
+  align: TextAlign
+}
+
+export interface ImageSection {
+  id: string
+  type: 'image'
+  content: { src: string; alt: string }
+  style: ImageStyle
+}
+
 export type ButtonShape = 'square' | 'rounded'
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonWidth = 'auto' | 'wide' | 'full'
@@ -59,6 +75,11 @@ export interface ButtonSection {
   style: ButtonStyle
 }
 
-export type Section = TitleSection | ParagraphSection | DividerSection | ButtonSection
+export type Section =
+  | TitleSection
+  | ParagraphSection
+  | DividerSection
+  | ButtonSection
+  | ImageSection
 export type SectionType = Section['type']
 export type SectionStyle = Section['style']

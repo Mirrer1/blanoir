@@ -6,8 +6,10 @@ import { GripVertical, Trash2 } from 'lucide-react'
 
 import SectionButton from './SectionButton'
 import SectionDivider from './SectionDivider'
+import SectionImage from './SectionImage'
 import SectionParagraph from './SectionParagraph'
 import SectionTitle from './SectionTitle'
+import { deleteImage } from '@/actions/upload'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { Section } from '@/types/section'
@@ -29,6 +31,9 @@ const EditorSection = ({ section }: { section: Section }) => {
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
+    if (section.type === 'image' && section.content.src) {
+      void deleteImage(section.content.src)
+    }
     removeSection(section.id)
   }
 
@@ -69,6 +74,7 @@ const EditorSection = ({ section }: { section: Section }) => {
       {section.type === 'paragraph' && (
         <SectionParagraph section={section} isSelected={isSelected} />
       )}
+      {section.type === 'image' && <SectionImage section={section} isSelected={isSelected} />}
       {section.type === 'divider' && <SectionDivider section={section} />}
       {section.type === 'button' && <SectionButton section={section} />}
     </div>

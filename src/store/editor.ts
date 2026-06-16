@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import type {
   ButtonStyle,
   DividerStyle,
+  ImageStyle,
   Section,
   SectionStyle,
   SectionType,
@@ -25,6 +26,7 @@ interface EditorState {
   isPublic: boolean
   sections: Section[]
   selectedSectionId: string | null
+  imageUploading: boolean
   isDirty: boolean
   saveStatus: SaveStatus
   savedSnapshot: string
@@ -34,6 +36,7 @@ interface EditorState {
   reset: () => void
   setTitle: (title: string) => void
   selectSection: (id: string | null) => void
+  setImageUploading: (uploading: boolean) => void
   addSection: (type: SectionType, index?: number) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
   updateSectionStyle: (id: string, style: Partial<SectionStyle>) => void
@@ -86,6 +89,12 @@ const DEFAULT_BUTTON_STYLE: ButtonStyle = {
   align: 'left',
 }
 
+const DEFAULT_IMAGE_STYLE: ImageStyle = {
+  size: 'medium',
+  shape: 'rounded',
+  align: 'center',
+}
+
 const createSection = (type: SectionType): Section => {
   const id = nanoid(8)
   if (type === 'title') {
@@ -102,6 +111,9 @@ const createSection = (type: SectionType): Section => {
   if (type === 'button') {
     return { id, type, content: { text: '버튼', url: '' }, style: { ...DEFAULT_BUTTON_STYLE } }
   }
+  if (type === 'image') {
+    return { id, type, content: { src: '', alt: '' }, style: { ...DEFAULT_IMAGE_STYLE } }
+  }
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
@@ -111,6 +123,7 @@ const INITIAL_STATE = {
   isPublic: false,
   sections: [] as Section[],
   selectedSectionId: null as string | null,
+  imageUploading: false,
   isDirty: false,
   saveStatus: 'idle' as SaveStatus,
   savedSnapshot: '',
@@ -143,6 +156,9 @@ const useEditorStore = create<EditorState>((set) => ({
 
   // 섹션 선택 또는 선택 해제
   selectSection: (id) => set({ selectedSectionId: id }),
+
+  // 이미지 업로드 진행 여부
+  setImageUploading: (imageUploading) => set({ imageUploading }),
 
   // 지정 위치에 새 섹션 삽입 후 선택
   addSection: (type, index) =>

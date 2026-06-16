@@ -12,8 +12,8 @@ import useEditorStore, { type EditorInitialPage } from '@/store/editor'
 
 const EditorShell = ({ page }: { page: EditorInitialPage }) => {
   const initialize = useEditorStore((s) => s.initialize)
+  const reset = useEditorStore((s) => s.reset)
   const currentPageId = useEditorStore((s) => s.pageId)
-  const selectSection = useEditorStore((s) => s.selectSection)
   const selectedSection = useEditorStore(
     (s) => s.sections.find((section) => section.id === s.selectedSectionId) ?? null,
   )
@@ -23,8 +23,8 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
     initialize(page)
   }
 
-  // 에디터 상태 초기화
-  useEffect(() => () => selectSection(null), [selectSection])
+  // 이탈 시 스토어 초기화
+  useEffect(() => () => reset(), [reset])
 
   useAutoSave()
   useUnsavedGuard()

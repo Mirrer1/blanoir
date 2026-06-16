@@ -8,6 +8,7 @@ import { saveNow } from '@/hooks/useAutoSave'
 import useEditorStore, { type SaveStatus } from '@/store/editor'
 
 const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
+  idle: '',
   saved: '자동 저장됨',
   unsaved: '저장되지 않은 변경사항',
 }

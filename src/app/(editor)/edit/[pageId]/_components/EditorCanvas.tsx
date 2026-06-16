@@ -13,6 +13,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import AddSectionMenu from './AddSectionMenu'
 import EditorEmptyState from './EditorEmptyState'
 import EditorSection from './EditorSection'
+import SectionInsert from './SectionInsert'
 import useEditorStore from '@/store/editor'
 
 const EditorCanvas = () => {
@@ -49,9 +50,12 @@ const EditorCanvas = () => {
               items={sections.map((section) => section.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-1">
-                {sections.map((section) => (
-                  <EditorSection key={section.id} section={section} />
+              <div>
+                {sections.map((section, i) => (
+                  <div key={section.id}>
+                    <SectionInsert index={i} />
+                    <EditorSection section={section} />
+                  </div>
                 ))}
               </div>
             </SortableContext>

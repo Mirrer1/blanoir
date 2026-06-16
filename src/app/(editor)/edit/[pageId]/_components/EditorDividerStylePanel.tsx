@@ -1,8 +1,8 @@
 'use client'
 
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
 import EditorColorField from './EditorColorField'
 import EditorStyleField from './EditorStyleField'
-import { SEG_BASE, SEG_OFF, SEG_ON } from './editorControlStyles'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { DividerSection, DividerThickness, DividerVariant } from '@/types/section'

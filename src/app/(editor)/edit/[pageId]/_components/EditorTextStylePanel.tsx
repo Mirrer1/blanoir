@@ -2,10 +2,10 @@
 
 import { Bold, Italic } from 'lucide-react'
 
+import { ICON_BASE, SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
 import EditorAlignField from './EditorAlignField'
 import EditorColorField from './EditorColorField'
 import EditorStyleField from './EditorStyleField'
-import { ICON_BASE, SEG_BASE, SEG_OFF, SEG_ON } from './editorControlStyles'
 import { FONT_OPTIONS } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'

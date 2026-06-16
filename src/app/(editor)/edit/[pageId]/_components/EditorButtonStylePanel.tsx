@@ -1,9 +1,9 @@
 'use client'
 
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
 import EditorAlignField from './EditorAlignField'
 import EditorColorField from './EditorColorField'
 import EditorStyleField from './EditorStyleField'
-import { SEG_BASE, SEG_OFF, SEG_ON } from './editorControlStyles'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'

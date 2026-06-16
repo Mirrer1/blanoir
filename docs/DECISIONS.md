@@ -490,29 +490,34 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 
 ## 에러 / 예외 처리
 
-| 케이스                       | 처리                                               |
-| ---------------------------- | -------------------------------------------------- |
-| 시스템 에러 (렌더링)         | `error.tsx` (Error Boundary)                       |
-| 404 (페이지 없음)            | `not-found.tsx`, `notFound()` 함수                 |
-| 비공개 페이지 다른 사람 접근 | 404 (보안)                                         |
-| 없는 사용자 URL              | 404                                                |
-| 비로그인 에디터 접근         | `middleware.ts`에서 로그인 페이지 리다이렉트       |
-| 조회/변경 실패               | React Query `onError` + Toast 알림 (shadcn Sonner) |
-| 저장 실패                    | React Query `onError` + 토스트                     |
+| 케이스                       | 처리                                                            |
+| ---------------------------- | --------------------------------------------------------------- |
+| 시스템 에러 (렌더링)         | `error.tsx` (Error Boundary)                                    |
+| 404 (페이지 없음)            | `not-found.tsx`, `notFound()` 함수                              |
+| 비공개 페이지 다른 사람 접근 | 404 (보안)                                                      |
+| 없는 사용자 URL              | 404                                                             |
+| 비로그인 에디터 접근         | `middleware.ts`에서 로그인 페이지 리다이렉트                    |
+| 조회/변경 실패               | 서버 액션이 `{ ok, message }` 반환 → 호출부에서 토스트 (Sonner) |
+| 저장 실패                    | 동일 (토스트)                                                   |
 
 ### 코드 구조
 
+조회는 서버 컴포넌트에서 직접 DB 호출(SSR), 변경은 서버 액션 직접 호출. 별도 클라이언트 데이터 패칭 레이어(React Query 등)는 두지 않는다.
+
 ```ts
-// React Query 전역 설정
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: 1, staleTime: 60_000 },
-    mutations: { onError: () => toast.error('저장 실패') },
-  },
-})
+// 서버 액션은 예외를 try/catch로 잡아 결과 객체로 반환
+export async function savePage(...): Promise<{ ok: true } | { ok: false; message: string }> {
+  try {
+    // ...작업
+    return { ok: true }
+  } catch (error) {
+    console.error(error)
+    return { ok: false, message: '잠시 후 다시 시도해 주세요' }
+  }
+}
 ```
 
-Server Action 내부 에러는 try/catch로 잡고 throw → React Query `onError`에서 토스트 표시.
+호출부(폼/버튼)에서 `if (!result.ok) toast.error(result.message)`로 안내한다. 렌더링 중 발생하는 시스템 에러는 `error.tsx`(Error Boundary), 없는 경로는 `not-found.tsx`가 잡는다.
 
 ## 페이지 구성 (MVP)
 

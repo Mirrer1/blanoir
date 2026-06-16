@@ -85,10 +85,11 @@ const handleSubmit = async () => {
 
 ### 데이터 fetching 패턴
 
-- **조회**: React Query (`useQuery` / `useSuspenseQuery`)
-- **변경 (POST/PUT/DELETE)**: Server Action 직접 호출 (axios/API Route 안 만듦)
+- **조회**: 서버 컴포넌트에서 직접 DB 호출 (SSR). 별도 클라이언트 패칭 레이어 없음
+- **변경 (POST/PUT/DELETE)**: Server Action 직접 호출 (axios/API Route 안 만듦). 변경 후 `revalidatePath`로 서버 컴포넌트 갱신
 - **인증**: NextAuth HttpOnly 쿠키 자동 (헤더에 토큰 직접 박지 않음)
-- 첫 GET은 서버 컴포넌트에서 prefetch + `HydrationBoundary`로 클라이언트에 hydration
+- 서버 액션은 예외를 try/catch로 잡아 `{ ok, message }` 반환 → 호출부에서 토스트
+- 클라이언트 캐시 라이브러리(React Query 등)는 안 쓴다. 여러 컴포넌트 공유 캐시·백그라운드 refetch·무한스크롤·폴링 같은 수요가 없어 서버 컴포넌트로 충분하기 때문. 즉시 반영(옵티미스틱)이 필요한 곳은 React 19 `useOptimistic` + Server Action으로 처리
 
 ## 코드 스타일
 
@@ -136,7 +137,7 @@ export default SignUpPage
 
 **쓰지 말 것:**
 
-- 데이터 fetching → React Query 사용
+- 데이터 fetching → 서버 컴포넌트 / 서버 액션 사용
 - 파생 상태 계산 → 변수로 계산
 - 이벤트 처리 → 이벤트 핸들러에서 처리
 
@@ -251,11 +252,11 @@ npx create-next-app@latest blanoir --typescript --tailwind --app --eslint --src-
 cd blanoir
 
 # 핵심 라이브러리
-npm install mongoose next-auth zustand @tanstack/react-query react-hook-form
+npm install mongoose next-auth zustand react-hook-form
 npm install zod @hookform/resolvers
 npm install nanoid motion next-themes
 # motion = 구 framer-motion의 새 패키지명. next-themes = 다크모드 토글
-# axios — 현재 미사용 (React Query + Server Action). 외부 API 호출 필요 시 설치
+# axios — 현재 미사용 (서버 컴포넌트 + Server Action). 외부 API 호출 필요 시 설치
 npm install cloudinary next-cloudinary
 npm install bcryptjs
 npm install -D @types/bcryptjs

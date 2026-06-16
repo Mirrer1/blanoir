@@ -2,6 +2,7 @@
 
 import { AlignCenter, AlignLeft, AlignRight, Bold, Italic, type LucideIcon } from 'lucide-react'
 
+import EditorStyleField from './EditorStyleField'
 import { FONT_OPTIONS } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
@@ -28,13 +29,6 @@ const SEG_OFF = 'text-foreground hover:bg-muted'
 const ICON_BASE =
   'flex size-8 cursor-pointer items-center justify-center rounded-md border transition-colors'
 
-const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
-  <div className="space-y-2">
-    <p className="text-muted-foreground text-xs font-medium">{label}</p>
-    {children}
-  </div>
-)
-
 const EditorStylePanel = ({ section }: { section: Section }) => {
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
   const { size, align, bold, italic, color, font } = section.style
@@ -44,7 +38,7 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
     <div className="border-border flex h-full w-72 flex-col gap-6 overflow-y-auto border-l p-4">
       <p className="text-sm font-semibold">스타일</p>
 
-      <Field label="폰트">
+      <EditorStyleField label="폰트">
         <div className="grid grid-cols-2 gap-1">
           {FONT_OPTIONS.map((option) => (
             <button
@@ -57,9 +51,9 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
             </button>
           ))}
         </div>
-      </Field>
+      </EditorStyleField>
 
-      <Field label="크기">
+      <EditorStyleField label="크기">
         <div className="grid grid-cols-2 gap-1">
           {SIZE_OPTIONS.map((option) => (
             <button
@@ -71,9 +65,9 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
             </button>
           ))}
         </div>
-      </Field>
+      </EditorStyleField>
 
-      <Field label="정렬">
+      <EditorStyleField label="정렬">
         <div className="flex gap-1">
           {ALIGN_OPTIONS.map(({ value, icon: Icon, label }) => (
             <button
@@ -86,9 +80,9 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
             </button>
           ))}
         </div>
-      </Field>
+      </EditorStyleField>
 
-      <Field label="강조">
+      <EditorStyleField label="강조">
         <div className="flex gap-1">
           <button
             aria-label="굵게"
@@ -105,9 +99,9 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
             <Italic className="size-4" />
           </button>
         </div>
-      </Field>
+      </EditorStyleField>
 
-      <Field label="색상">
+      <EditorStyleField label="색상">
         <div className="flex flex-wrap gap-2">
           {COLOR_PALETTE.map((value) => (
             <button
@@ -137,7 +131,7 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
             />
           </label>
         </div>
-      </Field>
+      </EditorStyleField>
     </div>
   )
 }

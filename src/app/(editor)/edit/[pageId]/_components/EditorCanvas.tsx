@@ -9,6 +9,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { useRef } from 'react'
 
 import AddSectionMenu from './AddSectionMenu'
 import EditorEmptyState from './EditorEmptyState'
@@ -21,7 +22,21 @@ const EditorCanvas = () => {
   const selectSection = useEditorStore((s) => s.selectSection)
   const moveSection = useEditorStore((s) => s.moveSection)
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
+
+  // 섹션 추가 시 새 섹션으로 스크롤
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = scrollRef.current
+        if (el) {
+          el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+        }
+      })
+    })
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -36,7 +51,11 @@ const EditorCanvas = () => {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto" onClick={() => selectSection(null)}>
+    <div
+      ref={scrollRef}
+      className="flex-1 [scrollbar-gutter:stable] overflow-y-auto"
+      onClick={() => selectSection(null)}
+    >
       <div className="mx-auto min-h-full max-w-3xl px-6 py-16">
         {sections.length === 0 ? (
           <EditorEmptyState />
@@ -60,7 +79,7 @@ const EditorCanvas = () => {
               </div>
             </SortableContext>
             <div className="flex justify-center pt-4">
-              <AddSectionMenu />
+              <AddSectionMenu onAdded={scrollToBottom} />
             </div>
           </DndContext>
         )}

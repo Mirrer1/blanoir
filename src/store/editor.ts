@@ -3,7 +3,9 @@ import { create } from 'zustand'
 
 import type {
   ButtonStyle,
+  CardStyle,
   DividerStyle,
+  GalleryStyle,
   ImageStyle,
   Section,
   SectionStyle,
@@ -83,6 +85,7 @@ const DEFAULT_DIVIDER_STYLE: DividerStyle = {
 
 const DEFAULT_BUTTON_STYLE: ButtonStyle = {
   color: '',
+  textColor: '',
   shape: 'rounded',
   size: 'medium',
   width: 'auto',
@@ -90,9 +93,26 @@ const DEFAULT_BUTTON_STYLE: ButtonStyle = {
 }
 
 const DEFAULT_IMAGE_STYLE: ImageStyle = {
-  size: 'medium',
+  size: 'large',
   shape: 'rounded',
   align: 'center',
+  ratio: 'original',
+  zoom: 1,
+  focusX: 50,
+  focusY: 50,
+}
+
+const DEFAULT_GALLERY_STYLE: GalleryStyle = {
+  displayMode: 'grid',
+  size: 'medium',
+  shape: 'rounded',
+  gap: 'medium',
+}
+
+const DEFAULT_CARD_STYLE: CardStyle = {
+  layout: 'vertical',
+  columns: 3,
+  align: 'left',
 }
 
 const createSection = (type: SectionType): Section => {
@@ -113,6 +133,17 @@ const createSection = (type: SectionType): Section => {
   }
   if (type === 'image') {
     return { id, type, content: { src: '', alt: '' }, style: { ...DEFAULT_IMAGE_STYLE } }
+  }
+  if (type === 'gallery') {
+    return { id, type, content: { images: [] }, style: { ...DEFAULT_GALLERY_STYLE } }
+  }
+  if (type === 'card') {
+    return {
+      id,
+      type,
+      content: { cards: [] },
+      style: { ...DEFAULT_CARD_STYLE },
+    }
   }
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }

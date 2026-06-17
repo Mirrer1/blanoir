@@ -2,6 +2,8 @@
 
 import { Menu } from '@base-ui/react/menu'
 import {
+  CreditCard,
+  GalleryHorizontalEnd,
   Image as ImageIcon,
   type LucideIcon,
   Minus,
@@ -21,10 +23,25 @@ const SECTION_TYPES: { type: SectionType; label: string; icon: LucideIcon }[] = 
   { type: 'image', label: '이미지', icon: ImageIcon },
   { type: 'divider', label: '구분선', icon: Minus },
   { type: 'button', label: '버튼', icon: MousePointerClick },
+  { type: 'gallery', label: '갤러리', icon: GalleryHorizontalEnd },
+  { type: 'card', label: '카드', icon: CreditCard },
 ]
 
-const AddSectionMenu = ({ index, compact }: { index?: number; compact?: boolean }) => {
+const AddSectionMenu = ({
+  index,
+  compact,
+  onAdded,
+}: {
+  index?: number
+  compact?: boolean
+  onAdded?: () => void
+}) => {
   const addSection = useEditorStore((s) => s.addSection)
+
+  const handleAdd = (type: SectionType) => {
+    addSection(type, index)
+    onAdded?.()
+  }
 
   return (
     <Menu.Root>
@@ -52,7 +69,7 @@ const AddSectionMenu = ({ index, compact }: { index?: number; compact?: boolean 
             {SECTION_TYPES.map(({ type, label, icon: Icon }) => (
               <Menu.Item
                 key={type}
-                onClick={() => addSection(type, index)}
+                onClick={() => handleAdd(type)}
                 className="data-[highlighted]:bg-muted flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none"
               >
                 <Icon className="size-4" />

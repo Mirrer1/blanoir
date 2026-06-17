@@ -1,7 +1,7 @@
 import type { Types } from 'mongoose'
 import { notFound, redirect } from 'next/navigation'
 
-import EditorShell from './_components/EditorShell'
+import EditorShell from './_components/shell/EditorShell'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb'
 import Page from '@/models/Page'

@@ -12,7 +12,7 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { ImagePlus } from 'lucide-react'
 import { useRef } from 'react'
 
-import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorGalleryItem from './EditorGalleryItem'
 import EditorStyleField from './EditorStyleField'
 import { deleteImage } from '@/actions/upload'

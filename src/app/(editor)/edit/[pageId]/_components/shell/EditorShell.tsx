@@ -3,9 +3,9 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect } from 'react'
 
+import EditorStylePanel from '../panels/EditorStylePanel'
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
-import EditorStylePanel from './EditorStylePanel'
 import useAutoSave from '@/hooks/useAutoSave'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
 import useEditorStore, { type EditorInitialPage } from '@/store/editor'

@@ -3,10 +3,10 @@
 import { ImagePlus, Info, Loader2, Upload, X } from 'lucide-react'
 import { useRef } from 'react'
 
-import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
+import EditorTooltip from '../shell/EditorTooltip'
 import EditorAlignField from './EditorAlignField'
 import EditorStyleField from './EditorStyleField'
-import EditorTooltip from './EditorTooltip'
 import { deleteImage } from '@/actions/upload'
 import useImageUpload from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'

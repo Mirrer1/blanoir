@@ -1,6 +1,6 @@
 'use client'
 
-import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorColorField from './EditorColorField'
 import EditorStyleField from './EditorStyleField'
 import { cn } from '@/lib/utils'

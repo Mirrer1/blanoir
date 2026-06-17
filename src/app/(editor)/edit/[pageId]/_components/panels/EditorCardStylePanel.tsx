@@ -13,7 +13,7 @@ import { ImagePlus } from 'lucide-react'
 import { nanoid } from 'nanoid'
 import { useRef } from 'react'
 
-import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
+import { SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorAlignField from './EditorAlignField'
 import EditorCardItem from './EditorCardItem'
 import EditorStyleField from './EditorStyleField'

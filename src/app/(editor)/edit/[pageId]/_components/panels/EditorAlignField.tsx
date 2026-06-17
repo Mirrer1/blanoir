@@ -2,7 +2,7 @@
 
 import { AlignCenter, AlignLeft, AlignRight, type LucideIcon } from 'lucide-react'
 
-import { ICON_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
+import { ICON_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorStyleField from './EditorStyleField'
 import { cn } from '@/lib/utils'
 import type { TextAlign } from '@/types/section'

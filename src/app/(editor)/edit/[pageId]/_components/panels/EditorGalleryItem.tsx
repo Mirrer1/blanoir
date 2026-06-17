@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Upload, X } from 'lucide-react'
 
-import EditorTooltip from './EditorTooltip'
+import EditorTooltip from '../shell/EditorTooltip'
 import { cn } from '@/lib/utils'
 
 interface EditorGalleryItemProps {

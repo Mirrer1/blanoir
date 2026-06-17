@@ -11,9 +11,9 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useRef } from 'react'
 
+import EditorSection from '../sections/EditorSection'
 import AddSectionMenu from './AddSectionMenu'
 import EditorEmptyState from './EditorEmptyState'
-import EditorSection from './EditorSection'
 import SectionInsert from './SectionInsert'
 import useEditorStore from '@/store/editor'
 

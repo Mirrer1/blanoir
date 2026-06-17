@@ -1,6 +1,6 @@
 'use client'
 
-import { Info, Loader2, Upload, X } from 'lucide-react'
+import { ImagePlus, Info, Loader2, Upload, X } from 'lucide-react'
 import { useRef } from 'react'
 
 import { SEG_BASE, SEG_OFF, SEG_ON } from '../controlStyles'
@@ -66,14 +66,6 @@ const EditorImageStylePanel = ({ section }: { section: ImageSection }) => {
   return (
     <>
       <EditorStyleField label="이미지">
-        <div className="bg-muted relative overflow-hidden rounded-lg border">
-          <img src={src} alt={alt} className="aspect-video w-full object-cover" />
-          {isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-              <Loader2 className="size-5 animate-spin text-white" />
-            </div>
-          )}
-        </div>
         <input
           ref={inputRef}
           type="file"
@@ -81,26 +73,47 @@ const EditorImageStylePanel = ({ section }: { section: ImageSection }) => {
           onChange={handleChange}
           className="hidden"
         />
-        <div className="flex justify-end gap-1">
-          <EditorTooltip label="이미지 교체">
-            <button
-              aria-label="이미지 교체"
-              onClick={openPicker}
-              className="text-muted-foreground hover:bg-muted hover:text-foreground flex size-7 cursor-pointer items-center justify-center rounded-md"
-            >
-              <Upload className="size-4" />
-            </button>
-          </EditorTooltip>
-          <EditorTooltip label="이미지 제거">
-            <button
-              aria-label="이미지 제거"
-              onClick={handleRemove}
-              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
-            >
-              <X className="size-4" />
-            </button>
-          </EditorTooltip>
-        </div>
+        {src ? (
+          <>
+            <div className="bg-muted relative overflow-hidden rounded-lg border">
+              <img src={src} alt={alt} className="aspect-video w-full object-cover" />
+              {isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                  <Loader2 className="size-5 animate-spin text-white" />
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end gap-1">
+              <EditorTooltip label="이미지 교체">
+                <button
+                  aria-label="이미지 교체"
+                  onClick={openPicker}
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground flex size-7 cursor-pointer items-center justify-center rounded-md"
+                >
+                  <Upload className="size-4" />
+                </button>
+              </EditorTooltip>
+              <EditorTooltip label="이미지 제거">
+                <button
+                  aria-label="이미지 제거"
+                  onClick={handleRemove}
+                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
+                >
+                  <X className="size-4" />
+                </button>
+              </EditorTooltip>
+            </div>
+          </>
+        ) : (
+          <button
+            onClick={openPicker}
+            disabled={isUploading}
+            className="border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground flex aspect-video w-full cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-dashed text-xs transition-colors"
+          >
+            <ImagePlus className="size-4" />
+            이미지 추가
+          </button>
+        )}
       </EditorStyleField>
 
       <EditorStyleField label="크기">

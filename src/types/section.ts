@@ -40,6 +40,19 @@ export interface DividerSection {
   style: DividerStyle
 }
 
+export type SpacerSize = 'small' | 'medium' | 'large'
+
+export interface SpacerStyle {
+  size: SpacerSize // 여백 높이
+}
+
+export interface SpacerSection {
+  id: string
+  type: 'spacer'
+  content: Record<string, never>
+  style: SpacerStyle
+}
+
 export type ImageSize = 'small' | 'medium' | 'large'
 export type ImageShape = 'square' | 'rounded' | 'circle'
 export type ImageRatio = 'original' | 'square' | 'wide'
@@ -130,6 +143,7 @@ export type Section =
   | TitleSection
   | ParagraphSection
   | DividerSection
+  | SpacerSection
   | ButtonSection
   | ImageSection
   | GallerySection

@@ -10,6 +10,7 @@ import SectionDivider from './SectionDivider'
 import SectionGallery from './SectionGallery'
 import SectionImage from './SectionImage'
 import SectionParagraph from './SectionParagraph'
+import SectionSpacer from './SectionSpacer'
 import SectionTitle from './SectionTitle'
 import { deleteImage } from '@/actions/upload'
 import { cn } from '@/lib/utils'
@@ -85,6 +86,7 @@ const EditorSection = ({ section }: { section: Section }) => {
       )}
       {section.type === 'image' && <SectionImage section={section} isSelected={isSelected} />}
       {section.type === 'divider' && <SectionDivider section={section} />}
+      {section.type === 'spacer' && <SectionSpacer section={section} />}
       {section.type === 'button' && <SectionButton section={section} />}
       {section.type === 'gallery' && <SectionGallery section={section} />}
       {section.type === 'card' && <SectionCard section={section} />}

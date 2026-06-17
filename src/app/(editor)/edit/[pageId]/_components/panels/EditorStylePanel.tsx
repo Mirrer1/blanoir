@@ -5,6 +5,7 @@ import EditorCardStylePanel from './EditorCardStylePanel'
 import EditorDividerStylePanel from './EditorDividerStylePanel'
 import EditorGalleryStylePanel from './EditorGalleryStylePanel'
 import EditorImageStylePanel from './EditorImageStylePanel'
+import EditorSpacerStylePanel from './EditorSpacerStylePanel'
 import EditorTextStylePanel from './EditorTextStylePanel'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
@@ -23,6 +24,8 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
       <p className="text-sm font-semibold">스타일</p>
       {section.type === 'divider' ? (
         <EditorDividerStylePanel section={section} />
+      ) : section.type === 'spacer' ? (
+        <EditorSpacerStylePanel section={section} />
       ) : section.type === 'button' ? (
         <EditorButtonStylePanel section={section} />
       ) : section.type === 'image' ? (

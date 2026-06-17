@@ -10,6 +10,7 @@ import type {
   Section,
   SectionStyle,
   SectionType,
+  SpacerStyle,
   TextStyle,
 } from '@/types/section'
 
@@ -92,6 +93,10 @@ const DEFAULT_BUTTON_STYLE: ButtonStyle = {
   align: 'left',
 }
 
+const DEFAULT_SPACER_STYLE: SpacerStyle = {
+  size: 'medium',
+}
+
 const DEFAULT_IMAGE_STYLE: ImageStyle = {
   size: 'large',
   shape: 'rounded',
@@ -127,6 +132,9 @@ const createSection = (type: SectionType): Section => {
   }
   if (type === 'divider') {
     return { id, type, content: {}, style: { ...DEFAULT_DIVIDER_STYLE } }
+  }
+  if (type === 'spacer') {
+    return { id, type, content: {}, style: { ...DEFAULT_SPACER_STYLE } }
   }
   if (type === 'button') {
     return { id, type, content: { text: '버튼', url: '' }, style: { ...DEFAULT_BUTTON_STYLE } }

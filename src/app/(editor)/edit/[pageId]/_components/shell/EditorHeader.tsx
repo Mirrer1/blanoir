@@ -10,6 +10,7 @@ import useEditorStore, { type SaveStatus } from '@/store/editor'
 const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
   idle: '',
   saved: '자동 저장됨',
+  manualSaved: '저장됨',
   unsaved: '저장되지 않은 변경사항',
 }
 
@@ -40,7 +41,7 @@ const EditorHeader = () => {
             </motion.span>
           </AnimatePresence>
         </span>
-        <Button size="sm" variant="outline" onClick={saveNow} disabled={!isDirty}>
+        <Button size="sm" variant="outline" onClick={() => saveNow(true)} disabled={!isDirty}>
           저장
         </Button>
         <Button size="sm">{isPublic ? '공개됨' : '공개'}</Button>

@@ -7,7 +7,7 @@ import useEditorStore, { serializeContent } from '@/store/editor'
 const AUTOSAVE_DELAY = 3000
 
 // 디바운스를 건너뛰고 현재 변경분을 즉시 저장
-export const saveNow = async () => {
+export const saveNow = async (manual = false) => {
   const { pageId, title, sections, isDirty } = useEditorStore.getState()
   if (!isDirty) {
     return
@@ -16,7 +16,7 @@ export const saveNow = async () => {
   const snapshot = serializeContent(title, sections)
   const result = await savePage(pageId, { title, sections })
   if (result.ok) {
-    useEditorStore.getState().markSaved(snapshot)
+    useEditorStore.getState().markSaved(snapshot, manual)
   } else {
     useEditorStore.getState().setSaveStatus('unsaved')
     toast.error(result.message)

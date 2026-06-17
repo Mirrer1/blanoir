@@ -13,7 +13,7 @@ import type {
   TextStyle,
 } from '@/types/section'
 
-export type SaveStatus = 'idle' | 'saved' | 'unsaved'
+export type SaveStatus = 'idle' | 'saved' | 'manualSaved' | 'unsaved'
 
 export interface EditorInitialPage {
   pageId: string
@@ -45,7 +45,7 @@ interface EditorState {
   removeSection: (id: string) => void
   moveSection: (fromIndex: number, toIndex: number) => void
   setSaveStatus: (status: SaveStatus) => void
-  markSaved: (savedSnapshot: string) => void
+  markSaved: (savedSnapshot: string, manual?: boolean) => void
 }
 
 export const serializeContent = (title: string, sections: Section[]) =>
@@ -253,11 +253,15 @@ const useEditorStore = create<EditorState>((set) => ({
   setSaveStatus: (saveStatus) => set({ saveStatus }),
 
   // 저장 완료 후 스냅샷 갱신
-  markSaved: (savedSnapshot) =>
-    set((s) => ({
-      savedSnapshot,
-      ...dirtyFrom(s.title, s.sections, savedSnapshot, s.initialSnapshot),
-    })),
+  markSaved: (savedSnapshot, manual = false) =>
+    set((s) => {
+      const next = dirtyFrom(s.title, s.sections, savedSnapshot, s.initialSnapshot)
+      return {
+        savedSnapshot,
+        ...next,
+        saveStatus: manual && next.saveStatus === 'saved' ? 'manualSaved' : next.saveStatus,
+      }
+    }),
 }))
 
 export default useEditorStore

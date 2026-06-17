@@ -5,7 +5,9 @@ import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
 
 import SectionButton from './SectionButton'
+import SectionCard from './SectionCard'
 import SectionDivider from './SectionDivider'
+import SectionGallery from './SectionGallery'
 import SectionImage from './SectionImage'
 import SectionParagraph from './SectionParagraph'
 import SectionTitle from './SectionTitle'
@@ -29,10 +31,17 @@ const EditorSection = ({ section }: { section: Section }) => {
     selectSection(section.id)
   }
 
+  // 섹션 삭제 시 안에서 사용되던 이미지 Cloudinary에서 정리
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (section.type === 'image' && section.content.src) {
       void deleteImage(section.content.src)
+    }
+    if (section.type === 'card') {
+      section.content.cards.forEach((card) => card.image && void deleteImage(card.image))
+    }
+    if (section.type === 'gallery') {
+      section.content.images.forEach((image) => void deleteImage(image.url))
     }
     removeSection(section.id)
   }
@@ -77,6 +86,8 @@ const EditorSection = ({ section }: { section: Section }) => {
       {section.type === 'image' && <SectionImage section={section} isSelected={isSelected} />}
       {section.type === 'divider' && <SectionDivider section={section} />}
       {section.type === 'button' && <SectionButton section={section} />}
+      {section.type === 'gallery' && <SectionGallery section={section} />}
+      {section.type === 'card' && <SectionCard section={section} />}
     </div>
   )
 }

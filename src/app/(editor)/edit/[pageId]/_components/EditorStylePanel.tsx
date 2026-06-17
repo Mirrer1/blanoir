@@ -1,7 +1,9 @@
 'use client'
 
 import EditorButtonStylePanel from './EditorButtonStylePanel'
+import EditorCardStylePanel from './EditorCardStylePanel'
 import EditorDividerStylePanel from './EditorDividerStylePanel'
+import EditorGalleryStylePanel from './EditorGalleryStylePanel'
 import EditorImageStylePanel from './EditorImageStylePanel'
 import EditorTextStylePanel from './EditorTextStylePanel'
 import { cn } from '@/lib/utils'
@@ -14,7 +16,7 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
   return (
     <div
       className={cn(
-        'border-border bg-background flex h-full w-72 flex-col gap-6 overflow-y-auto border-l p-4',
+        'border-border bg-background flex h-full w-80 flex-col gap-6 overflow-y-auto border-l p-4',
         imageUploading && 'pointer-events-none opacity-60',
       )}
     >
@@ -25,6 +27,10 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
         <EditorButtonStylePanel section={section} />
       ) : section.type === 'image' ? (
         <EditorImageStylePanel section={section} />
+      ) : section.type === 'gallery' ? (
+        <EditorGalleryStylePanel section={section} />
+      ) : section.type === 'card' ? (
+        <EditorCardStylePanel section={section} />
       ) : (
         <EditorTextStylePanel section={section} />
       )}

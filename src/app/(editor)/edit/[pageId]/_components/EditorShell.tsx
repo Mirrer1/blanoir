@@ -18,6 +18,12 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
     (s) => s.sections.find((section) => section.id === s.selectedSectionId) ?? null,
   )
 
+  const showStylePanel =
+    !!selectedSection &&
+    !(selectedSection.type === 'image' && !selectedSection.content.src) &&
+    !(selectedSection.type === 'gallery' && selectedSection.content.images.length === 0) &&
+    !(selectedSection.type === 'card' && selectedSection.content.cards.length === 0)
+
   // 서버 데이터로 store 초기화
   if (currentPageId !== page.pageId) {
     initialize(page)
@@ -25,6 +31,15 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
 
   // 이탈 시 스토어 초기화
   useEffect(() => () => reset(), [reset])
+
+  // 마운트 시 body  스크롤 잠금
+  useEffect(() => {
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [])
 
   useAutoSave()
   useUnsavedGuard()
@@ -35,7 +50,7 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
       <div className="relative flex flex-1 overflow-hidden">
         <EditorCanvas />
         <AnimatePresence>
-          {selectedSection && (
+          {selectedSection && showStylePanel && (
             <motion.aside
               initial={{ x: '100%' }}
               animate={{ x: 0 }}

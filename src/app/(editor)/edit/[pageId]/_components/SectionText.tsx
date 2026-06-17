@@ -49,7 +49,7 @@ const SectionText = ({
   useEffect(() => {
     const el = textareaRef.current
     if (isSelected && el) {
-      el.focus()
+      el.focus({ preventScroll: true })
       el.setSelectionRange(el.value.length, el.value.length)
     }
   }, [isSelected])
@@ -70,6 +70,7 @@ const SectionText = ({
           className={cn(
             typoClass,
             'placeholder:text-muted-foreground/40 resize-none border-0 bg-transparent p-0 outline-none',
+            '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
           )}
         />
       ) : (

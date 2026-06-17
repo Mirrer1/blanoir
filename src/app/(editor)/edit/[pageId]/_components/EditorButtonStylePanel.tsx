@@ -28,7 +28,7 @@ const EditorButtonStylePanel = ({ section }: { section: ButtonSection }) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
   const { text, url } = section.content
-  const { color, shape, size, width, align } = section.style
+  const { color, textColor, shape, size, width, align } = section.style
 
   return (
     <>
@@ -97,9 +97,16 @@ const EditorButtonStylePanel = ({ section }: { section: ButtonSection }) => {
       </EditorStyleField>
 
       <EditorColorField
-        label="버튼 색상"
+        label="배경 색상"
         color={color}
         onChange={(value) => updateSectionStyle(section.id, { color: value })}
+      />
+
+      <EditorColorField
+        label="글자 색상"
+        color={textColor}
+        defaultColor="var(--background)"
+        onChange={(value) => updateSectionStyle(section.id, { textColor: value })}
       />
     </>
   )

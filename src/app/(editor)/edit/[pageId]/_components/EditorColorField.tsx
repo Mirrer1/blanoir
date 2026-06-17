@@ -11,9 +11,15 @@ interface EditorColorFieldProps {
   label: string
   color: string
   onChange: (color: string) => void
+  defaultColor?: string
 }
 
-const EditorColorField = ({ label, color, onChange }: EditorColorFieldProps) => {
+const EditorColorField = ({
+  label,
+  color,
+  onChange,
+  defaultColor = 'var(--foreground)',
+}: EditorColorFieldProps) => {
   const isCustom = color !== '' && !COLOR_PALETTE.includes(color)
 
   return (
@@ -24,7 +30,7 @@ const EditorColorField = ({ label, color, onChange }: EditorColorFieldProps) => 
             key={value || 'default'}
             aria-label={value || '기본'}
             onClick={() => onChange(value)}
-            style={{ backgroundColor: value || 'var(--foreground)' }}
+            style={{ backgroundColor: value || defaultColor }}
             className={cn(
               'size-6 cursor-pointer rounded-full border transition-transform hover:scale-110',
               color === value && 'ring-foreground ring-offset-background ring-2 ring-offset-2',

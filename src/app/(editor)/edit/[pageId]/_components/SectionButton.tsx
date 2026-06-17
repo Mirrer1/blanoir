@@ -18,11 +18,11 @@ const JUSTIFY_CLASS = {
 
 const SectionButton = ({ section }: { section: ButtonSection }) => {
   const { text } = section.content
-  const { color, shape, size, width, align } = section.style
+  const { color, textColor, shape, size, width, align } = section.style
 
   const buttonStyle: CSSProperties = {
     backgroundColor: color || 'var(--foreground)',
-    color: 'var(--background)',
+    color: textColor || 'var(--background)',
   }
 
   return (

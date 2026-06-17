@@ -13,7 +13,7 @@ const LandingHero = () => {
         </span>
       </FadeIn>
       <FadeIn delay={0.1}>
-        <h1 className="font-heading max-w-3xl text-5xl leading-tight font-extrabold tracking-tight sm:text-6xl md:text-7xl">
+        <h1 className="font-heading max-w-3xl text-4xl leading-tight font-extrabold tracking-tight sm:text-6xl md:text-7xl">
           클릭만으로,
           <br />
           5분이면 충분해요

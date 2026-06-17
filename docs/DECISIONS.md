@@ -194,45 +194,80 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 
 **문단 (paragraph):** title과 유사, text 위주
 
-**이미지 (image):**
+**이미지 (image):** `alt`은 업로드 파일명에서 자동 생성(수동 입력 X — 비개발자 친화)
 
 ```ts
 {
   type: "image",
   content: { src: "https://cloudinary.../...", alt: "..." },
-  style: { size: "small" | "medium" | "large", align: "...", shape: "square" | "rounded" | "circle" }
+  style: {
+    size: "small" | "medium" | "large",   // 박스 폭(max-width)
+    shape: "square" | "rounded" | "circle",
+    align: "left" | "center" | "right",    // 박스가 좁을 때 가로 위치
+    ratio: "original" | "square" | "wide", // 원본=자연비율, 그 외=프레임에 cover로 꽉 채움
+    zoom: 1,                               // 1~3배 확대
+    focusX: 50, focusY: 50                 // 보일 부분(초점) %, 캔버스에서 드래그로 조정
+  }
 }
 ```
 
-**버튼 (button):**
+**버튼 (button):** 라벨·URL 모두 스타일 패널에서 입력(인라인 편집 X — 컨트롤 성격)
 
 ```ts
 {
   type: "button",
-  content: { text: "클릭", url: "https://..." },
-  style: { color: "...", shape: "square" | "rounded" }
+  content: { text: "버튼", url: "https://..." },
+  style: {
+    color: "",                         // 배경색, 빈값=기본(--foreground)
+    textColor: "",                     // 글자색, 빈값=기본(--background)
+    shape: "square" | "rounded",
+    size: "small" | "medium" | "large",
+    width: "auto" | "wide" | "full",   // wide=50%, full=100%
+    align: "left" | "center" | "right"
+  }
 }
 ```
 
-**구분선 (divider):** style만
+**구분선 (divider):** content 없음, style만
 
-**갤러리 (gallery):**
+```ts
+{
+  type: "divider",
+  content: {},
+  style: {
+    variant: "solid" | "dashed" | "dotted",
+    thickness: "thin" | "medium" | "thick",
+    color: ""                          // 빈값=기본 보더색(--border)
+  }
+}
+```
+
+**갤러리 (gallery):** 여러 이미지를 **한 줄 가로 캐러셀**로 표시. 칸 수보다 많으면 호버 시 좌우 화살표로 슬라이드(스크롤 위치에 따라 끝단에선 해당 방향 화살표 숨김, 스크롤바 숨김 + 스냅). 크기 = 한 줄에 보일 칸 수. 추가·교체·삭제·순서변경은 모두 스타일 패널에서. 빈 상태는 캔버스 스켈레톤 그리드(첫 업로드). 각 이미지는 `alt` 포함 객체.
 
 ```ts
 {
   type: "gallery",
-  content: { images: ["url1", "url2", ...] },
-  style: { displayMode: "grid" }  // V2: "carousel"
+  content: { images: [{ url: "...", alt: "..." }, ...] },
+  style: {
+    displayMode: "grid",
+    size: "small" | "medium" | "large",        // 한 줄 칸 수 4 / 3 / 2
+    shape: "square" | "rounded" | "circle",
+    gap: "none" | "small" | "medium" | "large"
+  }
 }
 ```
 
-**카드 (card):**
+**카드 (card):** 한 섹션에 **여러 카드**. 카드 추가·삭제·순서변경·이미지/제목/설명 편집은 모두 스타일 패널에서(컨트롤 성격, 인라인 X). 레이아웃은 세로형(이미지 위·텍스트 아래)/가로형(이미지 왼·텍스트 오른)/그리드형(한 줄 여러 개). 그리드는 `columns`가 **최대 열 수**이고 실제 표시 열은 카드 수에 맞춰 줄임, 같은 행 카드끼리 제목·설명 영역 높이를 가장 긴 것에 맞춰 통일. 빈 상태는 캔버스 스켈레톤 그리드(첫 업로드)로 카드 생성. `alt`은 파일명 자동.
 
 ```ts
 {
   type: "card",
-  content: { image: "...", title: "...", description: "..." },
-  style: { align: "..." }
+  content: { cards: [{ id, image, alt, title, description }, ...] },
+  style: {
+    layout: "vertical" | "horizontal" | "grid",
+    columns: 2 | 3 | 4,                // grid 한 줄 최대 카드 수
+    align: "left" | "center" | "right"
+  }
 }
 ```
 
@@ -334,6 +369,13 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 - 외부 클릭 → 편집 UI 닫힘
 - 섹션 사이 호버 → `[+ 섹션 추가]` 버튼 나타남
 - 미리보기 토글 별도 없음 (평소 화면 = 미리보기)
+- 텍스트 콘텐츠는 인라인 편집, 버튼처럼 컨트롤 성격인 값(라벨·URL)은 스타일 패널에서 입력
+
+### 스타일 패널
+
+- 섹션 타입별로 컨트롤 분기(텍스트/구분선/버튼). 공용 색상·정렬 필드는 별도 컴포넌트로 공유.
+- 캔버스를 밀지 않는 **오버레이 드로어**(우측 슬라이드)로 띄움 → 섹션 선택 시 캔버스 레이아웃이 흔들리지 않음.
+- 텍스트 섹션은 표시(`<h1>`~`<p>`)와 편집(`textarea`)을 보이지 않는 미러로 같은 박스 높이에 맞춰, 선택/해제 시 레이아웃 시프트가 없게 함.
 
 ### 섹션 조작
 
@@ -343,14 +385,16 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 
 ### 자동 저장 정책
 
-- **텍스트/스타일 변경**: 5초 디바운스 자동저장, 변경 있을 때만(`isDirty` 플래그)
-- **이미지 첨부**: 프론트 미리보기만(메모리), **사용자 "저장" 버튼 클릭시 Cloudinary 업로드**
-- 이유: 자동 업로드시 안 쓴 이미지가 스토리지 차지 → 명시적 저장으로 용량 관리
+- **텍스트/스타일 변경**: 3초 디바운스 자동저장, 변경 있을 때만(`isDirty` 플래그)
+- **이미지 첨부**: 파일 선택 즉시 자동 업로드(메모리 미리보기 + 백그라운드 Cloudinary 업로드). 별도 "저장" 버튼 없음
+- 업로드 성공 시 sections에 URL 반영 → **텍스트/스타일과 동일하게** 자동저장(3초)으로 DB 반영. 저장 상태 표시도 동일(즉시 flush 안 함 → "저장되지 않은 변경사항"이 보였다가 저장됨)
+- 스토리지 관리는 "명시적 저장"이 아니라 **자동 삭제**로: 교체 시 옛 이미지 삭제, 섹션 삭제 시 해당 이미지 삭제(`deleteImage`). 안 쓴 이미지가 실시간 정리됨. 자동저장 전 이탈 시의 잔여 orphan은 이탈 flush + V2 cron이 백스톱
+- 이유: "올리고 또 버튼 누르기"는 UX 군더더기. 자동 업로드+자동 삭제가 버튼 없이도 용량을 깨끗하게 유지
 
 ### 상태 표시
 
 - 평소: "자동 저장됨"
-- 저장 안 됨 (디바운스 진행중 / 이미지 미업로드): "저장되지 않은 변경사항 있음" + "저장" 버튼 강조
+- 저장 안 됨 (디바운스 진행중 / 이미지 업로드 중): "저장되지 않은 변경사항 있음" + "저장" 버튼 강조
 
 ### 페이지 이탈 경고
 
@@ -447,8 +491,12 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 
 ### 버튼
 
-- 색상
+- 텍스트·링크 URL (스타일 패널에서 입력)
+- 크기 (작게/보통/크게)
+- 너비 (자동/넓게/전체)
+- 정렬 (왼/가운데/오)
 - 모양 (사각/둥근)
+- 색상
 
 ### 한글 무료 폰트 후보
 
@@ -460,11 +508,12 @@ Vercel은 서버리스 — 함수가 요청마다 켜졌다 꺼짐. DB 커넥션
 
 ## 이미지 업로드 정책
 
-- 첨부 시점: 프론트 메모리에만 보관 (base64/ObjectURL 미리보기)
-- 업로드 시점: 사용자 "저장" 버튼 클릭시 Cloudinary 업로드
-- 업로드 후: sections에 URL 박고 MongoDB 저장
+- 업로드 시점: **파일 선택 즉시** 백그라운드 Cloudinary 업로드(스피너). 성공하면 sections에 URL 반영 → 자동저장(3초)으로 DB 반영. 공용 훅 `hooks/useImageUpload.ts`(`uploadOne`/`uploadMany`)로 검증·업로드·진행 플래그를 일원화
+- **조작 위치 일원화**: 빈 상태의 **첫 업로드만 캔버스 드롭존**, 이미지가 생긴 뒤 **변경·교체·삭제·추가는 스타일 패널에서**(캔버스는 결과물 표시 전용). 이미지 섹션은 패널 썸네일+업로드/제거 아이콘, 갤러리는 패널 목록(드래그 순서 + 행별 교체/제거) + "이미지 추가" 버튼
+- 업로드 중에는 스타일 드로어를 잠가(`pointer-events-none`) 미완료 상태 변경을 막음
+- `alt`은 업로드 파일명에서 자동 생성(수동 입력칸 없음)
+- 안 쓴 이미지 정리: 교체·삭제·섹션 삭제 시 `deleteImage`로 **즉시 삭제**(본인 `blanoir/{userId}` 폴더만). 잔여 orphan은 V2 cron이 백스톱
 - 파일 크기 제한: 파일당 **5MB**
-- 안 쓴 이미지 정리: V2 cron으로 자동 삭제
 
 ## SEO (MVP는 자동 생성만)
 

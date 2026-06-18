@@ -6,7 +6,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { GallerySection } from '@/types/section'
 
-const COLUMNS = { small: 4, medium: 3, large: 2 } as const
+// 한 줄에 보일 최대 칸 수, 이미지가 더 많으면 가로 스크롤
+const MAX_COLUMNS = 3
+// 좁은 화면에선 한 줄 2개
+const NARROW_COLUMNS = 2
+const NARROW_WIDTH = 480
 const GAP_PX = { none: 0, small: 4, medium: 8, large: 16 } as const
 const SHAPE_CLASS = {
   square: 'rounded-none',
@@ -26,11 +30,16 @@ const SectionGalleryView = ({
   const trackRef = useRef<HTMLDivElement>(null)
   const [canLeft, setCanLeft] = useState(false)
   const [canRight, setCanRight] = useState(false)
+  const [maxColumns, setMaxColumns] = useState(MAX_COLUMNS)
   const { images } = section.content
-  const { size, shape, gap } = section.style
+  const { shape, gap } = section.style
   const gapPx = GAP_PX[gap]
-  const columns = COLUMNS[size]
-  const itemStyle = { flexBasis: `calc((100% - ${(columns - 1) * gapPx}px) / ${columns})` }
+  // 이미지가 칸 수보다 적으면 남은 칸 없이 폭을 채우도록 실제 칸 수를 줄임
+  const totalCount = images.length + pendingUrls.length
+  const effectiveColumns = Math.max(1, Math.min(maxColumns, totalCount))
+  const itemStyle = {
+    flexBasis: `calc((100% - ${(effectiveColumns - 1) * gapPx}px) / ${effectiveColumns})`,
+  }
 
   // 스크롤 위치에 따라 화살표 노출 여부 갱신
   const updateArrows = useCallback(() => {
@@ -51,12 +60,25 @@ const SectionGalleryView = ({
     }
   }
 
+  // 컨테이너 실제 폭으로 한 줄 칸 수 결정, 모바일 미리보기 박스도 반영
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) {
+      return
+    }
+    const observer = new ResizeObserver(() => {
+      setMaxColumns(track.clientWidth < NARROW_WIDTH ? NARROW_COLUMNS : MAX_COLUMNS)
+    })
+    observer.observe(track)
+    return () => observer.disconnect()
+  }, [])
+
   // 칸 수, 이미지 수 변경 시 화살표 가능 여부 재측정
   useEffect(() => {
     updateArrows()
     window.addEventListener('resize', updateArrows)
     return () => window.removeEventListener('resize', updateArrows)
-  }, [updateArrows, images.length, pendingUrls.length, columns, gapPx])
+  }, [updateArrows, images.length, pendingUrls.length, effectiveColumns, gapPx])
 
   return (
     <div className="group/carousel relative">

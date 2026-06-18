@@ -98,7 +98,6 @@ export type GalleryGap = 'none' | 'small' | 'medium' | 'large'
 
 export interface GalleryStyle {
   displayMode: 'grid'
-  size: ImageSize
   shape: ImageShape
   gap: GalleryGap
 }
@@ -116,11 +115,9 @@ export interface GallerySection {
 }
 
 export type CardLayout = 'vertical' | 'horizontal' | 'grid'
-export type CardColumns = 2 | 3 | 4
 
 export interface CardStyle {
   layout: CardLayout
-  columns: CardColumns // 그리드일 때 한 줄 카드 수
   align: TextAlign
 }
 

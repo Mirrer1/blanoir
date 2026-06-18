@@ -21,14 +21,13 @@ import { deleteImage } from '@/actions/upload'
 import useImageUpload from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
-import type { CardColumns, CardItem, CardLayout, CardSection } from '@/types/section'
+import type { CardItem, CardLayout, CardSection } from '@/types/section'
 
 const LAYOUT_OPTIONS: { value: CardLayout; label: string }[] = [
   { value: 'vertical', label: '세로형' },
   { value: 'horizontal', label: '가로형' },
   { value: 'grid', label: '그리드형' },
 ]
-const COLUMN_OPTIONS: CardColumns[] = [2, 3, 4]
 
 const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
@@ -38,7 +37,7 @@ const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
   const pickInputRef = useRef<HTMLInputElement>(null)
   const pickTargetRef = useRef<string | null>(null)
   const { cards } = section.content
-  const { layout, columns, align } = section.style
+  const { layout, align } = section.style
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
@@ -148,22 +147,6 @@ const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
           ))}
         </div>
       </EditorStyleField>
-
-      {layout === 'grid' && (
-        <EditorStyleField label="열 수">
-          <div className="flex gap-1">
-            {COLUMN_OPTIONS.map((value) => (
-              <button
-                key={value}
-                onClick={() => updateSectionStyle(section.id, { columns: value })}
-                className={cn(SEG_BASE, 'flex-1', columns === value ? SEG_ON : SEG_OFF)}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-        </EditorStyleField>
-      )}
 
       <EditorAlignField
         align={align}

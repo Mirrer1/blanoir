@@ -112,14 +112,12 @@ const DEFAULT_IMAGE_STYLE: ImageStyle = {
 
 const DEFAULT_GALLERY_STYLE: GalleryStyle = {
   displayMode: 'grid',
-  size: 'medium',
   shape: 'rounded',
   gap: 'medium',
 }
 
 const DEFAULT_CARD_STYLE: CardStyle = {
   layout: 'vertical',
-  columns: 3,
   align: 'left',
 }
 

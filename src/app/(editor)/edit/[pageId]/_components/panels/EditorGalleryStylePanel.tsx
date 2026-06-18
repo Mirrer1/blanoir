@@ -19,13 +19,8 @@ import { deleteImage } from '@/actions/upload'
 import useImageUpload from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
-import type { GalleryGap, GallerySection, ImageShape, ImageSize } from '@/types/section'
+import type { GalleryGap, GallerySection, ImageShape } from '@/types/section'
 
-const SIZE_OPTIONS: { value: ImageSize; label: string }[] = [
-  { value: 'small', label: '작게' },
-  { value: 'medium', label: '보통' },
-  { value: 'large', label: '크게' },
-]
 const SHAPE_OPTIONS: { value: ImageShape; label: string }[] = [
   { value: 'square', label: '사각' },
   { value: 'rounded', label: '둥근' },
@@ -46,7 +41,7 @@ const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
   const replaceInputRef = useRef<HTMLInputElement>(null)
   const replaceTargetRef = useRef<string | null>(null)
   const { images } = section.content
-  const { size, shape, gap } = section.style
+  const { shape, gap } = section.style
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
@@ -113,20 +108,6 @@ const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
 
   return (
     <>
-      <EditorStyleField label="크기">
-        <div className="flex gap-1">
-          {SIZE_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => updateSectionStyle(section.id, { size: option.value })}
-              className={cn(SEG_BASE, 'flex-1', size === option.value ? SEG_ON : SEG_OFF)}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </EditorStyleField>
-
       <EditorStyleField label="모양">
         <div className="flex gap-1">
           {SHAPE_OPTIONS.map((option) => (

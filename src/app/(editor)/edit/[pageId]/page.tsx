@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 
 import EditorShell from './_components/shell/EditorShell'
 import { auth } from '@/lib/auth'
-import { connectDB } from '@/lib/mongodb'
+import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
 import type { EditorInitialPage } from '@/store/editor'
 import type { Section } from '@/types/section'
@@ -36,6 +36,7 @@ const EditPage = async ({ params }: EditPageProps) => {
 
   const initialPage: EditorInitialPage = {
     pageId: page.pageId,
+    handle: session.user.handle,
     title: page.title,
     isPublic: page.isPublic,
     sections: page.sections as Section[],

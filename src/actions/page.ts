@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
 
 import { auth } from '@/lib/auth'
-import { connectDB } from '@/lib/mongodb'
+import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
 
 // 서버 에러 공통 메시지
@@ -63,6 +63,35 @@ export async function savePage(
     return { ok: true }
   } catch (error) {
     console.error('savePage failed', error)
+    return { ok: false, message: UNEXPECTED_ERROR }
+  }
+}
+
+type TogglePublicResult = { ok: true; isPublic: boolean } | { ok: false; message: string }
+
+export async function togglePagePublic(
+  pageId: string,
+  isPublic: boolean,
+): Promise<TogglePublicResult> {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return { ok: false, message: '로그인이 필요해요' }
+    }
+
+    await connectDB()
+
+    // 소유권을 필터에 넣어 본인 페이지만 공개 상태 변경
+    const result = await Page.updateOne({ pageId, userId: session.user.id }, { $set: { isPublic } })
+    if (result.matchedCount === 0) {
+      return { ok: false, message: '권한이 없어요' }
+    }
+
+    revalidatePath('/dashboard')
+
+    return { ok: true, isPublic }
+  } catch (error) {
+    console.error('togglePagePublic failed', error)
     return { ok: false, message: UNEXPECTED_ERROR }
   }
 }

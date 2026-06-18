@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from 'motion/react'
 
 import EditorLeaveGuard from './EditorLeaveGuard'
+import EditorPreviewButton from './EditorPreviewButton'
+import EditorPublishButton from './EditorPublishButton'
 import { Button } from '@/components/ui/button'
 import { saveNow } from '@/hooks/useAutoSave'
 import useEditorStore, { type SaveStatus } from '@/store/editor'
@@ -16,7 +18,6 @@ const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
 
 const EditorHeader = () => {
   const title = useEditorStore((s) => s.title)
-  const isPublic = useEditorStore((s) => s.isPublic)
   const saveStatus = useEditorStore((s) => s.saveStatus)
   const isDirty = useEditorStore((s) => s.isDirty)
   const displayTitle = title || '제목 없는 페이지'
@@ -44,7 +45,8 @@ const EditorHeader = () => {
         <Button size="sm" variant="outline" onClick={() => saveNow(true)} disabled={!isDirty}>
           저장
         </Button>
-        <Button size="sm">{isPublic ? '공개됨' : '공개'}</Button>
+        <EditorPreviewButton />
+        <EditorPublishButton />
       </div>
     </header>
   )

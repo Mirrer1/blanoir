@@ -18,6 +18,7 @@ export type SaveStatus = 'idle' | 'saved' | 'manualSaved' | 'unsaved'
 
 export interface EditorInitialPage {
   pageId: string
+  handle: string
   title: string
   isPublic: boolean
   sections: Section[]
@@ -25,6 +26,7 @@ export interface EditorInitialPage {
 
 interface EditorState {
   pageId: string
+  handle: string
   title: string
   isPublic: boolean
   sections: Section[]
@@ -38,6 +40,7 @@ interface EditorState {
   initialize: (page: EditorInitialPage) => void
   reset: () => void
   setTitle: (title: string) => void
+  setPublic: (isPublic: boolean) => void
   selectSection: (id: string | null) => void
   setImageUploading: (uploading: boolean) => void
   addSection: (type: SectionType, index?: number) => void
@@ -158,6 +161,7 @@ const createSection = (type: SectionType): Section => {
 
 const INITIAL_STATE = {
   pageId: '',
+  handle: '',
   title: '',
   isPublic: false,
   sections: [] as Section[],
@@ -176,6 +180,7 @@ const useEditorStore = create<EditorState>((set) => ({
   initialize: (page) =>
     set({
       pageId: page.pageId,
+      handle: page.handle,
       title: page.title,
       isPublic: page.isPublic,
       sections: page.sections,
@@ -192,6 +197,9 @@ const useEditorStore = create<EditorState>((set) => ({
   // 페이지 제목 변경
   setTitle: (title) =>
     set((s) => ({ title, ...dirtyFrom(title, s.sections, s.savedSnapshot, s.initialSnapshot) })),
+
+  // 공개 여부 변경
+  setPublic: (isPublic) => set({ isPublic }),
 
   // 섹션 선택 또는 선택 해제
   selectSection: (id) => set({ selectedSectionId: id }),

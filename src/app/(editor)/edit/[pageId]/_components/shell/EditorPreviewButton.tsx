@@ -64,7 +64,7 @@ const EditorPreviewButton = () => {
               <X className="size-4" />
             </Button>
           </div>
-          <div className="bg-muted/30 flex-1 overflow-auto">
+          <div className="canvas-light text-foreground bg-background flex-1 overflow-auto">
             {device === 'pc' ? (
               <div className="mx-auto w-full max-w-3xl px-4 py-16 sm:px-6">
                 <PublicPageBody sections={sections} />

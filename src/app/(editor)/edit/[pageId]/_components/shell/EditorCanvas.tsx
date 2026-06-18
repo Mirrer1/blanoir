@@ -53,7 +53,7 @@ const EditorCanvas = () => {
   return (
     <div
       ref={scrollRef}
-      className="flex-1 [scrollbar-gutter:stable] overflow-y-auto"
+      className="canvas-light bg-background text-foreground flex-1 [scrollbar-gutter:stable] overflow-y-auto"
       onClick={() => selectSection(null)}
     >
       <div className="mx-auto min-h-full max-w-3xl px-6 py-16">

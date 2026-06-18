@@ -49,7 +49,9 @@
   --default-transition-duration: 200ms;
 }
 
-:root {
+/* .canvas-light는 .dark 아래여도 라이트 토큰을 쓰도록 :root 값을 공유 */
+:root,
+.canvas-light {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -116,6 +118,11 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* 폼 컨트롤, 스크롤바 등 시스템 색도 라이트로 */
+.canvas-light {
+  color-scheme: light;
 }
 
 @layer base {

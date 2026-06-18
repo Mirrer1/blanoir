@@ -55,6 +55,7 @@ const EditorDividerStylePanel = ({ section }: { section: DividerSection }) => {
       <EditorColorField
         label="색상"
         color={color}
+        defaultColor="var(--border)"
         onChange={(value) => updateSectionStyle(section.id, { color: value })}
       />
     </>

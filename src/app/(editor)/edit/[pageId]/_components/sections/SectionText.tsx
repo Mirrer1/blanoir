@@ -65,7 +65,7 @@ const SectionText = ({
           style={textStyle}
           className={cn(
             typoClass,
-            'placeholder:text-muted-foreground/40 resize-none border-0 bg-transparent p-0 outline-none',
+            'text-foreground placeholder:text-muted-foreground/40 resize-none border-0 bg-transparent p-0 outline-none',
             '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
           )}
         />

@@ -30,12 +30,16 @@ const EditorColorField = ({
             key={value || 'default'}
             aria-label={value || '기본'}
             onClick={() => onChange(value)}
-            style={{ backgroundColor: value || defaultColor }}
             className={cn(
-              'size-6 cursor-pointer rounded-full border transition-transform hover:scale-110',
+              'size-6 cursor-pointer overflow-hidden rounded-full border transition-transform hover:scale-110',
               color === value && 'ring-foreground ring-offset-background ring-2 ring-offset-2',
             )}
-          />
+          >
+            <span
+              style={{ backgroundColor: value || defaultColor }}
+              className="canvas-light block size-full"
+            />
+          </button>
         ))}
         <label
           aria-label="사용자 지정 색"

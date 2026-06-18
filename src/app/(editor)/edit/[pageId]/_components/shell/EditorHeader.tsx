@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import EditorLeaveGuard from './EditorLeaveGuard'
 import EditorPreviewButton from './EditorPreviewButton'
 import EditorPublishButton from './EditorPublishButton'
+import ThemeToggle from '@/components/common/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { saveNow } from '@/hooks/useAutoSave'
 import useEditorStore, { type SaveStatus } from '@/store/editor'
@@ -47,6 +48,7 @@ const EditorHeader = () => {
         </Button>
         <EditorPreviewButton />
         <EditorPublishButton />
+        <ThemeToggle />
       </div>
     </header>
   )

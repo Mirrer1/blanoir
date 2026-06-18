@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { verifyResetCode } from '@/actions/auth'
@@ -53,7 +54,7 @@ const ResetCodeStep = ({ email, onVerified }: ResetCodeStepProps) => {
           <FieldErrorText message={errors.code?.message} />
         </Field>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? '확인 중…' : '인증코드 확인'}
+          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '인증코드 확인'}
         </Button>
       </FieldGroup>
     </form>

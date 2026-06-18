@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -66,7 +67,7 @@ const LoginForm = () => {
           <FieldErrorText message={errors.password?.message} />
         </Field>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? '로그인 중…' : '로그인'}
+          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '로그인'}
         </Button>
         <Link
           href="/forgot-password"

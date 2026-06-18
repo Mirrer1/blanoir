@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -44,7 +45,7 @@ const ResetEmailStep = ({ onSent }: { onSent: (email: string) => void }) => {
           <FieldErrorText message={errors.email?.message} />
         </Field>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? '보내는 중…' : '인증코드 받기'}
+          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '인증코드 받기'}
         </Button>
       </FieldGroup>
     </form>

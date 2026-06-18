@@ -1,6 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -50,7 +51,7 @@ const ResetPasswordStep = ({ email, code, onDone }: ResetPasswordStepProps) => {
           <FieldErrorText message={errors.password?.message} />
         </Field>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? '변경 중…' : '비밀번호 변경'}
+          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '비밀번호 변경'}
         </Button>
       </FieldGroup>
     </form>

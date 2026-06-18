@@ -47,16 +47,16 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
   return (
     <div className="flex h-screen flex-col">
       <EditorHeader />
-      <div className="relative flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <EditorCanvas />
         <AnimatePresence>
           {selectedSection && showStylePanel && (
             <motion.aside
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              initial={{ width: 0 }}
+              animate={{ width: 320 }}
+              exit={{ width: 0 }}
               transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="absolute top-0 right-0 z-20 h-full"
+              className="h-full shrink-0 overflow-hidden"
             >
               <EditorStylePanel section={selectedSection} />
             </motion.aside>

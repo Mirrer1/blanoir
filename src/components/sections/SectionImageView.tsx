@@ -3,7 +3,8 @@ import type { PointerEventHandler, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import type { ImageSection, ImageStyle } from '@/types/section'
 
-const SIZE_CLASS = { small: 'max-w-xs', medium: 'max-w-md', large: 'max-w-full' } as const
+// 콘텐츠 가로폭 대비 비율, 크게는 전체
+const SIZE_CLASS = { small: 'w-1/3', medium: 'w-2/3', large: 'w-full' } as const
 const SHAPE_RADIUS = {
   square: 'rounded-none',
   rounded: 'rounded-xl',
@@ -54,7 +55,7 @@ const SectionImageView = ({
         onPointerUp={onPointerUp}
         style={{ aspectRatio: frameAspect }}
         className={cn(
-          'relative w-full overflow-hidden',
+          'relative overflow-hidden',
           SIZE_CLASS[size],
           SHAPE_RADIUS[shape],
           draggable && 'cursor-grab touch-none active:cursor-grabbing',

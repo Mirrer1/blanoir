@@ -40,15 +40,33 @@ const DashboardPageCard = ({ page }: DashboardPageCardProps) => {
                 {page.textPreview}
               </p>
             ) : (
-              <span className="text-muted-foreground/60 text-xs">내용 없음</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-muted-foreground/40 h-10 w-10"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="9" cy="9" r="1.5" />
+                <path d="m21 15-3.5-3.5a2 2 0 0 0-2.8 0L6 21" />
+              </svg>
             )}
           </div>
         )}
         <div className="flex items-center justify-between gap-2">
           <span className="truncate font-medium">{title}</span>
-          <span className="text-muted-foreground shrink-0 rounded-full border px-2 py-0.5 text-xs">
-            {page.isPublic ? '공개' : '비공개'}
-          </span>
+          {page.isPublic ? (
+            <span className="bg-foreground text-background shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium">
+              공개
+            </span>
+          ) : (
+            <span className="text-muted-foreground shrink-0 rounded-full border px-2.5 py-0.5 text-xs">
+              비공개
+            </span>
+          )}
         </div>
         <span className="text-muted-foreground text-xs">{updatedLabel} 수정</span>
       </Link>

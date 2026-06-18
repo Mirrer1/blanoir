@@ -152,4 +152,12 @@
       transition-duration: 0.01ms;
     }
   }
+
+  /* 토스트 아이콘과 텍스트 세로 정렬 */
+  .cn-toast [data-title] {
+    line-height: 1;
+  }
+  .cn-toast [data-icon] {
+    transform: translateY(1px);
+  }
 }

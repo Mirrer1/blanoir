@@ -39,8 +39,9 @@ const EditorPublishButton = () => {
 
   return (
     <Popover.Root>
-      <Popover.Trigger render={<Button size="sm" />}>
-        {isPublic ? '공개됨' : '공개'}
+      <Popover.Trigger render={<Button size="sm" variant={isPublic ? 'default' : 'outline'} />}>
+        {isPublic ? <Globe /> : <Lock />}
+        {isPublic ? '공개' : '비공개'}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner sideOffset={6} align="end" className="z-50">
@@ -51,14 +52,14 @@ const EditorPublishButton = () => {
               ) : (
                 <Lock className="text-muted-foreground size-4" />
               )}
-              <span className="text-sm font-medium">{isPublic ? '공개됨' : '비공개'}</span>
+              <span className="text-sm font-medium">{isPublic ? '공개' : '비공개'}</span>
             </div>
             <p className="text-muted-foreground mt-1 text-xs">
               {isPublic ? '누구나 이 링크로 볼 수 있어요' : '나만 볼 수 있어요'}
             </p>
 
             {isPublic && (
-              <div className="mt-3 flex flex-col gap-2">
+              <div className="mt-3 flex flex-col gap-3">
                 <div className="flex items-center gap-1.5">
                   <span className="border-border text-muted-foreground flex-1 truncate rounded-md border px-2 py-1.5 text-xs">
                     {path}
@@ -75,9 +76,9 @@ const EditorPublishButton = () => {
                   href={path}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 text-xs"
+                  className="text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 text-xs leading-none"
                 >
-                  <ExternalLink className="size-3.5" />새 탭에서 열기
+                  <ExternalLink className="size-3.5 -translate-y-px" />새 탭에서 열기
                 </a>
               </div>
             )}
@@ -87,7 +88,7 @@ const EditorPublishButton = () => {
               disabled={pending}
               variant={isPublic ? 'outline' : 'default'}
               size="sm"
-              className="mt-4 w-full"
+              className={isPublic ? 'mt-3 w-full' : 'mt-4 w-full'}
             >
               {isPublic ? '비공개로 전환' : '공개하기'}
             </Button>

@@ -1,14 +1,8 @@
 'use client'
 
 import SectionText from './SectionText'
+import { PARA_SIZE } from '@/components/sections/SectionParagraphView'
 import type { ParagraphSection } from '@/types/section'
-
-const PARA_SIZE = {
-  small: 'text-sm',
-  medium: 'text-base',
-  large: 'text-lg',
-  xlarge: 'text-xl',
-} as const
 
 interface SectionParagraphProps {
   section: ParagraphSection

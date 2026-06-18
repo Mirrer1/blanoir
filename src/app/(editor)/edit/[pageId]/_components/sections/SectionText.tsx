@@ -2,12 +2,16 @@
 
 import { useEffect, useRef } from 'react'
 
-import { fontFamilyOf } from '@/lib/fontOptions'
+import SectionTextView, {
+  textInlineStyle,
+  textTypoClass,
+} from '@/components/sections/SectionTextView'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { TextStyle } from '@/types/section'
 
-const ALIGN_CLASS = { left: 'text-left', center: 'text-center', right: 'text-right' } as const
+// 미러, textarea, 표시를 같은 그리드 셀에 겹쳐 선택/해제 시 레이아웃 시프트를 없앰
+const CELL = 'col-start-1 row-start-1'
 
 interface SectionTextProps {
   sectionId: string
@@ -27,22 +31,14 @@ const SectionText = ({
   style,
   sizeClass,
   leadingClass,
-  tag: Tag,
+  tag,
   placeholder,
 }: SectionTextProps) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const { align, bold, italic, color, font } = style
 
-  const typoClass = cn(
-    sizeClass,
-    ALIGN_CLASS[align],
-    bold ? 'font-bold' : 'font-normal',
-    italic && 'italic',
-    leadingClass,
-    'col-start-1 row-start-1 min-w-0 break-words whitespace-pre-wrap',
-  )
-  const textStyle = { fontFamily: fontFamilyOf(font), ...(color ? { color } : {}) }
+  const typoClass = cn(textTypoClass(style, sizeClass, leadingClass), CELL)
+  const textStyle = textInlineStyle(style)
   const mirrorText = `${text || placeholder} `
 
   // 선택되면 편집 textarea로 포커스 이동
@@ -74,9 +70,15 @@ const SectionText = ({
           )}
         />
       ) : (
-        <Tag style={textStyle} className={cn(typoClass, !text && 'text-muted-foreground/40')}>
-          {text || placeholder}
-        </Tag>
+        <SectionTextView
+          text={text}
+          style={style}
+          sizeClass={sizeClass}
+          leadingClass={leadingClass}
+          tag={tag}
+          placeholder={placeholder}
+          className={CELL}
+        />
       )}
     </div>
   )

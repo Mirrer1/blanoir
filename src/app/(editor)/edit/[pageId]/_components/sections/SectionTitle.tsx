@@ -1,15 +1,8 @@
 'use client'
 
 import SectionText from './SectionText'
+import { TITLE_SIZE, TITLE_TAG } from '@/components/sections/SectionTitleView'
 import type { TitleSection } from '@/types/section'
-
-const TITLE_TAG = { xlarge: 'h1', large: 'h2', medium: 'h3', small: 'p' } as const
-const TITLE_SIZE = {
-  xlarge: 'text-4xl sm:text-5xl',
-  large: 'text-3xl sm:text-4xl',
-  medium: 'text-2xl',
-  small: 'text-lg',
-} as const
 
 interface SectionTitleProps {
   section: TitleSection

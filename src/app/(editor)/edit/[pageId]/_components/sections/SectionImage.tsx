@@ -3,23 +3,10 @@
 import { ImagePlus, Loader2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
+import SectionImageView, { isImageCropped } from '@/components/sections/SectionImageView'
 import useImageUpload from '@/hooks/useImageUpload'
-import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { ImageSection } from '@/types/section'
-
-const SIZE_CLASS = { small: 'max-w-xs', medium: 'max-w-md', large: 'max-w-full' } as const
-const SHAPE_RADIUS = {
-  square: 'rounded-none',
-  rounded: 'rounded-xl',
-  circle: 'rounded-full',
-} as const
-const RATIO_ASPECT = { square: '1 / 1', wide: '16 / 9' } as const
-const JUSTIFY_CLASS = {
-  left: 'justify-start',
-  center: 'justify-center',
-  right: 'justify-end',
-} as const
 
 const clamp = (v: number) => Math.min(100, Math.max(0, v))
 
@@ -37,16 +24,12 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
     h: number
   } | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const { src, alt } = section.content
-  const { size, shape, align, ratio, zoom, focusX, focusY } = section.style
+  const { src } = section.content
+  const { zoom, focusX, focusY } = section.style
   const displaySrc = previewUrl ?? src
 
-  // 원본은 자연 비율 박스, 정사각/와이드/원형은 프레임에 cover
-  const cropped = ratio !== 'original' || shape === 'circle'
-  const frameAspect =
-    ratio === 'original' ? (shape === 'circle' ? '1 / 1' : undefined) : RATIO_ASPECT[ratio]
   // 확대한 cover거나 zoom이 1보다 크면 보일 부분을 드래그로 옮김
-  const canDrag = (cropped || zoom > 1) && isSelected && !isUploading
+  const canDrag = (isImageCropped(section.style) || zoom > 1) && isSelected && !isUploading
 
   // 첫 업로드 캔버스에서 처리, 이후 추가/편집은 패널에서
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +90,7 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
   }, [previewUrl])
 
   return (
-    <div className={cn('flex', JUSTIFY_CLASS[align])}>
+    <>
       <input
         ref={inputRef}
         type="file"
@@ -116,45 +99,21 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
         className="hidden"
       />
       {displaySrc ? (
-        <div
+        <SectionImageView
+          section={section}
+          src={displaySrc}
+          draggable={canDrag}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          style={{ aspectRatio: frameAspect }}
-          className={cn(
-            'relative w-full overflow-hidden',
-            SIZE_CLASS[size],
-            SHAPE_RADIUS[shape],
-            canDrag && 'cursor-grab touch-none active:cursor-grabbing',
-          )}
-        >
-          {cropped ? (
-            <img
-              src={displaySrc}
-              alt={alt}
-              draggable={false}
-              style={{
-                objectPosition: `${focusX}% ${focusY}%`,
-                transform: `scale(${zoom})`,
-                transformOrigin: `${focusX}% ${focusY}%`,
-              }}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          ) : (
-            <img
-              src={displaySrc}
-              alt={alt}
-              draggable={false}
-              style={{ transform: `scale(${zoom})`, transformOrigin: `${focusX}% ${focusY}%` }}
-              className="w-full"
-            />
-          )}
-          {isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-              <Loader2 className="size-6 animate-spin text-white" />
-            </div>
-          )}
-        </div>
+          overlay={
+            isUploading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                <Loader2 className="size-6 animate-spin text-white" />
+              </div>
+            ) : null
+          }
+        />
       ) : (
         <button
           onClick={openPicker}
@@ -166,7 +125,7 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
           <span className="text-muted-foreground/70 text-xs">클릭해서 선택 (5MB 이하)</span>
         </button>
       )}
-    </div>
+    </>
   )
 }
 

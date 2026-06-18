@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 import { Button, buttonVariants } from '@/components/ui/button'
 import { saveNow } from '@/hooks/useAutoSave'
-import useEditorStore from '@/store/editor'
+import { getEditorStore } from '@/store/editor'
 
 const DASHBOARD = '/dashboard'
 
@@ -17,7 +17,7 @@ const EditorLeaveGuard = () => {
   const [leaving, setLeaving] = useState(false)
 
   const handleBack = () => {
-    if (useEditorStore.getState().isDirty) {
+    if (getEditorStore().getState().isDirty) {
       setOpen(true)
     } else {
       router.push(DASHBOARD)
@@ -34,7 +34,7 @@ const EditorLeaveGuard = () => {
   useEffect(() => {
     window.history.pushState(null, '', window.location.href)
     const onPopState = () => {
-      if (useEditorStore.getState().isDirty) {
+      if (getEditorStore().getState().isDirty) {
         window.history.pushState(null, '', window.location.href)
         setOpen(true)
       } else {

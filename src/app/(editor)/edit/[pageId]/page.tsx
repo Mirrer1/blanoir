@@ -5,6 +5,7 @@ import EditorShell from './_components/shell/EditorShell'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
+import EditorProvider from '@/providers/EditorProvider'
 import type { EditorInitialPage } from '@/store/editor'
 import type { Section } from '@/types/section'
 
@@ -42,7 +43,12 @@ const EditPage = async ({ params }: EditPageProps) => {
     sections: page.sections as Section[],
   }
 
-  return <EditorShell page={initialPage} />
+  // pageId로 키를 주어 페이지 이동 시 스토어를 새로 만든다
+  return (
+    <EditorProvider key={initialPage.pageId} page={initialPage}>
+      <EditorShell />
+    </EditorProvider>
+  )
 }
 
 export default EditPage

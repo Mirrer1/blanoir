@@ -1,5 +1,9 @@
+'use client'
+
 import { nanoid } from 'nanoid'
-import { create } from 'zustand'
+import { createContext, useContext } from 'react'
+import { useStore } from 'zustand'
+import { createStore } from 'zustand/vanilla'
 
 import type {
   ButtonStyle,
@@ -37,8 +41,6 @@ interface EditorState {
   savedSnapshot: string
   initialSnapshot: string
 
-  initialize: (page: EditorInitialPage) => void
-  reset: () => void
   setTitle: (title: string) => void
   setPublic: (isPublic: boolean) => void
   selectSection: (id: string | null) => void
@@ -157,125 +159,133 @@ const createSection = (type: SectionType): Section => {
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
-const INITIAL_STATE = {
-  pageId: '',
-  handle: '',
-  title: '',
-  isPublic: false,
-  sections: [] as Section[],
-  selectedSectionId: null as string | null,
-  imageUploading: false,
-  isDirty: false,
-  saveStatus: 'idle' as SaveStatus,
-  savedSnapshot: '',
-  initialSnapshot: '',
+// 서버 데이터로 초기화된 페이지별 스토어 생성
+export const createEditorStore = (initial: EditorInitialPage) => {
+  const snapshot = serializeContent(initial.title, initial.sections)
+  return createStore<EditorState>()((set) => ({
+    pageId: initial.pageId,
+    handle: initial.handle,
+    title: initial.title,
+    isPublic: initial.isPublic,
+    sections: initial.sections,
+    selectedSectionId: null,
+    imageUploading: false,
+    isDirty: false,
+    saveStatus: 'idle',
+    savedSnapshot: snapshot,
+    initialSnapshot: snapshot,
+
+    // 페이지 제목 변경
+    setTitle: (title) =>
+      set((s) => ({ title, ...dirtyFrom(title, s.sections, s.savedSnapshot, s.initialSnapshot) })),
+
+    // 공개 여부 변경
+    setPublic: (isPublic) => set({ isPublic }),
+
+    // 섹션 선택 또는 선택 해제
+    selectSection: (id) => set({ selectedSectionId: id }),
+
+    // 이미지 업로드 진행 여부
+    setImageUploading: (imageUploading) => set({ imageUploading }),
+
+    // 지정 위치에 새 섹션 삽입 후 선택
+    addSection: (type, index) =>
+      set((s) => {
+        const section = createSection(type)
+        const sections = [...s.sections]
+        sections.splice(index ?? sections.length, 0, section)
+        return {
+          sections,
+          selectedSectionId: section.id,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 특정 섹션의 콘텐츠 갱신
+    updateSectionContent: (id, content) =>
+      set((s) => {
+        const sections = s.sections.map((section) =>
+          section.id === id
+            ? ({ ...section, content: { ...section.content, ...content } } as Section)
+            : section,
+        )
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 특정 섹션의 스타일 갱신
+    updateSectionStyle: (id, style) =>
+      set((s) => {
+        const sections = s.sections.map((section) =>
+          section.id === id
+            ? ({ ...section, style: { ...section.style, ...style } } as Section)
+            : section,
+        )
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 섹션 삭제, 선택 중이던 섹션이면 선택 해제
+    removeSection: (id) =>
+      set((s) => {
+        const sections = s.sections.filter((section) => section.id !== id)
+        return {
+          sections,
+          selectedSectionId: s.selectedSectionId === id ? null : s.selectedSectionId,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 섹션 순서 이동
+    moveSection: (fromIndex, toIndex) =>
+      set((s) => {
+        const sections = [...s.sections]
+        const [moved] = sections.splice(fromIndex, 1)
+        if (!moved) {
+          return s
+        }
+        sections.splice(toIndex, 0, moved)
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 저장 상태 직접 설정
+    setSaveStatus: (saveStatus) => set({ saveStatus }),
+
+    // 저장 완료 후 스냅샷 갱신
+    markSaved: (savedSnapshot, manual = false) =>
+      set((s) => {
+        const next = dirtyFrom(s.title, s.sections, savedSnapshot, s.initialSnapshot)
+        return {
+          savedSnapshot,
+          ...next,
+          saveStatus: manual && next.saveStatus === 'saved' ? 'manualSaved' : next.saveStatus,
+        }
+      }),
+  }))
 }
 
-const useEditorStore = create<EditorState>((set) => ({
-  ...INITIAL_STATE,
+export type EditorStore = ReturnType<typeof createEditorStore>
 
-  // 서버에서 받은 페이지로 스토어 초기화
-  initialize: (page) =>
-    set({
-      pageId: page.pageId,
-      handle: page.handle,
-      title: page.title,
-      isPublic: page.isPublic,
-      sections: page.sections,
-      selectedSectionId: null,
-      isDirty: false,
-      saveStatus: 'idle',
-      savedSnapshot: serializeContent(page.title, page.sections),
-      initialSnapshot: serializeContent(page.title, page.sections),
-    }),
+export const EditorStoreContext = createContext<EditorStore | null>(null)
 
-  // 에디터 이탈 시 초기 상태로 롤백
-  reset: () => set(INITIAL_STATE),
+// 자동저장 등 비React 영역에서 현재 페이지 스토어 접근
+let currentStore: EditorStore | null = null
 
-  // 페이지 제목 변경
-  setTitle: (title) =>
-    set((s) => ({ title, ...dirtyFrom(title, s.sections, s.savedSnapshot, s.initialSnapshot) })),
+export const setCurrentEditorStore = (store: EditorStore | null) => {
+  currentStore = store
+}
 
-  // 공개 여부 변경
-  setPublic: (isPublic) => set({ isPublic }),
+export const getEditorStore = () => {
+  if (!currentStore) {
+    throw new Error('에디터 스토어가 초기화되지 않았어요')
+  }
+  return currentStore
+}
 
-  // 섹션 선택 또는 선택 해제
-  selectSection: (id) => set({ selectedSectionId: id }),
-
-  // 이미지 업로드 진행 여부
-  setImageUploading: (imageUploading) => set({ imageUploading }),
-
-  // 지정 위치에 새 섹션 삽입 후 선택
-  addSection: (type, index) =>
-    set((s) => {
-      const section = createSection(type)
-      const sections = [...s.sections]
-      sections.splice(index ?? sections.length, 0, section)
-      return {
-        sections,
-        selectedSectionId: section.id,
-        ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
-      }
-    }),
-
-  // 특정 섹션의 콘텐츠 갱신
-  updateSectionContent: (id, content) =>
-    set((s) => {
-      const sections = s.sections.map((section) =>
-        section.id === id
-          ? ({ ...section, content: { ...section.content, ...content } } as Section)
-          : section,
-      )
-      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
-    }),
-
-  // 특정 섹션의 스타일 갱신
-  updateSectionStyle: (id, style) =>
-    set((s) => {
-      const sections = s.sections.map((section) =>
-        section.id === id
-          ? ({ ...section, style: { ...section.style, ...style } } as Section)
-          : section,
-      )
-      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
-    }),
-
-  // 섹션 삭제, 선택 중이던 섹션이면 선택 해제
-  removeSection: (id) =>
-    set((s) => {
-      const sections = s.sections.filter((section) => section.id !== id)
-      return {
-        sections,
-        selectedSectionId: s.selectedSectionId === id ? null : s.selectedSectionId,
-        ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
-      }
-    }),
-
-  // 섹션 순서 이동
-  moveSection: (fromIndex, toIndex) =>
-    set((s) => {
-      const sections = [...s.sections]
-      const [moved] = sections.splice(fromIndex, 1)
-      if (!moved) {
-        return s
-      }
-      sections.splice(toIndex, 0, moved)
-      return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
-    }),
-
-  // 저장 상태 직접 설정
-  setSaveStatus: (saveStatus) => set({ saveStatus }),
-
-  // 저장 완료 후 스냅샷 갱신
-  markSaved: (savedSnapshot, manual = false) =>
-    set((s) => {
-      const next = dirtyFrom(s.title, s.sections, savedSnapshot, s.initialSnapshot)
-      return {
-        savedSnapshot,
-        ...next,
-        saveStatus: manual && next.saveStatus === 'saved' ? 'manualSaved' : next.saveStatus,
-      }
-    }),
-}))
+const useEditorStore = <T>(selector: (state: EditorState) => T): T => {
+  const store = useContext(EditorStoreContext)
+  if (!store) {
+    throw new Error('useEditorStore는 EditorProvider 안에서만 쓸 수 있어요')
+  }
+  return useStore(store, selector)
+}
 
 export default useEditorStore

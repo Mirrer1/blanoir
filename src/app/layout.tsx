@@ -3,9 +3,9 @@ import { Geist_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
 
 import './globals.css'
-import Providers from '@/components/Providers'
 import { Toaster } from '@/components/ui/sonner'
 import { koreanFontVariables } from '@/lib/fonts'
+import Providers from '@/providers/Providers'
 
 const pretendard = localFont({
   src: './fonts/PretendardVariable.woff2',

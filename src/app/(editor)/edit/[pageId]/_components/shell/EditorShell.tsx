@@ -8,12 +8,9 @@ import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import useAutoSave from '@/hooks/useAutoSave'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
-import useEditorStore, { type EditorInitialPage } from '@/store/editor'
+import useEditorStore from '@/store/editor'
 
-const EditorShell = ({ page }: { page: EditorInitialPage }) => {
-  const initialize = useEditorStore((s) => s.initialize)
-  const reset = useEditorStore((s) => s.reset)
-  const currentPageId = useEditorStore((s) => s.pageId)
+const EditorShell = () => {
   const selectedSection = useEditorStore(
     (s) => s.sections.find((section) => section.id === s.selectedSectionId) ?? null,
   )
@@ -23,14 +20,6 @@ const EditorShell = ({ page }: { page: EditorInitialPage }) => {
     !(selectedSection.type === 'image' && !selectedSection.content.src) &&
     !(selectedSection.type === 'gallery' && selectedSection.content.images.length === 0) &&
     !(selectedSection.type === 'card' && selectedSection.content.cards.length === 0)
-
-  // 서버 데이터로 store 초기화
-  if (currentPageId !== page.pageId) {
-    initialize(page)
-  }
-
-  // 이탈 시 스토어 초기화
-  useEffect(() => () => reset(), [reset])
 
   // 마운트 시 body  스크롤 잠금
   useEffect(() => {

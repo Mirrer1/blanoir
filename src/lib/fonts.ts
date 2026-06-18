@@ -34,9 +34,19 @@ const gowunDodum = localFont({
   display: 'swap',
 })
 
+const gowunBatang = localFont({
+  src: [
+    { path: '../app/fonts/GowunBatang-400.woff2', weight: '400' },
+    { path: '../app/fonts/GowunBatang-700.woff2', weight: '700' },
+  ],
+  variable: '--font-gowun-batang',
+  display: 'swap',
+})
+
 export const koreanFontVariables = [
   notoSansKr.variable,
   nanumGothic.variable,
   nanumMyeongjo.variable,
   gowunDodum.variable,
+  gowunBatang.variable,
 ].join(' ')

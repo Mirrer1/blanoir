@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs'
 
 import { sendResetCodeEmail } from '@/lib/email'
-import { connectDB } from '@/lib/mongodb'
+import { connectDB } from '@/lib/mongoDB'
 import User from '@/models/User'
 import {
   type ForgotPasswordValues,

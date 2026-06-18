@@ -4,7 +4,7 @@ import DashboardEmpty from './_components/DashboardEmpty'
 import DashboardPageCard from './_components/DashboardPageCard'
 import NewPageButton from './_components/NewPageButton'
 import { auth } from '@/lib/auth'
-import { connectDB } from '@/lib/mongodb'
+import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
 
 const DashboardPage = async () => {

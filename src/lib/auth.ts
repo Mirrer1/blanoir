@@ -2,8 +2,8 @@ import bcrypt from 'bcryptjs'
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
-import { authConfig } from './auth.config'
-import { connectDB } from './mongodb'
+import { authConfig } from './authConfig'
+import { connectDB } from './mongoDB'
 import User, { type Provider } from '@/models/User'
 import { generateHandle } from '@/utils/handle'
 

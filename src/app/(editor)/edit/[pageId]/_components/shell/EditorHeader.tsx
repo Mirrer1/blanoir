@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import EditorLeaveGuard from './EditorLeaveGuard'
 import EditorPreviewButton from './EditorPreviewButton'
 import EditorPublishButton from './EditorPublishButton'
+import EditorTitle from './EditorTitle'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import { Button } from '@/components/ui/button'
 import { saveNow } from '@/hooks/useAutoSave'
@@ -18,16 +19,14 @@ const SAVE_STATUS_LABEL: Record<SaveStatus, string> = {
 }
 
 const EditorHeader = () => {
-  const title = useEditorStore((s) => s.title)
   const saveStatus = useEditorStore((s) => s.saveStatus)
   const isDirty = useEditorStore((s) => s.isDirty)
-  const displayTitle = title || '제목 없는 페이지'
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
       <div className="flex min-w-0 items-center gap-2">
         <EditorLeaveGuard />
-        <span className="truncate text-sm font-medium">{displayTitle}</span>
+        <EditorTitle />
       </div>
       <div className="flex shrink-0 items-center gap-3">
         <span className="text-muted-foreground flex h-4 items-center overflow-hidden text-xs">

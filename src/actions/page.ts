@@ -3,12 +3,31 @@
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
 
+import { deleteImage } from './upload'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
+import type { Section } from '@/types/section'
 
 // 서버 에러 공통 메시지
 const UNEXPECTED_ERROR = '잠시 후 다시 시도해 주세요'
+
+// 페이지에 쓰인 이미지 URL 수집
+const collectImageUrls = (sections: Section[]): string[] => {
+  const urls: string[] = []
+  for (const section of sections) {
+    if (section.type === 'image' && section.content.src) {
+      urls.push(section.content.src)
+    }
+    if (section.type === 'gallery') {
+      section.content.images.forEach((image) => image.url && urls.push(image.url))
+    }
+    if (section.type === 'card') {
+      section.content.cards.forEach((card) => card.image && urls.push(card.image))
+    }
+  }
+  return urls
+}
 
 type CreatePageResult = { ok: true; pageId: string } | { ok: false; message: string }
 
@@ -63,6 +82,37 @@ export async function savePage(
     return { ok: true }
   } catch (error) {
     console.error('savePage failed', error)
+    return { ok: false, message: UNEXPECTED_ERROR }
+  }
+}
+
+type DeleteResult = { ok: true } | { ok: false; message: string }
+
+export async function deletePage(pageId: string): Promise<DeleteResult> {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return { ok: false, message: '로그인이 필요해요' }
+    }
+
+    await connectDB()
+
+    // 소유권을 필터에 넣어 본인 페이지만 삭제
+    const page = await Page.findOneAndDelete({ pageId, userId: session.user.id }).lean<{
+      sections: Section[]
+    } | null>()
+    if (!page) {
+      return { ok: false, message: '권한이 없어요' }
+    }
+
+    // 페이지에 쓰인 이미지 정리
+    await Promise.all(collectImageUrls(page.sections).map((url) => deleteImage(url)))
+
+    revalidatePath('/dashboard')
+
+    return { ok: true }
+  } catch (error) {
+    console.error('deletePage failed', error)
     return { ok: false, message: UNEXPECTED_ERROR }
   }
 }

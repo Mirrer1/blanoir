@@ -6,6 +6,8 @@ import NewPageButton from './_components/NewPageButton'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
+import type { Section } from '@/types/section'
+import { firstImageUrl, firstTextContent } from '@/utils/pageMeta'
 
 const DashboardPage = async () => {
   const session = await auth()
@@ -16,13 +18,17 @@ const DashboardPage = async () => {
   await connectDB()
   const pages = await Page.find({ userId: session.user.id })
     .sort({ updatedAt: -1 })
-    .lean<{ pageId: string; title: string; isPublic: boolean; updatedAt: Date }[]>()
+    .lean<
+      { pageId: string; title: string; isPublic: boolean; updatedAt: Date; sections: Section[] }[]
+    >()
 
   const items = pages.map((page) => ({
     pageId: page.pageId,
     title: page.title,
     isPublic: page.isPublic,
     updatedAt: page.updatedAt.toISOString(),
+    thumbnail: firstImageUrl(page.sections),
+    textPreview: firstTextContent(page.sections),
   }))
 
   return (

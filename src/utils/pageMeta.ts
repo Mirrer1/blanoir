@@ -6,6 +6,16 @@ export const firstParagraphText = (sections: Section[]) => {
   return para?.type === 'paragraph' ? para.content.text.trim().slice(0, 150) : ''
 }
 
+// 이미지 없을 때 썸네일 대체용 첫 텍스트
+export const firstTextContent = (sections: Section[]) => {
+  const text = sections.find(
+    (s) => (s.type === 'title' || s.type === 'paragraph') && s.content.text.trim(),
+  )
+  return text?.type === 'title' || text?.type === 'paragraph'
+    ? text.content.text.trim().slice(0, 80)
+    : ''
+}
+
 // 첫 이미지, og:image
 export const firstImageUrl = (sections: Section[]) => {
   for (const section of sections) {

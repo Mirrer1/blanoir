@@ -4,3 +4,6 @@ export const SEG_ON = 'bg-foreground text-background border-foreground'
 export const SEG_OFF = 'text-foreground hover:bg-muted'
 export const ICON_BASE =
   'flex size-8 cursor-pointer items-center justify-center rounded-md border transition-colors'
+
+// 드래그 정렬 시 주변 요소가 부드럽게 자리를 내주는 트랜지션
+export const SORTABLE_TRANSITION = { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }

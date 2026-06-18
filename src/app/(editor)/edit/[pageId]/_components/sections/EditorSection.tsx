@@ -4,15 +4,9 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2 } from 'lucide-react'
 
-import SectionCard from './SectionCard'
-import SectionGallery from './SectionGallery'
-import SectionImage from './SectionImage'
-import SectionParagraph from './SectionParagraph'
-import SectionTitle from './SectionTitle'
+import { SORTABLE_TRANSITION } from '../../controlStyles'
+import EditorSectionContent from './EditorSectionContent'
 import { deleteImage } from '@/actions/upload'
-import SectionButton from '@/components/sections/SectionButton'
-import SectionDivider from '@/components/sections/SectionDivider'
-import SectionSpacer from '@/components/sections/SectionSpacer'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { Section } from '@/types/section'
@@ -23,9 +17,11 @@ const EditorSection = ({ section }: { section: Section }) => {
   const removeSection = useEditorStore((s) => s.removeSection)
   const isSelected = selectedSectionId === section.id
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: section.id,
-  })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isSorting } =
+    useSortable({
+      id: section.id,
+      transition: SORTABLE_TRANSITION,
+    })
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -54,8 +50,8 @@ const EditorSection = ({ section }: { section: Section }) => {
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
         'group relative cursor-pointer rounded-md px-3 py-2 transition-colors',
-        isSelected ? 'ring-foreground/20 ring-2 ring-inset' : 'hover:bg-muted/40',
-        isDragging && 'opacity-50',
+        isSelected ? 'ring-foreground/20 ring-2 ring-inset' : !isSorting && 'hover:bg-muted/40',
+        isDragging && 'opacity-0',
       )}
     >
       <div
@@ -80,16 +76,7 @@ const EditorSection = ({ section }: { section: Section }) => {
           <Trash2 className="size-4" />
         </button>
       </div>
-      {section.type === 'title' && <SectionTitle section={section} isSelected={isSelected} />}
-      {section.type === 'paragraph' && (
-        <SectionParagraph section={section} isSelected={isSelected} />
-      )}
-      {section.type === 'image' && <SectionImage section={section} isSelected={isSelected} />}
-      {section.type === 'divider' && <SectionDivider section={section} />}
-      {section.type === 'spacer' && <SectionSpacer section={section} />}
-      {section.type === 'button' && <SectionButton section={section} />}
-      {section.type === 'gallery' && <SectionGallery section={section} />}
-      {section.type === 'card' && <SectionCard section={section} />}
+      <EditorSectionContent section={section} isSelected={isSelected} />
     </div>
   )
 }

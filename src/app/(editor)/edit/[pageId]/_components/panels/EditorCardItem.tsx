@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, ImagePlus, Upload, X } from 'lucide-react'
 
+import { SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorTooltip from '../shell/EditorTooltip'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -29,6 +30,7 @@ const EditorCardItem = ({
 }: EditorCardItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
+    transition: SORTABLE_TRANSITION,
   })
 
   return (

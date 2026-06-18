@@ -3,18 +3,22 @@
 import {
   DndContext,
   type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
   PointerSensor,
   closestCenter,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import EditorSection from '../sections/EditorSection'
+import EditorSectionContent from '../sections/EditorSectionContent'
 import AddSectionMenu from './AddSectionMenu'
 import EditorEmptyState from './EditorEmptyState'
 import SectionInsert from './SectionInsert'
+import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 
 const EditorCanvas = () => {
@@ -23,8 +27,11 @@ const EditorCanvas = () => {
   const moveSection = useEditorStore((s) => s.moveSection)
 
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
+
+  const activeSection = sections.find((section) => section.id === activeId) ?? null
 
   // 섹션 추가 시 새 섹션으로 스크롤
   const scrollToBottom = () => {
@@ -38,7 +45,12 @@ const EditorCanvas = () => {
     })
   }
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null)
     const { active, over } = event
     if (!over || active.id === over.id) {
       return
@@ -48,6 +60,10 @@ const EditorCanvas = () => {
     if (from !== -1 && to !== -1) {
       moveSection(from, to)
     }
+  }
+
+  const handleDragCancel = () => {
+    setActiveId(null)
   }
 
   return (
@@ -61,9 +77,12 @@ const EditorCanvas = () => {
           <EditorEmptyState />
         ) : (
           <DndContext
+            id="editor-canvas"
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
           >
             <SortableContext
               items={sections.map((section) => section.id)}
@@ -81,6 +100,18 @@ const EditorCanvas = () => {
             <div className="flex justify-center pt-4">
               <AddSectionMenu onAdded={scrollToBottom} />
             </div>
+            <DragOverlay>
+              {activeSection ? (
+                <div
+                  className={cn(
+                    'cursor-grabbing rounded-md px-3 py-2 opacity-50',
+                    activeSection.type === 'spacer' ? 'bg-muted' : 'bg-background',
+                  )}
+                >
+                  <EditorSectionContent section={activeSection} />
+                </div>
+              ) : null}
+            </DragOverlay>
           </DndContext>
         )}
       </div>

@@ -78,7 +78,9 @@ export async function updateProfileImage(url: string): Promise<ActionResult> {
   }
 }
 
-type PasswordResult = { ok: true } | { ok: false; field?: 'currentPassword'; message: string }
+type PasswordResult =
+  | { ok: true }
+  | { ok: false; field?: 'currentPassword' | 'newPassword'; message: string }
 
 // 로컬 계정 비밀번호 확인 후 교체
 export async function changePassword(values: PasswordChangeValues): Promise<PasswordResult> {
@@ -105,6 +107,10 @@ export async function changePassword(values: PasswordChangeValues): Promise<Pass
     const matched = await bcrypt.compare(parsed.data.currentPassword, user.password)
     if (!matched) {
       return { ok: false, field: 'currentPassword', message: '현재 비밀번호가 일치하지 않아요' }
+    }
+
+    if (parsed.data.newPassword === parsed.data.currentPassword) {
+      return { ok: false, field: 'newPassword', message: '기존과 다른 비밀번호를 입력해 주세요' }
     }
 
     user.password = await bcrypt.hash(parsed.data.newPassword, 10)

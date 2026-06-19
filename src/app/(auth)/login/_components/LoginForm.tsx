@@ -30,13 +30,17 @@ const LoginForm = () => {
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) })
 
   const onSubmit = async ({ email, password }: LoginValues) => {
-    const res = await signIn('credentials', { email, password, redirect: false })
-    if (res?.error) {
-      toast.error('이메일 또는 비밀번호를 확인해 주세요')
-      return
-    }
+    try {
+      const res = await signIn('credentials', { email, password, redirect: false })
+      if (res?.error) {
+        toast.error('이메일 또는 비밀번호를 확인해 주세요')
+        return
+      }
 
-    router.push('/dashboard')
+      router.push('/dashboard')
+    } catch {
+      toast.error('잠시 후 다시 시도해 주세요')
+    }
   }
 
   return (

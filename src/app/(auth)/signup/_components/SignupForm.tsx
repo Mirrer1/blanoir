@@ -34,18 +34,23 @@ const SignupForm = () => {
       return
     }
 
-    const login = await signIn('credentials', {
-      email: values.email,
-      password: values.password,
-      redirect: false,
-    })
-    if (login?.error) {
-      toast.error('가입은 됐지만 자동 로그인에 실패했어요. 로그인 페이지에서 다시 시도해 주세요')
-      router.push('/login')
-      return
-    }
+    try {
+      const login = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      })
+      if (login?.error) {
+        toast.error('다시 로그인해 주세요')
+        router.push('/login')
+        return
+      }
 
-    router.push('/dashboard')
+      router.push('/dashboard')
+    } catch {
+      toast.error('다시 로그인해 주세요')
+      router.push('/login')
+    }
   }
 
   return (

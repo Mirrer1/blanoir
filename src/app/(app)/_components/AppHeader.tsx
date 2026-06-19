@@ -1,7 +1,8 @@
+import { Settings } from 'lucide-react'
 import Link from 'next/link'
 
-import LogoutButton from './LogoutButton'
 import ThemeToggle from '@/components/common/ThemeToggle'
+import { buttonVariants } from '@/components/ui/button'
 
 const AppHeader = () => {
   return (
@@ -12,7 +13,13 @@ const AppHeader = () => {
         </Link>
         <div className="flex items-center gap-1">
           <ThemeToggle />
-          <LogoutButton />
+          <Link
+            href="/settings"
+            className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+            aria-label="설정"
+          >
+            <Settings className="size-5" />
+          </Link>
         </div>
       </div>
     </header>

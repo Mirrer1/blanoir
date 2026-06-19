@@ -434,17 +434,25 @@ blanoir/
           _components/
             DashboardPageCard.tsx
             DashboardEmpty.tsx
+        settings/                           # 계정 설정 (프로필·비번·테마·요금제)
+          page.tsx
+          _components/
 
       (editor)/                             # 공통 헤더 없이 몰입형 (AppHeader 미적용)
         not-found.tsx
         edit/
           [pageId]/
             page.tsx                        # 서버: auth + 페이지 로드 + 소유권 검증
-            _components/
-              EditorShell.tsx               # 헤더 + 캔버스 + 스타일 패널 조합
-              EditorHeader.tsx
-              EditorCanvas.tsx
-              EditorStylePanel.tsx          # 섹션 선택 시 우측 슬라이드인
+            _components/                    # 3그룹으로 분리
+              shell/                        # 에디터 뼈대 + 공용
+                EditorShell.tsx             # 헤더 + 캔버스 + 스타일 패널 조합
+                EditorHeader.tsx
+                EditorCanvas.tsx
+                AddSectionMenu.tsx
+              sections/                     # 캔버스 표시 (EditorSection + Section*)
+              panels/                       # 타입별 스타일 패널 + 공용 필드/항목
+                EditorStylePanel.tsx        # 섹션 선택 시 우측 슬라이드인
+            controlStyles.ts                # 라우트 세그먼트 레벨 상수
 
       (public)/
         user/
@@ -468,8 +476,9 @@ blanoir/
       useAutoSave.ts
 
     lib/                                    # 외부 연동 설정
-      mongodb.ts
+      mongoDB.ts
       auth.ts
+      authConfig.ts
       cloudinary.ts
 
     utils/                                  # 순수 함수
@@ -477,8 +486,12 @@ blanoir/
       handle.ts
       nanoid.ts
 
-    store/                                  # Zustand
+    store/                                  # Zustand (페이지별 Context 스토어 팩토리)
       editor.ts
+
+    providers/                              # React Context Provider
+      Providers.tsx                         # 전역 (테마 등)
+      EditorProvider.tsx                    # 에디터 스토어 주입 (pageId 키)
 
     types/
       user.ts

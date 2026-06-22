@@ -13,7 +13,9 @@ const LandingFooter = () => {
             시작하기
           </Link>
         </nav>
-        <span className="text-muted-foreground text-sm">© Blanoir</span>
+        <span className="text-muted-foreground text-sm">
+          © {new Date().getFullYear()} Blanoir. All rights reserved.
+        </span>
       </div>
     </footer>
   )

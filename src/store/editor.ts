@@ -47,6 +47,7 @@ interface EditorState {
   selectSection: (id: string | null) => void
   setImageUploading: (uploading: boolean) => void
   addSection: (type: SectionType, index?: number) => void
+  replaceSections: (sections: Section[]) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
   updateSectionStyle: (id: string, style: Partial<SectionStyle>) => void
   updateSectionContainer: (id: string, container: Partial<ContainerStyle>) => void
@@ -203,6 +204,14 @@ export const createEditorStore = (initial: EditorInitialPage) => {
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
       }),
+
+    // 템플릿 적용/실행취소 시 전체 섹션 교체
+    replaceSections: (sections) =>
+      set((s) => ({
+        sections,
+        selectedSectionId: null,
+        ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+      })),
 
     // 특정 섹션의 콘텐츠 갱신
     updateSectionContent: (id, content) =>

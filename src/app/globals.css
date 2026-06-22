@@ -176,8 +176,11 @@
   .cn-toast [data-title] {
     line-height: 1;
   }
+  .cn-toast [data-icon],
+  .cn-toast [data-content] {
+    margin-bottom: 2px;
+  }
   .cn-toast [data-icon] {
-    transform: translateY(1px);
     color: var(--muted-foreground);
   }
   /* 실행취소 등 액션 버튼을 또렷한 채움 버튼으로 */

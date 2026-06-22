@@ -7,7 +7,10 @@ const DashboardEmpty = () => {
         <p className="font-heading text-lg font-bold">아직 만든 페이지가 없어요</p>
         <p className="text-muted-foreground text-sm">첫 페이지를 만들어 5분 만에 공개해 보세요.</p>
       </div>
-      <NewPageButton />
+      <div className="hidden lg:block">
+        <NewPageButton />
+      </div>
+      <p className="text-muted-foreground text-sm lg:hidden">새 페이지는 PC에서 만들 수 있어요</p>
     </div>
   )
 }

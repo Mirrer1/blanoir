@@ -4,7 +4,7 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 
 import type { SectionAnimation } from '@/types/section'
-import { ANIMATION_TO, sectionAnimationFrom } from '@/utils/sectionAnimation'
+import { ANIMATION_TO, revealMotionFrom } from '@/utils/revealMotion'
 
 interface SectionRevealProps {
   animation: SectionAnimation | undefined
@@ -13,7 +13,7 @@ interface SectionRevealProps {
 
 // key를 효과 값에 포함시켜 섹션 애니메이션 최초 트리거 효과
 const SectionReveal = ({ animation, children }: SectionRevealProps) => {
-  const from = sectionAnimationFrom(animation)
+  const from = revealMotionFrom(animation)
 
   return (
     <>

@@ -23,5 +23,5 @@ export const ANIMATION_TO: Target = {
   filter: 'blur(0px)',
 }
 
-export const sectionAnimationFrom = (animation: SectionAnimation | undefined): Target | null =>
+export const revealMotionFrom = (animation: SectionAnimation | undefined): Target | null =>
   animation && animation !== 'none' ? ANIMATION_FROM[animation] : null

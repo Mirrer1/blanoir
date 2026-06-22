@@ -66,14 +66,12 @@ const EditorPreviewButton = () => {
           </div>
           <div className="canvas-light text-foreground bg-background flex-1 overflow-auto">
             {device === 'pc' ? (
-              <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
+              <div className="w-full">
                 <PublicPageBody sections={sections} />
               </div>
             ) : (
               <div className="bg-background mx-auto my-8 w-[430px] overflow-hidden rounded-xl border shadow-sm">
-                <div className="px-4 py-12">
-                  <PublicPageBody sections={sections} />
-                </div>
+                <PublicPageBody sections={sections} />
               </div>
             )}
           </div>

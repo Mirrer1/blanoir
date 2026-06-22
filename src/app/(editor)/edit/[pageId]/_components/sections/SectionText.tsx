@@ -9,6 +9,7 @@ import SectionTextView, {
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { TextStyle } from '@/types/section'
+import { isGradient } from '@/utils/colorFill'
 
 // 미러, textarea, 표시를 같은 그리드 셀에 겹쳐 선택/해제 시 레이아웃 시프트를 없앰
 const CELL = 'col-start-1 row-start-1'
@@ -39,6 +40,9 @@ const SectionText = ({
 
   const typoClass = cn(textTypoClass(style, sizeClass, leadingClass), CELL)
   const textStyle = textInlineStyle(style)
+  const editStyle = isGradient(style.color)
+    ? { ...textStyle, caretColor: 'var(--foreground)' }
+    : textStyle
   const mirrorText = `${text || placeholder} `
 
   // 선택되면 편집 textarea로 포커스 이동
@@ -62,7 +66,7 @@ const SectionText = ({
           onChange={(e) => updateSectionContent(sectionId, { text: e.target.value })}
           rows={1}
           placeholder={placeholder}
-          style={textStyle}
+          style={editStyle}
           className={cn(
             typoClass,
             'text-foreground placeholder:text-muted-foreground/40 resize-none border-0 bg-transparent p-0 outline-none',

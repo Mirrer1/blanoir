@@ -7,3 +7,7 @@ export const ICON_BASE =
 
 // 드래그 정렬 시 주변 요소가 부드럽게 자리를 내주는 트랜지션
 export const SORTABLE_TRANSITION = { duration: 320, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+
+// 섹션 배경색/그레디언트 부드럽게 전환
+export const COLOR_TRANSITION =
+  'background-color 200ms ease, --cf-from 200ms ease, --cf-to 200ms ease, --cf-angle 200ms ease'

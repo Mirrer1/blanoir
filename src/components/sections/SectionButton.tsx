@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { ButtonSection } from '@/types/section'
+import { fillBackground, fillText } from '@/utils/colorFill'
 
 const SHAPE_CLASS = { square: 'rounded-md', rounded: 'rounded-full' } as const
 const SIZE_CLASS = {
@@ -22,16 +23,18 @@ const SectionButton = ({ section, live }: { section: ButtonSection; live?: boole
   const { color, textColor, shape, size, width, align } = section.style
   const label = text || '버튼'
 
-  const buttonStyle: CSSProperties = {
-    backgroundColor: color || 'var(--foreground)',
-    color: textColor || 'var(--background)',
-  }
+  // 배경과 글자를 분리
+  const buttonStyle: CSSProperties = color
+    ? fillBackground(color)
+    : { backgroundColor: 'var(--foreground)' }
+  const labelStyle: CSSProperties = textColor ? fillText(textColor) : { color: 'var(--background)' }
   const buttonClass = cn(
     'inline-flex items-center justify-center font-medium',
     SIZE_CLASS[size],
     SHAPE_CLASS[shape],
     WIDTH_CLASS[width],
   )
+  const labelNode = <span style={labelStyle}>{label}</span>
 
   return (
     <div className={cn('flex', JUSTIFY_CLASS[align])}>
@@ -44,17 +47,17 @@ const SectionButton = ({ section, live }: { section: ButtonSection; live?: boole
             style={buttonStyle}
             className={buttonClass}
           >
-            {label}
+            {labelNode}
           </a>
         ) : (
           // 링크 없는 버튼도 공개에선 버튼처럼 보이게 하고 클릭은 무동작
           <button type="button" style={buttonStyle} className={cn(buttonClass, 'cursor-pointer')}>
-            {label}
+            {labelNode}
           </button>
         )
       ) : (
         <span style={buttonStyle} className={buttonClass}>
-          {label}
+          {labelNode}
         </span>
       )}
     </div>

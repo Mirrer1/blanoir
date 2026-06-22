@@ -75,7 +75,7 @@ const PublicPage = async ({ params }: PublicPageProps) => {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
+    <main className="w-full">
       <PublicPageBody sections={page.sections} />
     </main>
   )

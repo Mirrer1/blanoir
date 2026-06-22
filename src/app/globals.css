@@ -4,6 +4,23 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* 그레디언트 색/각도 변수 등록 */
+@property --cf-from {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --cf-to {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --cf-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -140,7 +157,9 @@
   *,
   *::before,
   *::after {
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke, --cf-from,
+      --cf-to, --cf-angle;
     transition-timing-function: ease;
     transition-duration: 200ms;
   }
@@ -159,5 +178,21 @@
   }
   .cn-toast [data-icon] {
     transform: translateY(1px);
+    color: var(--muted-foreground);
+  }
+  /* 실행취소 등 액션 버튼을 또렷한 채움 버튼으로 */
+  .cn-toast [data-button] {
+    display: inline-flex;
+    align-items: center;
+    height: 1.75rem;
+    border-radius: calc(var(--radius) - 2px);
+    background: var(--foreground);
+    padding-inline: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--background);
+  }
+  .cn-toast [data-button]:hover {
+    background: color-mix(in oklab, var(--foreground) 88%, transparent);
   }
 }

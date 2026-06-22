@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { fontFamilyOf } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
 import type { TextStyle } from '@/types/section'
+import { fillText } from '@/utils/colorFill'
 
 export const ALIGN_CLASS = {
   left: 'text-left',
@@ -23,7 +24,7 @@ export const textTypoClass = (style: TextStyle, sizeClass: string, leadingClass:
 
 export const textInlineStyle = (style: TextStyle): CSSProperties => ({
   fontFamily: fontFamilyOf(style.font),
-  ...(style.color ? { color: style.color } : {}),
+  ...(style.color ? fillText(style.color) : {}),
 })
 
 interface SectionTextViewProps {

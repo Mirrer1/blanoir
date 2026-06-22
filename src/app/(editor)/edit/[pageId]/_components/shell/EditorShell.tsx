@@ -47,7 +47,7 @@ const EditorShell = () => {
               transition={{ duration: 0.22, ease: 'easeOut' }}
               className="h-full shrink-0 overflow-hidden"
             >
-              <EditorStylePanel section={selectedSection} />
+              <EditorStylePanel key={selectedSection.id} section={selectedSection} />
             </motion.aside>
           )}
         </AnimatePresence>

@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { COLOR_TRANSITION, SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorSectionContent from './EditorSectionContent'
 import { deleteImage } from '@/actions/upload'
+import SectionReveal from '@/components/sections/SectionReveal'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 import type { Section } from '@/types/section'
@@ -123,74 +124,76 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
   }
 
   return (
-    <div
-      ref={setSectionRef}
-      onClick={handleClick}
-      style={{
-        ...containerBackground(section),
-        minHeight: section.container?.height,
-        transform: CSS.Transform.toString(transform),
-        transition: transition ? `${transition}, ${COLOR_TRANSITION}` : COLOR_TRANSITION,
-      }}
-      className={cn(
-        'group relative flex cursor-pointer flex-col justify-center py-2',
-        isDragging && 'opacity-0',
-      )}
-    >
+    <SectionReveal animation={section.container?.animation}>
       <div
-        ref={columnRef}
+        ref={setSectionRef}
+        onClick={handleClick}
+        style={{
+          ...containerBackground(section),
+          minHeight: section.container?.height,
+          transform: CSS.Transform.toString(transform),
+          transition: transition ? `${transition}, ${COLOR_TRANSITION}` : COLOR_TRANSITION,
+        }}
         className={cn(
-          'relative mx-auto w-full max-w-5xl rounded-md px-3 py-2 transition-colors',
-          isSelected ? 'ring-foreground/20 ring-2 ring-inset' : !isSorting && 'hover:bg-muted/40',
+          'group relative flex cursor-pointer flex-col justify-center py-2',
+          isDragging && 'opacity-0',
         )}
       >
         <div
+          ref={columnRef}
           className={cn(
-            'absolute top-1/2 right-0 z-10 flex translate-x-[calc(100%+0.375rem)] -translate-y-1/2 gap-0.5 opacity-0 transition-opacity',
-            isSelected
-              ? 'opacity-100'
-              : 'pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100',
+            'relative mx-auto w-full max-w-5xl rounded-md px-3 py-2 transition-colors',
+            isSelected ? 'ring-foreground/20 ring-2 ring-inset' : !isSorting && 'hover:bg-muted/40',
           )}
         >
-          <button
-            aria-label="순서 변경"
-            className="text-muted-foreground hover:bg-muted flex size-7 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
-            {...attributes}
-            {...listeners}
+          <div
+            className={cn(
+              'absolute top-1/2 right-0 z-10 flex translate-x-[calc(100%+0.375rem)] -translate-y-1/2 gap-0.5 opacity-0 transition-opacity',
+              isSelected
+                ? 'opacity-100'
+                : 'pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100',
+            )}
           >
-            <GripVertical className="size-4" />
-          </button>
-          <button
-            aria-label="삭제"
-            onClick={handleRemove}
-            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
-          >
-            <Trash2 className="size-4" />
-          </button>
+            <button
+              aria-label="순서 변경"
+              className="text-muted-foreground hover:bg-muted flex size-7 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
+              {...attributes}
+              {...listeners}
+            >
+              <GripVertical className="size-4" />
+            </button>
+            <button
+              aria-label="삭제"
+              onClick={handleRemove}
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
+            >
+              <Trash2 className="size-4" />
+            </button>
+          </div>
+          <EditorSectionContent section={section} isSelected={isSelected} />
         </div>
-        <EditorSectionContent section={section} isSelected={isSelected} />
-      </div>
-      <button
-        type="button"
-        onPointerDown={handleResizeStart}
-        aria-label="높이 조절"
-        className={cn(
-          'text-foreground/40 hover:text-foreground/70 absolute right-1 bottom-1 z-10 flex size-3.5 cursor-ns-resize items-center justify-center opacity-0 transition-opacity',
-          isSelected ? 'opacity-100' : 'pointer-events-none',
-        )}
-      >
-        <svg
-          viewBox="0 0 10 10"
-          className="size-full"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeLinecap="round"
+        <button
+          type="button"
+          onPointerDown={handleResizeStart}
+          aria-label="높이 조절"
+          className={cn(
+            'text-foreground/40 hover:text-foreground/70 absolute right-1 bottom-1 z-10 flex size-3.5 cursor-ns-resize items-center justify-center opacity-0 transition-opacity',
+            isSelected ? 'opacity-100' : 'pointer-events-none',
+          )}
         >
-          <path d="M9 3 3 9M9 7 7 9" />
-        </svg>
-      </button>
-    </div>
+          <svg
+            viewBox="0 0 10 10"
+            className="size-full"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+          >
+            <path d="M9 3 3 9M9 7 7 9" />
+          </svg>
+        </button>
+      </div>
+    </SectionReveal>
   )
 }
 

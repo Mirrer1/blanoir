@@ -1,5 +1,6 @@
 'use client'
 
+import EditorAnimationField from './EditorAnimationField'
 import EditorColorField from './EditorColorField'
 import EditorImageField from './EditorImageField'
 import { deleteImage } from '@/actions/upload'
@@ -11,6 +12,7 @@ const EditorBackgroundPanel = ({ section }: { section: Section }) => {
   const updateSectionContainer = useEditorStore((s) => s.updateSectionContainer)
   const backgroundColor = section.container?.backgroundColor ?? ''
   const backgroundImage = section.container?.backgroundImage ?? ''
+  const animation = section.container?.animation ?? 'none'
 
   const handleChange = (uploaded: { url: string }) => {
     const old = backgroundImage
@@ -29,17 +31,21 @@ const EditorBackgroundPanel = ({ section }: { section: Section }) => {
 
   return (
     <>
+      <EditorImageField
+        label="배경 이미지"
+        url={backgroundImage}
+        onChange={handleChange}
+        onRemove={handleRemove}
+      />
       <EditorColorField
         label="배경색"
         color={backgroundColor}
         onChange={(color) => updateSectionContainer(section.id, { backgroundColor: color })}
         defaultColor="var(--background)"
       />
-      <EditorImageField
-        label="배경 이미지"
-        url={backgroundImage}
-        onChange={handleChange}
-        onRemove={handleRemove}
+      <EditorAnimationField
+        animation={animation}
+        onChange={(value) => updateSectionContainer(section.id, { animation: value })}
       />
     </>
   )

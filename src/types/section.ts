@@ -136,11 +136,14 @@ export interface CardSection {
   style: CardStyle
 }
 
+export type SectionAnimation = 'none' | 'up' | 'down' | 'left' | 'right' | 'fade' | 'zoom' | 'blur'
+
 // 모든 섹션 공통 컨테이너 속성
 export interface ContainerStyle {
   height?: number // 콘텐츠보다 크게 늘린 박스 높이
   backgroundColor?: string // 박스 배경색. 없으면 투명
   backgroundImage?: string // 박스 배경 이미지 URL
+  animation?: SectionAnimation // 스크롤로 들어올 때 등장 효과
 }
 
 export type Section = (

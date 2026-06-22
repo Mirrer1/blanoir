@@ -76,7 +76,7 @@ const EditorCanvas = () => {
   return (
     <div
       ref={scrollRef}
-      className="canvas-light bg-background text-foreground flex-1 overflow-y-auto"
+      className="canvas-light bg-background text-foreground flex-1 overflow-x-hidden overflow-y-auto"
       onClick={handleBackgroundClick}
     >
       <div className="min-h-full">

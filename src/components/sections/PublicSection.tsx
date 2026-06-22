@@ -4,6 +4,7 @@ import SectionDivider from './SectionDivider'
 import SectionGalleryView from './SectionGalleryView'
 import SectionImageView from './SectionImageView'
 import SectionParagraphView from './SectionParagraphView'
+import SectionReveal from './SectionReveal'
 import SectionSpacer from './SectionSpacer'
 import SectionTitleView from './SectionTitleView'
 import type { Section } from '@/types/section'
@@ -33,21 +34,23 @@ const isEmptySection = (section: Section) => {
 // 에디터 EditorSection의 표시 전용 대응
 const PublicSection = ({ section }: { section: Section }) =>
   isEmptySection(section) ? null : (
-    <div
-      className="flex flex-col justify-center py-2"
-      style={{ ...containerBackground(section), minHeight: section.container?.height }}
-    >
-      <div className="mx-auto w-full max-w-5xl px-3 py-2">
-        {section.type === 'title' && <SectionTitleView section={section} />}
-        {section.type === 'paragraph' && <SectionParagraphView section={section} />}
-        {section.type === 'image' && <SectionImageView section={section} />}
-        {section.type === 'divider' && <SectionDivider section={section} />}
-        {section.type === 'spacer' && <SectionSpacer section={section} />}
-        {section.type === 'button' && <SectionButton section={section} live />}
-        {section.type === 'gallery' && <SectionGalleryView section={section} />}
-        {section.type === 'card' && <SectionCardView section={section} />}
+    <SectionReveal animation={section.container?.animation}>
+      <div
+        className="flex flex-col justify-center py-2"
+        style={{ ...containerBackground(section), minHeight: section.container?.height }}
+      >
+        <div className="mx-auto w-full max-w-5xl px-3 py-2">
+          {section.type === 'title' && <SectionTitleView section={section} />}
+          {section.type === 'paragraph' && <SectionParagraphView section={section} />}
+          {section.type === 'image' && <SectionImageView section={section} />}
+          {section.type === 'divider' && <SectionDivider section={section} />}
+          {section.type === 'spacer' && <SectionSpacer section={section} />}
+          {section.type === 'button' && <SectionButton section={section} live />}
+          {section.type === 'gallery' && <SectionGalleryView section={section} />}
+          {section.type === 'card' && <SectionCardView section={section} />}
+        </div>
       </div>
-    </div>
+    </SectionReveal>
   )
 
 export default PublicSection

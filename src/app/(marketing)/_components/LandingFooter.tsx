@@ -4,7 +4,9 @@ const LandingFooter = () => {
   return (
     <footer className="border-t">
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 py-12 sm:flex-row">
-        <span className="font-heading text-base font-extrabold tracking-tight">Blanoir</span>
+        <span className="font-heading text-base font-extrabold tracking-tight">
+          Blanoir <span className="text-muted-foreground text-xs font-normal">블라누아</span>
+        </span>
         <nav className="text-muted-foreground flex items-center gap-6 text-sm">
           <Link href="/login" className="hover:text-foreground">
             로그인

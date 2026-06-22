@@ -1,4 +1,5 @@
 import type { Types } from 'mongoose'
+import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 
 import EditorViewportGate from './_components/shell/EditorViewportGate'
@@ -8,6 +9,11 @@ import Page from '@/models/Page'
 import EditorProvider from '@/providers/EditorProvider'
 import type { EditorInitialPage } from '@/store/editor'
 import type { Section } from '@/types/section'
+
+// 에디터는 비공개 작업으로 검색에 미노출
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 interface EditPageProps {
   params: Promise<{ pageId: string }>

@@ -40,7 +40,9 @@ const AddSectionMenu = ({
 }) => {
   const addSection = useEditorStore((s) => s.addSection)
 
-  const handleAdd = (type: SectionType) => {
+  // 메뉴 항목 캔버스로 버블링
+  const handleAdd = (e: React.MouseEvent, type: SectionType) => {
+    e.stopPropagation()
     addSection(type, index)
     onAdded?.()
   }
@@ -71,7 +73,7 @@ const AddSectionMenu = ({
             {SECTION_TYPES.map(({ type, label, icon: Icon }) => (
               <Menu.Item
                 key={type}
-                onClick={() => handleAdd(type)}
+                onClick={(e) => handleAdd(e, type)}
                 className="data-[highlighted]:bg-muted flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none"
               >
                 <Icon className="size-4" />

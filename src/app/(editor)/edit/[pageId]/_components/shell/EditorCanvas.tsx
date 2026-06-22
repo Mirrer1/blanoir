@@ -66,13 +66,20 @@ const EditorCanvas = () => {
     setActiveId(null)
   }
 
+  // 캔버스 빈 영역 클릭만 선택 해제
+  const handleBackgroundClick = (e: React.MouseEvent) => {
+    if (e.currentTarget.contains(e.target as Node)) {
+      selectSection(null)
+    }
+  }
+
   return (
     <div
       ref={scrollRef}
-      className="canvas-light bg-background text-foreground flex-1 [scrollbar-gutter:stable] overflow-y-auto"
-      onClick={() => selectSection(null)}
+      className="canvas-light bg-background text-foreground flex-1 overflow-y-auto"
+      onClick={handleBackgroundClick}
     >
-      <div className="mx-auto min-h-full max-w-5xl px-6 py-16">
+      <div className="min-h-full">
         {sections.length === 0 ? (
           <EditorEmptyState />
         ) : (
@@ -90,15 +97,17 @@ const EditorCanvas = () => {
             >
               <div>
                 {sections.map((section, i) => (
-                  <div key={section.id}>
-                    <SectionInsert index={i} />
-                    <EditorSection section={section} />
+                  <div key={section.id} className="relative">
+                    {i > 0 && <SectionInsert index={i} />}
+                    <EditorSection section={section} index={i} />
                   </div>
                 ))}
               </div>
             </SortableContext>
-            <div className="flex justify-center pt-4">
+            <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-6">
+              <div className="bg-border h-px flex-1" />
               <AddSectionMenu onAdded={scrollToBottom} />
+              <div className="bg-border h-px flex-1" />
             </div>
             <DragOverlay>
               {activeSection ? (

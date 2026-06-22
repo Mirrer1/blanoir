@@ -7,6 +7,7 @@ import SectionParagraphView from './SectionParagraphView'
 import SectionSpacer from './SectionSpacer'
 import SectionTitleView from './SectionTitleView'
 import type { Section } from '@/types/section'
+import { containerBackground } from '@/utils/colorFill'
 
 // 내용을 안 채운 섹션은 공개 페이지에서 숨김
 // divider/spacer는 구조 섹션이라 항상 표시
@@ -32,16 +33,21 @@ const isEmptySection = (section: Section) => {
 // 에디터 EditorSection의 표시 전용 대응
 const PublicSection = ({ section }: { section: Section }) =>
   isEmptySection(section) ? null : (
-    <>
-      {section.type === 'title' && <SectionTitleView section={section} />}
-      {section.type === 'paragraph' && <SectionParagraphView section={section} />}
-      {section.type === 'image' && <SectionImageView section={section} />}
-      {section.type === 'divider' && <SectionDivider section={section} />}
-      {section.type === 'spacer' && <SectionSpacer section={section} />}
-      {section.type === 'button' && <SectionButton section={section} live />}
-      {section.type === 'gallery' && <SectionGalleryView section={section} />}
-      {section.type === 'card' && <SectionCardView section={section} />}
-    </>
+    <div
+      className="flex flex-col justify-center py-2"
+      style={{ ...containerBackground(section), minHeight: section.container?.height }}
+    >
+      <div className="mx-auto w-full max-w-5xl px-3 py-2">
+        {section.type === 'title' && <SectionTitleView section={section} />}
+        {section.type === 'paragraph' && <SectionParagraphView section={section} />}
+        {section.type === 'image' && <SectionImageView section={section} />}
+        {section.type === 'divider' && <SectionDivider section={section} />}
+        {section.type === 'spacer' && <SectionSpacer section={section} />}
+        {section.type === 'button' && <SectionButton section={section} live />}
+        {section.type === 'gallery' && <SectionGalleryView section={section} />}
+        {section.type === 'card' && <SectionCardView section={section} />}
+      </div>
+    </div>
   )
 
 export default PublicSection

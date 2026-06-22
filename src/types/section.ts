@@ -136,7 +136,14 @@ export interface CardSection {
   style: CardStyle
 }
 
-export type Section =
+// 모든 섹션 공통 컨테이너 속성
+export interface ContainerStyle {
+  height?: number // 콘텐츠보다 크게 늘린 박스 높이
+  backgroundColor?: string // 박스 배경색. 없으면 투명
+  backgroundImage?: string // 박스 배경 이미지 URL
+}
+
+export type Section = (
   | TitleSection
   | ParagraphSection
   | DividerSection
@@ -145,5 +152,6 @@ export type Section =
   | ImageSection
   | GallerySection
   | CardSection
+) & { container?: ContainerStyle }
 export type SectionType = Section['type']
 export type SectionStyle = Section['style']

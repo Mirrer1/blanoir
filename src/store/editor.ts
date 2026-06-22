@@ -8,6 +8,7 @@ import { createStore } from 'zustand/vanilla'
 import type {
   ButtonStyle,
   CardStyle,
+  ContainerStyle,
   DividerStyle,
   GalleryStyle,
   ImageStyle,
@@ -48,7 +49,9 @@ interface EditorState {
   addSection: (type: SectionType, index?: number) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
   updateSectionStyle: (id: string, style: Partial<SectionStyle>) => void
+  updateSectionContainer: (id: string, container: Partial<ContainerStyle>) => void
   removeSection: (id: string) => void
+  restoreSection: (section: Section, index: number) => void
   moveSection: (fromIndex: number, toIndex: number) => void
   setSaveStatus: (status: SaveStatus) => void
   markSaved: (savedSnapshot: string, manual?: boolean) => void
@@ -223,6 +226,17 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
+    // 섹션 박스 속성 갱신
+    updateSectionContainer: (id, container) =>
+      set((s) => {
+        const sections = s.sections.map((section) =>
+          section.id === id
+            ? ({ ...section, container: { ...section.container, ...container } } as Section)
+            : section,
+        )
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
     // 섹션 삭제, 선택 중이던 섹션이면 선택 해제
     removeSection: (id) =>
       set((s) => {
@@ -230,6 +244,18 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return {
           sections,
           selectedSectionId: s.selectedSectionId === id ? null : s.selectedSectionId,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 삭제 실행취소
+    restoreSection: (section, index) =>
+      set((s) => {
+        const sections = [...s.sections]
+        sections.splice(Math.min(index, sections.length), 0, section)
+        return {
+          sections,
+          selectedSectionId: section.id,
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
       }),

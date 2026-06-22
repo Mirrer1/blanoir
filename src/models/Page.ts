@@ -6,6 +6,7 @@ const sectionSchema = new Schema(
     type: { type: String, required: true }, // title | paragraph | image | button | divider | gallery | card
     content: { type: Schema.Types.Mixed, default: {} }, // 타입별 콘텐츠
     style: { type: Schema.Types.Mixed, default: {} }, // 타입별 스타일
+    container: { type: Schema.Types.Mixed }, // 박스(배경색 | 배경이미지 |높이)
   },
   { _id: false },
 )

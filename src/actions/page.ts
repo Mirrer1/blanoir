@@ -16,6 +16,9 @@ const UNEXPECTED_ERROR = '잠시 후 다시 시도해 주세요'
 const collectImageUrls = (sections: Section[]): string[] => {
   const urls: string[] = []
   for (const section of sections) {
+    if (section.container?.backgroundImage) {
+      urls.push(section.container.backgroundImage)
+    }
     if (section.type === 'image' && section.content.src) {
       urls.push(section.content.src)
     }

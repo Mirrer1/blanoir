@@ -29,12 +29,16 @@ const SectionButton = ({ section, live }: { section: ButtonSection; live?: boole
     : { backgroundColor: 'var(--foreground)' }
   const labelStyle: CSSProperties = textColor ? fillText(textColor) : { color: 'var(--background)' }
   const buttonClass = cn(
-    'inline-flex items-center justify-center font-medium',
+    'inline-flex max-w-full items-center justify-center font-medium',
     SIZE_CLASS[size],
     SHAPE_CLASS[shape],
     WIDTH_CLASS[width],
   )
-  const labelNode = <span style={labelStyle}>{label}</span>
+  const labelNode = (
+    <span style={labelStyle} className="text-center break-words break-keep">
+      {label}
+    </span>
+  )
 
   return (
     <div className={cn('flex', JUSTIFY_CLASS[align])}>

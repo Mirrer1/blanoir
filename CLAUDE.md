@@ -28,7 +28,17 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **설정 페이지·다크모드 토글 배치 정리.** 로그인 사용자 계정 설정 `/settings` 추가 — 프로필(닉네임·페이지 주소 handle·프로필 이미지, handle 변경 시 그 사용자 공개 페이지 주소가 함께 바뀜), 계정(이메일·로그인 방식·가입일 표시), 비밀번호 변경(로컬만, 소셜은 안내), 화면 테마, 요금제(Free/Pro UI만 — 결제는 "준비 중" 토스트로 자리만, 무료 정체성 유지), 로그아웃. 서버 액션 `actions/user.ts`(`updateProfile`·`updateProfileImage`·`changePassword`) + 스키마 `types/user.ts`, 이미지는 Cloudinary 업로드·없으면 기본 인물 아이콘. 대시보드 헤더는 로그아웃을 빼고 설정 아이콘으로 교체(로그아웃은 설정 안으로). 다크모드 토글 배치 규칙 확정: 색이 바뀌는 Blanoir UI 화면(랜딩·인증·대시보드·에디터)엔 헤더 토글, 라이트 고정 결과물·미리보기(공개 페이지·캔버스)엔 없음. 로그인 사용자는 헤더 토글과 별개로 설정 페이지에서도 테마 선택. 소셜 브랜드 아이콘을 `components/common/SocialIcon.tsx`로 공용화(로그인 버튼 + 설정 계정 표시 공유).
 
-**남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404), 모바일 에디터 접속 시 미리보기 전용 모드 + 안내 배너, 공개 페이지 자체 다크 토글.
+**섹션 배경 컨테이너·색상 그레디언트.** 모든 섹션에 공통 컨테이너(박스) 속성 추가 — 배경색·배경이미지·높이(코너 그립으로 조절), `types/section.ts`의 `ContainerStyle`·스토어 `updateSectionContainer`, Mongoose 스키마(`Page.ts`의 `sectionSchema`)에 `container` 반영해 저장·새로고침·공개에 유지. 풀블리드 레이아웃(섹션·배경은 전체폭, 콘텐츠만 가운데 `max-w-5xl`), 스타일 드로어를 **콘텐츠/배경 탭**으로 분리(`EditorBackgroundPanel`·`EditorImageField` 신규, 배경 이미지도 본인 폴더 자동 정리). 색상 쓰는 곳(텍스트·버튼·구분선·배경) 전부 **그레디언트** 지원 — 팔레트에 그레디언트 스와치(프리셋 + 시작/끝색·방향 빌더) + 커스텀 단색, 분기 헬퍼 `utils/colorFill.ts`(`isGradient`/`fillBackground`/`fillText`+`containerBackground`), `@property(--cf-*)` 등록으로 그레디언트도 변수 보간으로 부드럽게 전환. 팔레트는 저채도 뮤트 톤. 섹션 추가 시 **우측 드로어 자동 열림**(텍스트는 바로 포커스, 포털 클릭 버블링 차단으로 메뉴 바깥 클릭 시에도 선택 유지). 섹션 **삭제는 즉시 + 실행취소 토스트**로 전환(확인 모달 대신 실행취소가 안전망, 이미지 정리는 토스트 닫힐 때 확정·실행취소 시 보존). 캔버스/공개 섹션 간격을 `py-2`로 통일.
+
+**섹션 등장 효과.** 컨테이너에 스크롤 등장 애니메이션 추가(`container.animation`, 스키마가 Mixed라 별도 변경 없음) — 없음(기본)·위/아래/좌/우·페이드·확대·블러 8종, 배경 탭 아이콘 버튼(`EditorAnimationField`, 줄바꿈). 시작/끝 상태는 `utils/revealMotion.ts`, 공용 래퍼 `components/sections/SectionReveal.tsx`(motion `whileInView` once, 없음이면 통과, `key`로 효과 변경 시 그 자리 재생). **배경 속성이라 콘텐츠만이 아니라 배경색·이미지 포함 섹션 블록 전체가 함께 등장** — 래퍼를 `PublicSection`·`EditorSection` 둘 다 섹션 바깥에 두고, 에디터·미리보기·공개 셋 다 동일 적용. 좌우 효과의 full-bleed 가로 밀림은 캔버스 `overflow-x-hidden`·공개/미리보기 본문 `overflow-x-clip`으로 클립.
+
+**에디터 시작 템플릿.** 빈 캔버스 막막함을 줄이려 에디터 왼쪽에 템플릿 시작 패널 추가(`EditorTemplatePanel`, 진입 시 기본 펼침 + 화살표로 접기/펴기, width 애니메이션). 페이지 종류별 5종(프로필·매장·청첩장·포트폴리오·이력서) — 각 `templates.ts`의 `build()`가 새 id로 섹션 배열 생성, 글·제목·버튼·구분선은 안내 문구까지 채우고 이미지·갤러리·카드는 빈 플레이스홀더(첫 업로드는 캔버스). 배경·등장효과는 안 넣어 중립 골격 유지(라벨은 단어 안 겹치게, 프로필 두 버튼은 글자수 맞춰 너비 통일). 적용은 스토어 `replaceSections`로 **기존 섹션 덮어쓰기 + 실행취소 토스트**(삭제 패턴과 동일, 밀려난 이미지는 토스트 닫힐 때 정리). 이미지 URL 수집 로직을 `utils/imageUrls.ts`로 공용화(`EditorSection`·템플릿 패널 공유). 버튼 긴 텍스트는 `max-w-full`+`break-keep break-words`로 영역 안에서 줄바꿈·넘침 방지.
+
+**모바일 미리보기 전용·SEO·배포.** 모바일/태블릿(1024px 미만)에서 에디터 접속 시 편집 UI 대신 결과물 미리보기만 보여주는 전용 모드 추가(`hooks/useIsSmallScreen.ts`의 `useSyncExternalStore`+`matchMedia` 구독, `EditorViewportGate`가 PC=`EditorShell`/그 외=`EditorMobilePreview` 분기, 미리보기는 상단에 대시보드 링크+안내문+`EditorPublishButton`·본문 `PublicPageBody`). 대시보드 새 페이지 버튼도 PC 전용(`hidden lg:block`)·빈 상태는 PC 안내. SEO 기반 구성: `lib/site.ts` 상수, 루트 `layout` metadata 강화(`metadataBase`·title 템플릿·openGraph·twitter·robots·verification env), `app/robots.ts`·`app/sitemap.ts`(공개 페이지 DB 동적, `force-dynamic`), 인증/에디터 noindex, 공개 페이지 `generateMetadata` 보강(canonical·og), 랜딩 JSON-LD(WebSite), 브랜드 한글표기 '블라누아' 노출. 파비콘은 반전 B 디자인 `app/icon.png` 하나로 통일(기존 `favicon.ico`·미사용 starter svg 제거).
+
+**Vercel 배포 완료.** `blanoir.vercel.app`에 연결·env 등록(Mongo·소셜 3종·Cloudinary·Gmail + `NEXT_PUBLIC_SITE_URL`/`NEXTAUTH_URL`·검증 코드), 함수 리전을 Atlas와 동일한 서울(`icn1`)로 맞춰 왕복 지연 최소화. 이미지 업로드 Server Action은 기본 1MB 제한을 넘는 이미지가 500 나던 걸 `next.config.ts`의 `serverActions.bodySizeLimit` 6MB 상향으로 해결. Atlas Network Access는 Vercel IP 비고정이라 `0.0.0.0/0` 허용. 구글·네이버 서치콘솔 소유권 인증(메타태그 env) + sitemap 제출. 도메인은 데모라 미구매(`vercel.app` 사용, 추후 구매 시 env 교체·OAuth/검증 재설정).
+
+**남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404), 공개 페이지 자체 다크 토글.
 
 ## 문서 안내
 
@@ -78,7 +88,7 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 - [x] Kakao Developers OAuth 등록 (이메일 미제공 → 합성 이메일로 처리)
 - [x] Naver Developers OAuth 등록
 - [x] Gmail SMTP 앱 비밀번호 발급 (비밀번호 재설정 메일 발송)
-- [ ] GitHub 레포지토리 생성 (main 단일 브랜치, 바로 push·배포)
+- [x] GitHub 레포지토리 생성 (main 단일 브랜치, 바로 push·배포 — `Mirrer1/blanoir`)
 
 **코드 작업:**
 
@@ -149,7 +159,7 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 - [x] 공개/비공개 토글 + 비공개시 404 처리
 - [x] 다크모드 토글 (헤더) + 캔버스/미리보기/공개 라이트 절연
 - [x] PC/모바일 미리보기 토글 (에디터)
-- [ ] 모바일에서 에디터 접속 시 미리보기 전용 모드
+- [x] 모바일에서 에디터 접속 시 미리보기 전용 모드
 
 ### Phase 6: 마무리 (개발 완료 후)
 
@@ -162,9 +172,11 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **외부 셋업 (직접 실행):**
 
-- [ ] 도메인 구매 (가비아 — **blanoir.com**)
-- [ ] Vercel 계정 + 프로젝트 연결
-- [ ] Vercel 대시보드에 `.env.production` 환경변수 등록
-- [ ] Vercel에 도메인 연결
-- [ ] 소셜 OAuth Redirect URL을 운영 도메인으로 추가 (Google/Kakao/Naver 콘솔)
-- [ ] MongoDB Atlas Network Access에 Vercel IP 허용 (0.0.0.0/0 또는 화이트리스트)
+- [ ] 도메인 구매 (가비아 — **blanoir.com**) — 데모라 보류, `vercel.app` 사용
+- [x] Vercel 계정 + 프로젝트 연결 (`blanoir.vercel.app`)
+- [x] Vercel 대시보드에 환경변수 등록 (`.env.production` 파일 대신 대시보드 직접 등록)
+- [x] Vercel 함수 리전을 서울(`icn1`)로 — Atlas와 동일 리전, 왕복 지연 최소화
+- [ ] Vercel에 도메인 연결 — 도메인 구매 시
+- [x] 소셜 OAuth Redirect URL을 운영 도메인으로 추가 (Google/Kakao/Naver 콘솔)
+- [x] MongoDB Atlas Network Access에 Vercel IP 허용 (0.0.0.0/0)
+- [x] 검색엔진 등록 — 구글 서치콘솔 + 네이버 서치어드바이저 소유권 인증 + sitemap 제출

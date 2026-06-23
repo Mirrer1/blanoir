@@ -8,7 +8,13 @@ import { deleteImage } from '@/actions/upload'
 import useEditorStore from '@/store/editor'
 import { sectionImageUrls } from '@/utils/imageUrls'
 
-const EditorTemplatePanel = ({ onCollapse }: { onCollapse: () => void }) => {
+const EditorTemplatePanel = ({
+  onCollapse,
+  onApplied,
+}: {
+  onCollapse: () => void
+  onApplied: () => void
+}) => {
   const sections = useEditorStore((s) => s.sections)
   const replaceSections = useEditorStore((s) => s.replaceSections)
 
@@ -25,6 +31,7 @@ const EditorTemplatePanel = ({ onCollapse }: { onCollapse: () => void }) => {
       before.flatMap(sectionImageUrls).forEach((url) => void deleteImage(url))
     }
     replaceSections(template.build())
+    onApplied()
     toast(`${template.label} 템플릿을 적용했어요`, {
       icon: <LayoutTemplate className="size-4" />,
       duration: 5000,

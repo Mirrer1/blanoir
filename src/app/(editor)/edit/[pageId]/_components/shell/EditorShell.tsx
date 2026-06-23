@@ -2,7 +2,7 @@
 
 import { ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import EditorStylePanel from '../panels/EditorStylePanel'
 import EditorCanvas from './EditorCanvas'
@@ -18,6 +18,14 @@ const EditorShell = () => {
   )
 
   const [templateOpen, setTemplateOpen] = useState(true)
+  const canvasScrollRef = useRef<HTMLDivElement>(null)
+
+  // 템플릿 적용 시 페이지 스크롤 맨 위로 이동
+  const scrollCanvasToTop = () => {
+    requestAnimationFrame(() => {
+      canvasScrollRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+    })
+  }
 
   const showStylePanel =
     !!selectedSection &&
@@ -50,7 +58,10 @@ const EditorShell = () => {
               transition={{ duration: 0.22, ease: 'easeOut' }}
               className="h-full shrink-0 overflow-hidden"
             >
-              <EditorTemplatePanel onCollapse={() => setTemplateOpen(false)} />
+              <EditorTemplatePanel
+                onCollapse={() => setTemplateOpen(false)}
+                onApplied={scrollCanvasToTop}
+              />
             </motion.aside>
           )}
         </AnimatePresence>
@@ -63,7 +74,7 @@ const EditorShell = () => {
             <ChevronRight className="size-4" />
           </button>
         )}
-        <EditorCanvas />
+        <EditorCanvas scrollRef={canvasScrollRef} />
         <AnimatePresence>
           {selectedSection && showStylePanel && (
             <motion.aside

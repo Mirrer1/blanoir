@@ -11,7 +11,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 
 import EditorSection from '../sections/EditorSection'
 import EditorSectionContent from '../sections/EditorSectionContent'
@@ -21,12 +21,11 @@ import SectionInsert from './SectionInsert'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
 
-const EditorCanvas = () => {
+const EditorCanvas = ({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) => {
   const sections = useEditorStore((s) => s.sections)
   const selectSection = useEditorStore((s) => s.selectSection)
   const moveSection = useEditorStore((s) => s.moveSection)
 
-  const scrollRef = useRef<HTMLDivElement>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))

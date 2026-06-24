@@ -6,6 +6,16 @@
 
 **Live demo:** https://blanoir.vercel.app
 
+<br />
+
+## 아키텍처
+
+<img width="1215" height="697" alt="Image" src="https://github.com/user-attachments/assets/1ea9478c-c0a3-496f-ab16-03ff57aa7369" />
+
+
+<br />
+
+
 ## 주요 기능
 
 - **섹션 기반 에디터** — 8종의 섹션을 드래그로 배치하고 인라인으로 편집합니다. 섹션 선택 시 우측 스타일 패널이 콘텐츠/배경 탭으로 열립니다.
@@ -17,6 +27,8 @@
 - **공개 페이지** — SSR 렌더 + 공개/비공개 토글, 메타데이터·sitemap 자동 생성으로 검색 노출
 - **다크 모드** — 작업 도구(헤더·패널)에만 적용하고, 결과물·미리보기는 항상 라이트로 절연
 - **반응형** — 모바일/태블릿에서 에디터는 미리보기 전용으로 전환
+
+<br />
 
 ## 섹션 종류
 
@@ -33,6 +45,8 @@
 
 모든 섹션은 공통 컨테이너 속성(배경색·배경이미지·높이·등장 효과)을 가집니다.
 
+<br />
+
 ## 라우트
 
 | 경로                      | 내용                                |
@@ -44,6 +58,8 @@
 | `/edit/[pageId]`          | 에디터                              |
 | `/settings`               | 계정 설정 (프로필·비번·테마·요금제) |
 | `/user/[handle]/[pageId]` | 공개 페이지 (결과물)                |
+
+<br />
 
 ## 기술 스택
 
@@ -62,12 +78,16 @@
 | 모션       | Motion                             |
 | 호스팅     | Vercel                             |
 
+<br />
+
 ## 설계 노트
 
 - 조회는 서버 컴포넌트(SSR), 변경은 Server Action으로 처리합니다. 별도 클라이언트 패칭 레이어(React Query 등)를 두지 않습니다.
 - Zustand 에디터 스토어는 전역 싱글톤이 아니라 페이지별 Context 스토어로 생성해, SSR 깜빡임과 요청 간 상태 누수를 피합니다.
 - 섹션 표시 컴포넌트를 단일 소스로 두고 에디터만 그 위에 편집을 얹어, 캔버스·미리보기·공개에 같은 뷰를 중복 구현하지 않고 편집 화면과 결과물을 일치시킵니다.
 - 서버리스 환경을 위해 MongoDB 커넥션을 캐싱하고, 안 쓰는 Cloudinary 이미지는 교체·삭제 시점에 정리합니다.
+
+<br />
 
 ## 시작하기
 
@@ -87,6 +107,8 @@ npm run dev
 
 http://localhost:3000 에서 확인할 수 있습니다.
 
+<br />
+
 ### 환경 변수
 
 `.env.example`의 키를 `.env.local`에 채웁니다.
@@ -99,6 +121,8 @@ http://localhost:3000 에서 확인할 수 있습니다.
 - `NEXT_PUBLIC_SITE_URL` — 사이트 베이스 URL (sitemap·OG에 사용)
 - `GOOGLE_SITE_VERIFICATION` / `NAVER_SITE_VERIFICATION` — 검색엔진 소유권 인증 (선택)
 
+<br />
+
 ## 스크립트
 
 | 명령             | 설명               |
@@ -109,6 +133,8 @@ http://localhost:3000 에서 확인할 수 있습니다.
 | `npm run lint`   | ESLint             |
 | `npm run format` | Prettier 포맷      |
 | `npm run test`   | Vitest 단위 테스트 |
+
+<br />
 
 ## 프로젝트 구조
 
@@ -125,6 +151,8 @@ src/
   types/          # 공유 타입
   utils/          # 순수 함수
 ```
+
+<br />
 
 ## 문서
 

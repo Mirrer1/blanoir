@@ -2,13 +2,14 @@
 
 import { ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import EditorStylePanel from '../panels/EditorStylePanel'
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorTemplatePanel from './EditorTemplatePanel'
 import useAutoSave from '@/hooks/useAutoSave'
+import useTemplatePanel from '@/hooks/useTemplatePanel'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
 import useEditorStore, { findNode } from '@/store/editor'
 
@@ -20,7 +21,9 @@ const EditorShell = () => {
       !!s.selectedSectionId && !s.sections.some((section) => section.id === s.selectedSectionId),
   )
 
-  const [templateOpen, setTemplateOpen] = useState(true)
+  const pageId = useEditorStore((s) => s.pageId)
+  const initiallyEmpty = useEditorStore((s) => s.sections.length === 0)
+  const [templateOpen, setTemplateOpen] = useTemplatePanel(pageId, initiallyEmpty)
   const canvasScrollRef = useRef<HTMLDivElement>(null)
 
   // 템플릿 적용 시 페이지 스크롤 맨 위로 이동

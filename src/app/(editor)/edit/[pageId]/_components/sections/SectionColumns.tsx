@@ -15,6 +15,7 @@ import useEditorStore from '@/store/editor'
 import type { ColumnChild, ColumnsSection } from '@/types/section'
 
 const STACK_WIDTH = 480
+const TABLET_WIDTH = 768
 
 const SectionColumns = ({ section }: { section: ColumnsSection }) => {
   const selectedId = useEditorStore((s) => s.selectedSectionId)
@@ -27,18 +28,31 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
   const total = widths.reduce((a, b) => a + b, 0)
 
   const gridRef = useRef<HTMLDivElement>(null)
-  const [stacked, setStacked] = useState(false)
+  const colCount = columns.length
+  const [effectiveCols, setEffectiveCols] = useState(colCount)
 
-  // 실제 폭으로 스택 여부 결정
+  // 실제 폭으로 표시 칸 수 결정, 3열은 태블릿급에서 2열 경유 후 모바일 1열
   useEffect(() => {
     const el = gridRef.current
     if (!el) {
       return
     }
-    const observer = new ResizeObserver(() => setStacked(el.clientWidth < STACK_WIDTH))
+    const observer = new ResizeObserver(() => {
+      const w = el.clientWidth
+      setEffectiveCols(w < STACK_WIDTH ? 1 : w < TABLET_WIDTH && colCount === 3 ? 2 : colCount)
+    })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [colCount])
+
+  // 칸 비율 드래그는 원래 칸 수로 펼쳐졌을 때만, 줄어들면 균등 + 줄바꿈
+  const isFull = effectiveCols === colCount
+  const templateColumns =
+    effectiveCols === 1
+      ? '1fr'
+      : isFull
+        ? widths.map((w) => `${w}fr`).join(' ')
+        : `repeat(${effectiveCols}, minmax(0, 1fr))`
 
   // 칸 블록 삭제, 즉시 비우고 실행취소 토스트(이미지는 토스트 닫힐 때 정리)
   const handleRemoveChild = (e: React.MouseEvent, colIndex: number, child: ColumnChild) => {
@@ -152,7 +166,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
     <div
       ref={gridRef}
       className="group/cols border-border relative grid gap-4 rounded-lg border p-2"
-      style={{ gridTemplateColumns: stacked ? '1fr' : widths.map((w) => `${w}fr`).join(' ') }}
+      style={{ gridTemplateColumns: templateColumns }}
     >
       {columns.map((col, i) => {
         const child = col[0]
@@ -191,7 +205,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
         )
       })}
 
-      {!stacked &&
+      {isFull &&
         widths.slice(0, -1).map((_, i) => {
           const cum = widths.slice(0, i + 1).reduce((a, b) => a + b, 0)
           return (

@@ -3,6 +3,7 @@
 import { Menu } from '@base-ui/react/menu'
 import {
   Columns2,
+  Columns3,
   CreditCard,
   GalleryHorizontalEnd,
   Image as ImageIcon,
@@ -34,6 +35,7 @@ const SECTION_TYPES: {
   { type: 'gallery', label: '갤러리', icon: GalleryHorizontalEnd },
   { type: 'card', label: '카드', icon: CreditCard },
   { type: 'columns', label: '2열', icon: Columns2, columnsCount: 2 },
+  { type: 'columns', label: '3열', icon: Columns3, columnsCount: 3 },
 ]
 
 const AddSectionMenu = ({

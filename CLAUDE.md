@@ -167,7 +167,7 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 - [x] 에러 처리 (`error.tsx`·`not-found.tsx` 추가, `proxy.ts` 가드 + 서버 액션 try/catch → 토스트)
 - [x] 반응형 점검 — 공개영역(랜딩/로그인/대시보드) 완료. 에디터 모바일 미리보기 전용은 Phase 5와 함께
-- [ ] 단위 테스트 작성 (Vitest)
+- [x] 단위 테스트 작성 (Vitest) — 순수 유틸 5종 콜로케이트 테스트(`handle`·`colorFill`·`altFromFileName`·`pageMeta`·`imageUrls`), `vitest.config.ts`(`@/` alias·node 환경)
 - [ ] E2E 테스트 작성 (Playwright 1~2개 시나리오)
 
 **외부 셋업 (직접 실행):**

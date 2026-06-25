@@ -4,6 +4,8 @@ import { nanoid } from 'nanoid'
 import type {
   ButtonSection,
   CardSection,
+  ColumnChild,
+  ColumnsSection,
   DividerSection,
   GallerySection,
   ImageSection,
@@ -71,6 +73,14 @@ const card = (layout: CardSection['style']['layout'] = 'grid'): CardSection => (
   style: { layout, align: 'left' },
 })
 
+// 칸마다 블록 하나, 6칸 그리드 균등 분할
+const columns = (children: ColumnChild[]): ColumnsSection => ({
+  id: nanoid(8),
+  type: 'columns',
+  content: { columns: children.map((child) => [child]) },
+  style: { widths: children.map(() => 6 / children.length) },
+})
+
 export interface EditorTemplate {
   id: string
   label: string
@@ -116,8 +126,7 @@ export const EDITOR_TEMPLATES: EditorTemplate[] = [
       divider(),
       title('찾아오시는 길'),
       paragraph('주소\n영업시간\n전화번호'),
-      button('전화하기'),
-      button('지도보기'),
+      columns([button('전화하기', 'center'), button('지도보기', 'center')]),
     ],
   },
   {
@@ -138,7 +147,10 @@ export const EDITOR_TEMPLATES: EditorTemplate[] = [
       gallery(),
       divider(),
       title('마음 전하실 곳', 'large', 'center'),
-      paragraph('신랑 측 · 신부 측 계좌를 적어보세요.', 'center'),
+      columns([
+        paragraph('신랑 측\n예금주 · 계좌번호', 'center'),
+        paragraph('신부 측\n예금주 · 계좌번호', 'center'),
+      ]),
       button('오시는 길', 'center'),
     ],
   },
@@ -152,7 +164,7 @@ export const EDITOR_TEMPLATES: EditorTemplate[] = [
       paragraph('어떤 일을 하는지, 어떤 강점이 있는지 한두 줄로 소개하세요.'),
       divider(),
       title('소개'),
-      paragraph('경력이나 전문 분야를 간단히 적어보세요.'),
+      columns([image('rounded'), paragraph('경력이나 전문 분야를 간단히 적어보세요.')]),
       title('작업물'),
       card('grid'),
       divider(),

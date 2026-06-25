@@ -77,7 +77,7 @@ const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
     }
   }
 
-  // 숨김 파일 입력은 대상을 불명확해 이미지 url을 먼저 저장
+  // 숨김 파일 입력은 대상이 불명확해 이미지 url을 먼저 저장
   const openReplace = (url: string) => {
     replaceTargetRef.current = url
     replaceInputRef.current?.click()

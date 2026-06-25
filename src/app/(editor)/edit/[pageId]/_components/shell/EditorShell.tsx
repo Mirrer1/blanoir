@@ -33,7 +33,7 @@ const EditorShell = () => {
     !(selectedSection.type === 'gallery' && selectedSection.content.images.length === 0) &&
     !(selectedSection.type === 'card' && selectedSection.content.cards.length === 0)
 
-  // 마운트 시 body  스크롤 잠금
+  // 마운트 시 body 스크롤 잠금
   useEffect(() => {
     const previous = document.body.style.overflow
     document.body.style.overflow = 'hidden'

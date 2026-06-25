@@ -17,7 +17,7 @@ interface EditorProviderProps {
 const EditorProvider = ({ page, children }: EditorProviderProps) => {
   const [store] = useState(() => createEditorStore(page))
 
-  // 이탈 저장이 이 참조를 쓰므로 cleanup에서 비우지 않고 다음 마운트가 덮어쓴다
+  // 이탈 저장이 이 참조를 쓰므로 cleanup에서 비우지 않고 다음 마운트가 덮어씀
   useEffect(() => {
     setCurrentEditorStore(store)
   }, [store])

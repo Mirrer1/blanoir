@@ -77,7 +77,7 @@ const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
     }
   }
 
-  // 숨김 파일 입력은 대상을 불명확해 카드 id를 먼저 저장
+  // 숨김 파일 입력은 대상이 불명확해 카드 id를 먼저 저장
   const openPick = (id: string) => {
     pickTargetRef.current = id
     pickInputRef.current?.click()

@@ -47,7 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false
       }
 
-      // 카카오 등 이메일 미제공 소셜은 provider+계정ID로 식별용 이메일을 합성한다.
+      // 카카오 등 이메일 미제공 소셜은 provider+계정ID로 식별용 이메일을 합성
       const email = user.email ?? `${account.provider}_${account.providerAccountId}@social.local`
 
       await connectDB()

@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 
 const { GMAIL_USER, GMAIL_APP_PASSWORD } = process.env
 
-// Gmail이 설정되어 있으면 SMTP로 발송하고 그렇지 안핟면 콘솔에 출력
+// Gmail이 설정되어 있으면 SMTP로 발송하고 그렇지 않으면 콘솔에 출력
 const transporter =
   GMAIL_USER && GMAIL_APP_PASSWORD
     ? nodemailer.createTransport({

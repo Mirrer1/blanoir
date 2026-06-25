@@ -49,7 +49,7 @@ const EditPage = async ({ params }: EditPageProps) => {
     sections: page.sections as Section[],
   }
 
-  // pageId로 키를 주어 페이지 이동 시 스토어를 새로 만든다
+  // pageId로 키를 주어 페이지 이동 시 스토어를 새로 생성
   return (
     <EditorProvider key={initialPage.pageId} page={initialPage}>
       <EditorViewportGate />

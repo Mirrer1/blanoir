@@ -6,6 +6,7 @@ import { useState } from 'react'
 import EditorBackgroundPanel from './EditorBackgroundPanel'
 import EditorButtonStylePanel from './EditorButtonStylePanel'
 import EditorCardStylePanel from './EditorCardStylePanel'
+import EditorColumnsStylePanel from './EditorColumnsStylePanel'
 import EditorDividerStylePanel from './EditorDividerStylePanel'
 import EditorGalleryStylePanel from './EditorGalleryStylePanel'
 import EditorImageStylePanel from './EditorImageStylePanel'
@@ -22,10 +23,20 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'background', label: '배경' },
 ]
 
-const EditorStylePanel = ({ section }: { section: Section }) => {
+const EditorStylePanel = ({
+  section,
+  isChild = false,
+}: {
+  section: Section
+  isChild?: boolean
+}) => {
   const imageUploading = useEditorStore((s) => s.imageUploading)
   const selectSection = useEditorStore((s) => s.selectSection)
   const [tab, setTab] = useState<Tab>('content')
+
+  // 칸 자식은 컨테이너가 없어 배경 탭을 두지 않음
+  const tabs = isChild ? TABS.filter((t) => t.key === 'content') : TABS
+  const activeTab = isChild ? 'content' : tab
 
   return (
     <div
@@ -36,13 +47,13 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
       )}
     >
       <div className="border-border flex items-center gap-1 border-b px-4">
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
             className={cn(
               '-mb-px cursor-pointer border-b-2 px-3 py-3 text-xs font-medium transition-colors',
-              tab === t.key
+              activeTab === t.key
                 ? 'border-foreground text-foreground'
                 : 'text-muted-foreground hover:text-foreground border-transparent',
             )}
@@ -59,8 +70,10 @@ const EditorStylePanel = ({ section }: { section: Section }) => {
         </button>
       </div>
       <div className="flex flex-col gap-6 p-4">
-        {tab === 'background' ? (
+        {activeTab === 'background' ? (
           <EditorBackgroundPanel section={section} />
+        ) : section.type === 'columns' ? (
+          <EditorColumnsStylePanel section={section} />
         ) : section.type === 'divider' ? (
           <EditorDividerStylePanel section={section} />
         ) : section.type === 'spacer' ? (

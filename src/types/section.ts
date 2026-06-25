@@ -136,6 +136,21 @@ export interface CardSection {
   style: CardStyle
 }
 
+// 열 섹션 칸에 들어갈 수 있는 좁은 블록(갤러리·카드·구분선·공백 제외)
+export type ColumnChild = TitleSection | ParagraphSection | ImageSection | ButtonSection
+export type ColumnChildType = ColumnChild['type']
+
+export interface ColumnsStyle {
+  widths: number[] // 6칸 그리드 기준 칸별 비율(합 6)
+}
+
+export interface ColumnsSection {
+  id: string
+  type: 'columns'
+  content: { columns: ColumnChild[][] } // 열마다 블록 배열, 현재 슬롯형이라 0~1개
+  style: ColumnsStyle
+}
+
 export type SectionAnimation = 'none' | 'up' | 'down' | 'left' | 'right' | 'fade' | 'zoom' | 'blur'
 
 // 모든 섹션 공통 컨테이너 속성
@@ -155,6 +170,7 @@ export type Section = (
   | ImageSection
   | GallerySection
   | CardSection
+  | ColumnsSection
 ) & { container?: ContainerStyle }
 export type SectionType = Section['type']
 export type SectionStyle = Section['style']

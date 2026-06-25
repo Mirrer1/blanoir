@@ -2,6 +2,7 @@
 
 import { Menu } from '@base-ui/react/menu'
 import {
+  Columns2,
   CreditCard,
   GalleryHorizontalEnd,
   Image as ImageIcon,
@@ -18,7 +19,12 @@ import { Button } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
 import type { SectionType } from '@/types/section'
 
-const SECTION_TYPES: { type: SectionType; label: string; icon: LucideIcon }[] = [
+const SECTION_TYPES: {
+  type: SectionType
+  label: string
+  icon: LucideIcon
+  columnsCount?: number
+}[] = [
   { type: 'title', label: '제목', icon: Type },
   { type: 'paragraph', label: '문단', icon: Pilcrow },
   { type: 'image', label: '이미지', icon: ImageIcon },
@@ -27,6 +33,7 @@ const SECTION_TYPES: { type: SectionType; label: string; icon: LucideIcon }[] = 
   { type: 'button', label: '버튼', icon: MousePointerClick },
   { type: 'gallery', label: '갤러리', icon: GalleryHorizontalEnd },
   { type: 'card', label: '카드', icon: CreditCard },
+  { type: 'columns', label: '2열', icon: Columns2, columnsCount: 2 },
 ]
 
 const AddSectionMenu = ({
@@ -41,9 +48,9 @@ const AddSectionMenu = ({
   const addSection = useEditorStore((s) => s.addSection)
 
   // 메뉴 항목 캔버스로 버블링
-  const handleAdd = (e: React.MouseEvent, type: SectionType) => {
+  const handleAdd = (e: React.MouseEvent, type: SectionType, columnsCount?: number) => {
     e.stopPropagation()
-    addSection(type, index)
+    addSection(type, index, columnsCount)
     onAdded?.()
   }
 
@@ -70,10 +77,10 @@ const AddSectionMenu = ({
         <Menu.Backdrop className="fixed inset-0 z-40" />
         <Menu.Positioner sideOffset={6} align="center" className="z-50">
           <Menu.Popup className="bg-background min-w-36 origin-top rounded-lg border p-1 shadow-md transition-[transform,opacity] duration-150 ease-out data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
-            {SECTION_TYPES.map(({ type, label, icon: Icon }) => (
+            {SECTION_TYPES.map(({ type, label, icon: Icon, columnsCount }) => (
               <Menu.Item
-                key={type}
-                onClick={(e) => handleAdd(e, type)}
+                key={label}
+                onClick={(e) => handleAdd(e, type, columnsCount)}
                 className="data-[highlighted]:bg-muted flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none"
               >
                 <Icon className="size-4" />

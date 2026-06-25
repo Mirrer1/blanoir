@@ -8,6 +8,9 @@ import { createStore } from 'zustand/vanilla'
 import type {
   ButtonStyle,
   CardStyle,
+  ColumnChild,
+  ColumnChildType,
+  ColumnsStyle,
   ContainerStyle,
   DividerStyle,
   GalleryStyle,
@@ -46,7 +49,7 @@ interface EditorState {
   setPublic: (isPublic: boolean) => void
   selectSection: (id: string | null) => void
   setImageUploading: (uploading: boolean) => void
-  addSection: (type: SectionType, index?: number) => void
+  addSection: (type: SectionType, index?: number, columnsCount?: number) => void
   replaceSections: (sections: Section[]) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
   updateSectionStyle: (id: string, style: Partial<SectionStyle>) => void
@@ -54,6 +57,10 @@ interface EditorState {
   removeSection: (id: string) => void
   restoreSection: (section: Section, index: number) => void
   moveSection: (fromIndex: number, toIndex: number) => void
+  addColumnChild: (sectionId: string, colIndex: number, type: ColumnChildType) => void
+  removeColumnChild: (childId: string) => void
+  restoreColumnChild: (sectionId: string, colIndex: number, child: ColumnChild) => void
+  setColumnWidths: (sectionId: string, widths: number[]) => void
   setSaveStatus: (status: SaveStatus) => void
   markSaved: (savedSnapshot: string, manual?: boolean) => void
 }
@@ -127,8 +134,19 @@ const DEFAULT_CARD_STYLE: CardStyle = {
   align: 'left',
 }
 
-const createSection = (type: SectionType): Section => {
+// 6칸 그리드를 칸 수로 균등 분할
+const evenWidths = (count: number): number[] => Array.from({ length: count }, () => 6 / count)
+
+const createSection = (type: SectionType, columnsCount = 2): Section => {
   const id = nanoid(8)
+  if (type === 'columns') {
+    return {
+      id,
+      type,
+      content: { columns: Array.from({ length: columnsCount }, () => []) },
+      style: { widths: evenWidths(columnsCount) } satisfies ColumnsStyle,
+    }
+  }
   if (type === 'title') {
     return {
       id,
@@ -163,6 +181,57 @@ const createSection = (type: SectionType): Section => {
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
+// top-level 섹션이든 열 섹션 칸 자식이든 id로 찾아 갱신
+type EditorNode = Section | ColumnChild
+const mapNode = (
+  sections: Section[],
+  id: string,
+  fn: (node: EditorNode) => EditorNode,
+): Section[] =>
+  sections.map((section) => {
+    if (section.id === id) {
+      return fn(section) as Section
+    }
+    if (section.type === 'columns') {
+      let touched = false
+      const columns = section.content.columns.map((col) =>
+        col.map((child) => {
+          if (child.id === id) {
+            touched = true
+            return fn(child) as ColumnChild
+          }
+          return child
+        }),
+      )
+      if (touched) {
+        return { ...section, content: { ...section.content, columns } }
+      }
+    }
+    return section
+  })
+
+// id로 노드(섹션/칸 자식) 조회
+export const findNode = (sections: Section[], id: string | null): EditorNode | null => {
+  if (!id) {
+    return null
+  }
+  for (const section of sections) {
+    if (section.id === id) {
+      return section
+    }
+    if (section.type === 'columns') {
+      for (const col of section.content.columns) {
+        for (const child of col) {
+          if (child.id === id) {
+            return child
+          }
+        }
+      }
+    }
+  }
+  return null
+}
+
 // 서버 데이터로 초기화된 페이지별 스토어 생성
 export const createEditorStore = (initial: EditorInitialPage) => {
   const snapshot = serializeContent(initial.title, initial.sections)
@@ -193,9 +262,9 @@ export const createEditorStore = (initial: EditorInitialPage) => {
     setImageUploading: (imageUploading) => set({ imageUploading }),
 
     // 지정 위치에 새 섹션 삽입 후 선택
-    addSection: (type, index) =>
+    addSection: (type, index, columnsCount) =>
       set((s) => {
-        const section = createSection(type)
+        const section = createSection(type, columnsCount)
         const sections = [...s.sections]
         sections.splice(index ?? sections.length, 0, section)
         return {
@@ -213,24 +282,24 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
       })),
 
-    // 특정 섹션의 콘텐츠 갱신
+    // 특정 섹션/칸 자식의 콘텐츠 갱신
     updateSectionContent: (id, content) =>
       set((s) => {
-        const sections = s.sections.map((section) =>
-          section.id === id
-            ? ({ ...section, content: { ...section.content, ...content } } as Section)
-            : section,
+        const sections = mapNode(
+          s.sections,
+          id,
+          (node) => ({ ...node, content: { ...node.content, ...content } }) as EditorNode,
         )
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
-    // 특정 섹션의 스타일 갱신
+    // 특정 섹션/칸 자식의 스타일 갱신
     updateSectionStyle: (id, style) =>
       set((s) => {
-        const sections = s.sections.map((section) =>
-          section.id === id
-            ? ({ ...section, style: { ...section.style, ...style } } as Section)
-            : section,
+        const sections = mapNode(
+          s.sections,
+          id,
+          (node) => ({ ...node, style: { ...node.style, ...style } }) as EditorNode,
         )
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
@@ -278,6 +347,76 @@ export const createEditorStore = (initial: EditorInitialPage) => {
           return s
         }
         sections.splice(toIndex, 0, moved)
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 열 칸에 새 블록 생성 후 선택
+    addColumnChild: (sectionId, colIndex, type) =>
+      set((s) => {
+        const child = createSection(type) as ColumnChild
+        const sections = s.sections.map((section) => {
+          if (section.id !== sectionId || section.type !== 'columns') {
+            return section
+          }
+          const columns = section.content.columns.map((col, i) => (i === colIndex ? [child] : col))
+          return { ...section, content: { ...section.content, columns } }
+        })
+        return {
+          sections,
+          selectedSectionId: child.id,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 열 칸 블록 비우기, 선택 중이면 해제
+    removeColumnChild: (childId) =>
+      set((s) => {
+        const sections = s.sections.map((section) => {
+          if (section.type !== 'columns') {
+            return section
+          }
+          let touched = false
+          const columns = section.content.columns.map((col) => {
+            if (col.some((child) => child.id === childId)) {
+              touched = true
+              return []
+            }
+            return col
+          })
+          return touched ? { ...section, content: { ...section.content, columns } } : section
+        })
+        return {
+          sections,
+          selectedSectionId: s.selectedSectionId === childId ? null : s.selectedSectionId,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 칸 블록 삭제 실행취소
+    restoreColumnChild: (sectionId, colIndex, child) =>
+      set((s) => {
+        const sections = s.sections.map((section) => {
+          if (section.id !== sectionId || section.type !== 'columns') {
+            return section
+          }
+          const columns = section.content.columns.map((col, i) => (i === colIndex ? [child] : col))
+          return { ...section, content: { ...section.content, columns } }
+        })
+        return {
+          sections,
+          selectedSectionId: child.id,
+          ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
+        }
+      }),
+
+    // 열 칸 너비 비율 설정
+    setColumnWidths: (sectionId, widths) =>
+      set((s) => {
+        const sections = s.sections.map((section) =>
+          section.id === sectionId && section.type === 'columns'
+            ? { ...section, style: { ...section.style, widths } }
+            : section,
+        )
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 

@@ -31,6 +31,15 @@ export const firstImageUrl = (sections: Section[]) => {
         return card.image
       }
     }
+    if (section.type === 'columns') {
+      for (const col of section.content.columns) {
+        for (const child of col) {
+          if (child.type === 'image' && child.content.src) {
+            return child.content.src
+          }
+        }
+      }
+    }
   }
   return ''
 }

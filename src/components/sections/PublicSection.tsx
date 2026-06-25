@@ -1,5 +1,6 @@
 import SectionButton from './SectionButton'
 import SectionCardView from './SectionCardView'
+import SectionColumnsView from './SectionColumnsView'
 import SectionDivider from './SectionDivider'
 import SectionGalleryView from './SectionGalleryView'
 import SectionImageView from './SectionImageView'
@@ -7,8 +8,23 @@ import SectionParagraphView from './SectionParagraphView'
 import SectionReveal from './SectionReveal'
 import SectionSpacer from './SectionSpacer'
 import SectionTitleView from './SectionTitleView'
-import type { Section } from '@/types/section'
+import type { ColumnChild, Section } from '@/types/section'
 import { containerBackground } from '@/utils/colorFill'
+
+// 칸 자식이 내용 없는지 판정
+const isEmptyChild = (child?: ColumnChild) => {
+  if (!child) {
+    return true
+  }
+  if (child.type === 'title' || child.type === 'paragraph') {
+    return !child.content.text.trim()
+  }
+  if (child.type === 'image') {
+    return !child.content.src
+  }
+  // 버튼은 라벨이 항상 있어 비어있지 않음
+  return false
+}
 
 // 내용을 안 채운 섹션은 공개 페이지에서 숨김
 // divider/spacer는 구조 섹션이라 항상 표시
@@ -24,6 +40,9 @@ const isEmptySection = (section: Section) => {
   }
   if (section.type === 'card') {
     return section.content.cards.length === 0
+  }
+  if (section.type === 'columns') {
+    return section.content.columns.every((col) => isEmptyChild(col[0]))
   }
   // 버튼은 라벨이 항상 있어 숨기지 않음
   // divider/spacer도 구조 섹션이라 표시
@@ -48,6 +67,7 @@ const PublicSection = ({ section }: { section: Section }) =>
           {section.type === 'button' && <SectionButton section={section} live />}
           {section.type === 'gallery' && <SectionGalleryView section={section} />}
           {section.type === 'card' && <SectionCardView section={section} />}
+          {section.type === 'columns' && <SectionColumnsView section={section} />}
         </div>
       </div>
     </SectionReveal>

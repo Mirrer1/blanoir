@@ -15,5 +15,14 @@ export const sectionImageUrls = (section: Section): string[] => {
   if (section.type === 'gallery') {
     section.content.images.forEach((image) => image.url && urls.push(image.url))
   }
+  if (section.type === 'columns') {
+    section.content.columns.forEach((col) =>
+      col.forEach((child) => {
+        if (child.type === 'image' && child.content.src) {
+          urls.push(child.content.src)
+        }
+      }),
+    )
+  }
   return urls
 }

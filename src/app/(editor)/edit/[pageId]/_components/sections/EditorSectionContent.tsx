@@ -1,6 +1,7 @@
 'use client'
 
 import SectionCard from './SectionCard'
+import SectionColumns from './SectionColumns'
 import SectionGallery from './SectionGallery'
 import SectionImage from './SectionImage'
 import SectionParagraph from './SectionParagraph'
@@ -28,6 +29,7 @@ const EditorSectionContent = ({ section, isSelected = false }: EditorSectionCont
       {section.type === 'button' && <SectionButton section={section} />}
       {section.type === 'gallery' && <SectionGallery section={section} />}
       {section.type === 'card' && <SectionCard section={section} />}
+      {section.type === 'columns' && <SectionColumns section={section} />}
     </>
   )
 }

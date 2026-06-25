@@ -10,11 +10,14 @@ import EditorHeader from './EditorHeader'
 import EditorTemplatePanel from './EditorTemplatePanel'
 import useAutoSave from '@/hooks/useAutoSave'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
-import useEditorStore from '@/store/editor'
+import useEditorStore, { findNode } from '@/store/editor'
 
 const EditorShell = () => {
-  const selectedSection = useEditorStore(
-    (s) => s.sections.find((section) => section.id === s.selectedSectionId) ?? null,
+  // 선택은 top-level 섹션 또는 열 칸 자식 모두 가리킬 수 있음
+  const selectedNode = useEditorStore((s) => findNode(s.sections, s.selectedSectionId))
+  const isChildSelected = useEditorStore(
+    (s) =>
+      !!s.selectedSectionId && !s.sections.some((section) => section.id === s.selectedSectionId),
   )
 
   const [templateOpen, setTemplateOpen] = useState(true)
@@ -27,11 +30,12 @@ const EditorShell = () => {
     })
   }
 
+  // 빈 이미지(업로드 전)·빈 갤러리/카드는 패널을 띄우지 않음
   const showStylePanel =
-    !!selectedSection &&
-    !(selectedSection.type === 'image' && !selectedSection.content.src) &&
-    !(selectedSection.type === 'gallery' && selectedSection.content.images.length === 0) &&
-    !(selectedSection.type === 'card' && selectedSection.content.cards.length === 0)
+    !!selectedNode &&
+    !(selectedNode.type === 'image' && !selectedNode.content.src) &&
+    !(selectedNode.type === 'gallery' && selectedNode.content.images.length === 0) &&
+    !(selectedNode.type === 'card' && selectedNode.content.cards.length === 0)
 
   // 마운트 시 body 스크롤 잠금
   useEffect(() => {
@@ -76,7 +80,7 @@ const EditorShell = () => {
         )}
         <EditorCanvas scrollRef={canvasScrollRef} />
         <AnimatePresence>
-          {selectedSection && showStylePanel && (
+          {selectedNode && showStylePanel && (
             <motion.aside
               initial={{ width: 0 }}
               animate={{ width: 320 }}
@@ -84,7 +88,11 @@ const EditorShell = () => {
               transition={{ duration: 0.22, ease: 'easeOut' }}
               className="h-full shrink-0 overflow-hidden"
             >
-              <EditorStylePanel key={selectedSection.id} section={selectedSection} />
+              <EditorStylePanel
+                key={selectedNode.id}
+                section={selectedNode}
+                isChild={isChildSelected}
+              />
             </motion.aside>
           )}
         </AnimatePresence>

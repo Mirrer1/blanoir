@@ -38,7 +38,9 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **Vercel 배포 완료.** `blanoir.vercel.app`에 연결·env 등록(Mongo·소셜 3종·Cloudinary·Gmail + `NEXT_PUBLIC_SITE_URL`/`NEXTAUTH_URL`·검증 코드), 함수 리전을 Atlas와 동일한 서울(`icn1`)로 맞춰 왕복 지연 최소화. 이미지 업로드 Server Action은 기본 1MB 제한을 넘는 이미지가 500 나던 걸 `next.config.ts`의 `serverActions.bodySizeLimit` 6MB 상향으로 해결. Atlas Network Access는 Vercel IP 비고정이라 `0.0.0.0/0` 허용. 구글·네이버 서치콘솔 소유권 인증(메타태그 env) + sitemap 제출. 도메인은 데모라 미구매(`vercel.app` 사용, 추후 구매 시 env 교체·OAuth/검증 재설정).
 
-**남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404), 공개 페이지 자체 다크 토글.
+**열(다단) 섹션·열 테스트·템플릿 패널 기억.** 가로로 칸을 나누는 열 섹션 추가로 섹션 9종 — 추가 메뉴에 2열/3열. **슬롯형**(한 칸 한 블록)이라 중첩 dnd 없이 안전: 칸엔 제목·문단·이미지·버튼만 넣고 갤러리·카드·구분선·공백은 제외, 칸 편집은 기존 섹션처럼 캔버스 인라인(클릭하면 그 칸 스타일 패널), 빈 칸은 "+추가"로 4종 메뉴, 칸 이미지는 일반 이미지 섹션과 동일하게 동작. 데이터는 `types/section.ts`의 `ColumnsSection`(`content.columns: ColumnChild[][]`·`style.widths`), 향후 한 칸에 여러 블록 쌓기 대비해 칸을 배열로 둠. 스토어 갱신은 top-level 섹션과 칸 자식을 한 id로 찾는 `mapNode`·`findNode`로 일원화해 기존 텍스트·버튼·이미지 패널을 그대로 재활용. 너비는 6칸 그리드 한 칸 단위로 경계 드래그(드래그 중엔 DOM 직접 갱신해 부드럽게, 놓으면 ease-out 안착), 좁아지면 3열→태블릿 2열→모바일 1열 자동 스택(`ResizeObserver`). 칸 콘텐츠는 세로 가운데 정렬, 모든 칸이 비면 공개에서 숨김, 컨테이너 배경·등장효과는 열 블록 전체에 적용. **추가는 캔버스, 순서변경·삭제는 스타일 패널**로 갤러리·카드와 분담 통일(`EditorColumnsStylePanel`에 패널 내부 sortable 리스트 + 비우기, 스토어 `moveColumn`·`removeColumnChild`). 템플릿은 어울리는 자리에만 반영(청첩장 신랑·신부, 포트폴리오 사진·소개, 매장 전화·지도). 열 스토어 로직은 단위 테스트로 검증(`store/editor.test.ts` — `findNode`·`addSection(columns)`·`addColumnChild`·중첩 `updateSection*`·`removeColumnChild`·`restoreColumnChild`·`setColumnWidths`·`moveColumn`). 템플릿 시작 패널은 빈 페이지면 열고 그 페이지에서 한 번 닫으면 페이지별로 닫힘을 기억(`hooks/useTemplatePanel`의 `useSyncExternalStore`+localStorage로 SSR 하이드레이션·effect-setState 회피).
+
+**남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404, 우선순위 낮음), E2E 테스트(Playwright 1~2 시나리오). 공개 페이지 자체 다크 토글은 안 하기로.
 
 ## 문서 안내
 
@@ -167,7 +169,7 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 - [x] 에러 처리 (`error.tsx`·`not-found.tsx` 추가, `proxy.ts` 가드 + 서버 액션 try/catch → 토스트)
 - [x] 반응형 점검 — 공개영역(랜딩/로그인/대시보드) 완료. 에디터 모바일 미리보기 전용은 Phase 5와 함께
-- [x] 단위 테스트 작성 (Vitest) — 순수 유틸 5종 콜로케이트 테스트(`handle`·`colorFill`·`altFromFileName`·`pageMeta`·`imageUrls`), `vitest.config.ts`(`@/` alias·node 환경)
+- [x] 단위 테스트 작성 (Vitest) — 순수 유틸 5종 콜로케이트 테스트(`handle`·`colorFill`·`altFromFileName`·`pageMeta`·`imageUrls`) + 열 섹션 스토어 로직 테스트(`store/editor.test.ts`), `vitest.config.ts`(`@/` alias·node 환경)
 - [ ] E2E 테스트 작성 (Playwright 1~2개 시나리오)
 
 **외부 셋업 (직접 실행):**

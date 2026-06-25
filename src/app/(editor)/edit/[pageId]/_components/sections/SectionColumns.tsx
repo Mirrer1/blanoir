@@ -1,18 +1,15 @@
 'use client'
 
-import { RotateCcw, Trash2, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
 
 import AddColumnChildMenu from './AddColumnChildMenu'
 import SectionImage from './SectionImage'
 import SectionParagraph from './SectionParagraph'
 import SectionTitle from './SectionTitle'
-import { deleteImage } from '@/actions/upload'
 import SectionButton from '@/components/sections/SectionButton'
 import { cn } from '@/lib/utils'
 import useEditorStore from '@/store/editor'
-import type { ColumnChild, ColumnsSection } from '@/types/section'
+import type { ColumnsSection } from '@/types/section'
 
 const STACK_WIDTH = 480
 const TABLET_WIDTH = 768
@@ -20,8 +17,6 @@ const TABLET_WIDTH = 768
 const SectionColumns = ({ section }: { section: ColumnsSection }) => {
   const selectedId = useEditorStore((s) => s.selectedSectionId)
   const selectSection = useEditorStore((s) => s.selectSection)
-  const removeColumnChild = useEditorStore((s) => s.removeColumnChild)
-  const restoreColumnChild = useEditorStore((s) => s.restoreColumnChild)
   const setColumnWidths = useEditorStore((s) => s.setColumnWidths)
   const { columns } = section.content
   const { widths } = section.style
@@ -45,7 +40,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
     return () => observer.disconnect()
   }, [colCount])
 
-  // 칸 비율 드래그는 원래 칸 수로 펼쳐졌을 때만, 줄어들면 균등 + 줄바꿈
+  // 원래 칸 수로 펼쳐졌을 때만 비율 드래그, 좁아지면 균등 줄바꿈
   const isFull = effectiveCols === colCount
   const templateColumns =
     effectiveCols === 1
@@ -53,41 +48,6 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
       : isFull
         ? widths.map((w) => `${w}fr`).join(' ')
         : `repeat(${effectiveCols}, minmax(0, 1fr))`
-
-  // 칸 블록 삭제, 즉시 비우고 실행취소 토스트(이미지는 토스트 닫힐 때 정리)
-  const handleRemoveChild = (e: React.MouseEvent, colIndex: number, child: ColumnChild) => {
-    e.stopPropagation()
-    let undone = false
-    let cleaned = false
-    const cleanup = () => {
-      if (undone || cleaned) {
-        return
-      }
-      cleaned = true
-      if (child.type === 'image' && child.content.src) {
-        void deleteImage(child.content.src)
-      }
-    }
-    removeColumnChild(child.id)
-    toast('블록을 삭제했어요', {
-      icon: <Trash2 className="size-4" />,
-      duration: 5000,
-      action: {
-        label: (
-          <span className="flex items-center gap-1.5">
-            <RotateCcw className="size-3.5" />
-            실행취소
-          </span>
-        ),
-        onClick: () => {
-          undone = true
-          restoreColumnChild(section.id, colIndex, child)
-        },
-      },
-      onAutoClose: cleanup,
-      onDismiss: cleanup,
-    })
-  }
 
   // 경계 핸들 드래그: 중엔 DOM을 직접 따라가 부드럽게, 놓으면 가까운 칸으로 ease-out 안착
   const handleResize = (e: React.PointerEvent, i: number) => {
@@ -180,7 +140,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
                   selectSection(child.id)
                 }}
                 className={cn(
-                  'group/cell relative flex h-full min-h-20 flex-col justify-center rounded-md p-2 transition-colors',
+                  'flex h-full min-h-20 flex-col justify-center rounded-md p-2 transition-colors',
                   sel && 'ring-foreground/20 ring-2 ring-inset',
                 )}
               >
@@ -190,13 +150,6 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
                 )}
                 {child.type === 'button' && <SectionButton section={child} />}
                 {child.type === 'image' && <SectionImage section={child} isSelected={sel} />}
-                <button
-                  aria-label="블록 제거"
-                  onClick={(e) => handleRemoveChild(e, i, child)}
-                  className="border-border bg-background text-muted-foreground hover:text-destructive absolute top-1 right-1 z-10 flex size-6 cursor-pointer items-center justify-center rounded-md border opacity-0 shadow-sm transition-opacity group-hover/cell:opacity-100"
-                >
-                  <X className="size-3.5" />
-                </button>
               </div>
             ) : (
               <AddColumnChildMenu sectionId={section.id} colIndex={i} />

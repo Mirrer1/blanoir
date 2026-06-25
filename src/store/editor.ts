@@ -61,6 +61,7 @@ interface EditorState {
   removeColumnChild: (childId: string) => void
   restoreColumnChild: (sectionId: string, colIndex: number, child: ColumnChild) => void
   setColumnWidths: (sectionId: string, widths: number[]) => void
+  moveColumn: (sectionId: string, from: number, to: number) => void
   setSaveStatus: (status: SaveStatus) => void
   markSaved: (savedSnapshot: string, manual?: boolean) => void
 }
@@ -181,6 +182,14 @@ const createSection = (type: SectionType, columnsCount = 2): Section => {
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
+// 배열 원소를 from→to로 이동
+const moveItem = <T>(arr: T[], from: number, to: number): T[] => {
+  const next = [...arr]
+  const [moved] = next.splice(from, 1)
+  next.splice(to, 0, moved)
+  return next
+}
+
 // top-level 섹션이든 열 섹션 칸 자식이든 id로 찾아 갱신
 type EditorNode = Section | ColumnChild
 const mapNode = (
@@ -210,7 +219,7 @@ const mapNode = (
     return section
   })
 
-// id로 노드(섹션/칸 자식) 조회
+// 섹션이나 칸 자식을 id로 조회
 export const findNode = (sections: Section[], id: string | null): EditorNode | null => {
   if (!id) {
     return null
@@ -417,6 +426,22 @@ export const createEditorStore = (initial: EditorInitialPage) => {
             ? { ...section, style: { ...section.style, widths } }
             : section,
         )
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 열을 from→to로 이동, 내용·너비 함께
+    moveColumn: (sectionId, from, to) =>
+      set((s) => {
+        const sections = s.sections.map((section) => {
+          if (section.id !== sectionId || section.type !== 'columns') {
+            return section
+          }
+          return {
+            ...section,
+            content: { ...section.content, columns: moveItem(section.content.columns, from, to) },
+            style: { ...section.style, widths: moveItem(section.style.widths, from, to) },
+          }
+        })
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 

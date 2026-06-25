@@ -1,17 +1,108 @@
 'use client'
 
-import type { ColumnsSection } from '@/types/section'
+import {
+  DndContext,
+  type DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { RotateCcw, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
-// 열 섹션은 칸 편집·너비 조절을 캔버스에서 직접
+import EditorColumnItem from './EditorColumnItem'
+import EditorStyleField from './EditorStyleField'
+import { deleteImage } from '@/actions/upload'
+import useEditorStore from '@/store/editor'
+import type { ColumnChild, ColumnsSection } from '@/types/section'
+
+const CHILD_LABEL: Record<ColumnChild['type'], string> = {
+  title: '제목',
+  paragraph: '문단',
+  image: '이미지',
+  button: '버튼',
+}
+const labelOf = (col: ColumnChild[]) => (col[0] ? CHILD_LABEL[col[0].type] : '빈 칸')
+
+// 열 순서·삭제는 패널에서, 너비는 캔버스 경계 드래그
 const EditorColumnsStylePanel = ({ section }: { section: ColumnsSection }) => {
-  const count = section.content.columns.length
+  const moveColumn = useEditorStore((s) => s.moveColumn)
+  const removeColumnChild = useEditorStore((s) => s.removeColumnChild)
+  const restoreColumnChild = useEditorStore((s) => s.restoreColumnChild)
+  const { columns } = section.content
+  const ids = columns.map((col, i) => col[0]?.id ?? `empty-${i}`)
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) {
+      return
+    }
+    const from = ids.indexOf(active.id as string)
+    const to = ids.indexOf(over.id as string)
+    if (from !== -1 && to !== -1) {
+      moveColumn(section.id, from, to)
+    }
+  }
+
+  // 즉시 비우고 실행취소 토스트, 이미지는 토스트 닫힐 때 정리
+  const handleRemove = (colIndex: number, child: ColumnChild) => {
+    let undone = false
+    let cleaned = false
+    const cleanup = () => {
+      if (undone || cleaned) {
+        return
+      }
+      cleaned = true
+      if (child.type === 'image' && child.content.src) {
+        void deleteImage(child.content.src)
+      }
+    }
+    removeColumnChild(child.id)
+    toast('블록을 비웠어요', {
+      icon: <Trash2 className="size-4" />,
+      duration: 5000,
+      action: {
+        label: (
+          <span className="flex items-center gap-1.5">
+            <RotateCcw className="size-3.5" />
+            실행취소
+          </span>
+        ),
+        onClick: () => {
+          undone = true
+          restoreColumnChild(section.id, colIndex, child)
+        },
+      },
+      onAutoClose: cleanup,
+      onDismiss: cleanup,
+    })
+  }
 
   return (
-    <div className="text-muted-foreground space-y-2 text-xs leading-relaxed">
-      <p>{count}열 섹션이에요.</p>
-      <p>각 칸을 클릭해 블록을 추가·편집하고, 칸 사이 경계를 드래그하면 너비가 한 칸씩 조절돼요.</p>
-      <p>배경·등장 효과는 위 배경 탭에서 설정할 수 있어요.</p>
-    </div>
+    <EditorStyleField label="열 순서">
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+          <div className="flex flex-col gap-1.5">
+            {columns.map((col, i) => (
+              <EditorColumnItem
+                key={ids[i]}
+                id={ids[i]}
+                order={i + 1}
+                label={labelOf(col)}
+                onRemove={col[0] ? () => handleRemove(i, col[0]) : undefined}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+      <p className="text-muted-foreground text-xs leading-relaxed">
+        칸 너비는 캔버스에서 경계를 드래그해 조절해요.
+      </p>
+    </EditorStyleField>
   )
 }
 

@@ -152,3 +152,20 @@ describe('setColumnWidths', () => {
     expect(columnsOf(store).style.widths).toEqual([4, 2])
   })
 })
+
+describe('moveColumn', () => {
+  it('열을 from→to로 옮기며 내용·너비 함께 이동', () => {
+    const store = makeStore()
+    store.getState().addSection('columns', undefined, 3)
+    const colId = columnsOf(store).id
+    store.getState().addColumnChild(colId, 0, 'title')
+    store.getState().setColumnWidths(colId, [3, 2, 1])
+    const childId = columnsOf(store).content.columns[0][0].id
+
+    store.getState().moveColumn(colId, 0, 2)
+    const col = columnsOf(store)
+    expect(col.content.columns[0]).toHaveLength(0)
+    expect(col.content.columns[2][0].id).toBe(childId)
+    expect(col.style.widths).toEqual([2, 1, 3])
+  })
+})

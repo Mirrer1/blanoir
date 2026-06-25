@@ -15,7 +15,7 @@ const ColumnChildView = ({ child, live = false }: { child: ColumnChild; live?: b
   if (child.type === 'button') {
     return <SectionButton section={child} live={live} />
   }
-  // 일반 이미지와 동일 표시(모양·비율·확대·초점 반영)
+  // 모양·비율·확대·초점까지 일반 이미지와 동일하게 표시
   return <SectionImageView section={child} />
 }
 

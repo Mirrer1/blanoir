@@ -41,12 +41,19 @@ const EditPage = async ({ params }: EditPageProps) => {
     notFound()
   }
 
+  // 버튼 링크에서 고를 수 있는 내 다른 페이지 목록
+  const myPages = await Page.find({ userId: session.user.id, pageId: { $ne: page.pageId } })
+    .select('pageId title isPublic')
+    .sort({ updatedAt: -1 })
+    .lean<{ pageId: string; title: string; isPublic: boolean }[]>()
+
   const initialPage: EditorInitialPage = {
     pageId: page.pageId,
     handle: session.user.handle,
     title: page.title,
     isPublic: page.isPublic,
     sections: page.sections as Section[],
+    myPages: myPages.map((p) => ({ pageId: p.pageId, title: p.title, isPublic: p.isPublic })),
   }
 
   // pageId로 키를 주어 페이지 이동 시 스토어를 새로 생성

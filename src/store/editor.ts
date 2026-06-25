@@ -24,12 +24,19 @@ import type {
 
 export type SaveStatus = 'idle' | 'saved' | 'manualSaved' | 'unsaved'
 
+export interface PageSummary {
+  pageId: string
+  title: string
+  isPublic: boolean
+}
+
 export interface EditorInitialPage {
   pageId: string
   handle: string
   title: string
   isPublic: boolean
   sections: Section[]
+  myPages: PageSummary[]
 }
 
 interface EditorState {
@@ -38,6 +45,7 @@ interface EditorState {
   title: string
   isPublic: boolean
   sections: Section[]
+  myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록, 저장 대상 아님
   selectedSectionId: string | null
   imageUploading: boolean
   isDirty: boolean
@@ -250,6 +258,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
     title: initial.title,
     isPublic: initial.isPublic,
     sections: initial.sections,
+    myPages: initial.myPages,
     selectedSectionId: null,
     imageUploading: false,
     isDirty: false,

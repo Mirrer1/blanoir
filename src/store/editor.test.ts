@@ -28,7 +28,14 @@ const columnsWith = (columns: ColumnsSection['content']['columns']): ColumnsSect
 })
 
 const makeStore = (sections: Section[] = []) =>
-  createEditorStore({ pageId: 'p1', handle: 'h', title: 't', isPublic: false, sections })
+  createEditorStore({
+    pageId: 'p1',
+    handle: 'h',
+    title: 't',
+    isPublic: false,
+    sections,
+    myPages: [],
+  })
 
 // 스토어에서 columns 섹션을 타입 좁혀 꺼냄
 const columnsOf = (store: EditorStore): ColumnsSection => {

@@ -103,17 +103,18 @@ const EditorCanvas = ({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement
                 ))}
               </div>
             </SortableContext>
-            <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-6">
+            <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2">
               <div className="bg-border h-px flex-1" />
               <AddSectionMenu onAdded={scrollToBottom} />
               <div className="bg-border h-px flex-1" />
             </div>
-            <DragOverlay>
+            <DragOverlay dropAnimation={null}>
               {activeSection ? (
                 <div
                   className={cn(
-                    'cursor-grabbing rounded-md px-3 py-2 opacity-50',
+                    'mx-auto w-full max-w-5xl cursor-grabbing rounded-md py-2 opacity-50',
                     activeSection.type === 'spacer' ? 'bg-muted' : 'bg-background',
+                    !['image', 'gallery', 'card', 'columns'].includes(activeSection.type) && 'px-3',
                   )}
                 >
                   <EditorSectionContent section={activeSection} />

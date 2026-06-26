@@ -88,7 +88,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     removeSection(removed.id)
     toast('섹션을 삭제했어요', {
       icon: <Trash2 className="size-4" />,
-      duration: 5000,
+      duration: 4000,
       action: {
         label: (
           <span className="flex items-center gap-1.5">

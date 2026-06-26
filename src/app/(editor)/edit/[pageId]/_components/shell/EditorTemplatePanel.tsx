@@ -34,7 +34,7 @@ const EditorTemplatePanel = ({
     onApplied()
     toast(`${template.label} 템플릿을 적용했어요`, {
       icon: <LayoutTemplate className="size-4" />,
-      duration: 5000,
+      duration: 4000,
       action: {
         label: (
           <span className="flex items-center gap-1.5">

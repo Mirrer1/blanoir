@@ -64,7 +64,7 @@ const EditorColumnsStylePanel = ({ section }: { section: ColumnsSection }) => {
     removeColumnChild(child.id)
     toast('블록을 비웠어요', {
       icon: <Trash2 className="size-4" />,
-      duration: 5000,
+      duration: 4000,
       action: {
         label: (
           <span className="flex items-center gap-1.5">

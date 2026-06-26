@@ -67,7 +67,7 @@ const SectionCard = ({ section }: { section: CardSection }) => {
         <button
           onClick={openPicker}
           disabled={isUploading}
-          className="group/add border-border hover:border-foreground/40 w-full cursor-pointer rounded-xl border border-dashed p-5 transition-colors"
+          className="group/add border-foreground/25 hover:border-foreground/40 w-full cursor-pointer rounded-xl border border-dashed p-5 transition-colors"
         >
           <div className="grid grid-cols-3 gap-3">
             {[0, 1, 2].map((i) => (
@@ -75,9 +75,9 @@ const SectionCard = ({ section }: { section: CardSection }) => {
                 key={i}
                 className="border-border bg-muted/30 flex flex-col gap-2 rounded-lg border p-2"
               >
-                <div className="bg-muted aspect-video w-full rounded" />
-                <div className="bg-muted h-2.5 w-2/3 rounded" />
-                <div className="bg-muted h-2 w-full rounded" />
+                <div className="bg-muted-foreground/20 aspect-video w-full rounded" />
+                <div className="bg-muted-foreground/20 h-2.5 w-2/3 rounded" />
+                <div className="bg-muted-foreground/20 h-2 w-full rounded" />
               </div>
             ))}
           </div>

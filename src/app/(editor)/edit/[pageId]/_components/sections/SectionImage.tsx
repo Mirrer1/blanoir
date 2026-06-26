@@ -118,7 +118,7 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
         <button
           onClick={openPicker}
           disabled={isUploading}
-          className="border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-12 transition-colors"
+          className="border-foreground/25 text-muted-foreground hover:border-foreground/40 hover:text-foreground flex w-full cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed px-6 py-12 transition-colors"
         >
           <ImagePlus className="size-6" />
           <span className="text-sm">이미지 추가</span>

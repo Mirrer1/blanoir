@@ -53,11 +53,11 @@ const SectionGallery = ({ section }: { section: GallerySection }) => {
         <button
           onClick={openPicker}
           disabled={isUploading}
-          className="group/add border-border hover:border-foreground/40 w-full cursor-pointer rounded-xl border border-dashed p-5 transition-colors"
+          className="group/add border-foreground/25 hover:border-foreground/40 w-full cursor-pointer rounded-xl border border-dashed p-5 transition-colors"
         >
           <div className="grid grid-cols-3 gap-3">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="bg-muted aspect-square w-full rounded-lg" />
+              <div key={i} className="bg-muted-foreground/20 aspect-square w-full rounded-lg" />
             ))}
           </div>
           <div className="text-muted-foreground group-hover/add:text-foreground mt-4 flex items-center justify-center gap-1.5 text-sm transition-colors">

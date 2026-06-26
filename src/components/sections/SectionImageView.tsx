@@ -26,6 +26,7 @@ interface SectionImageViewProps {
   src?: string // 미리보기 등 표시 src 교체
   draggable?: boolean // 초점 드래그 커서 표시
   overlay?: ReactNode // 업로드 스피너 등 프레임 위 오버레이
+  live?: boolean // 공개·미리보기에서만 링크 동작
   onPointerDown?: PointerEventHandler
   onPointerMove?: PointerEventHandler
   onPointerUp?: PointerEventHandler
@@ -36,54 +37,76 @@ const SectionImageView = ({
   src,
   draggable,
   overlay,
+  live,
   onPointerDown,
   onPointerMove,
   onPointerUp,
 }: SectionImageViewProps) => {
-  const { alt } = section.content
+  const { alt, link } = section.content
   const { size, shape, align, ratio, zoom, focusX, focusY } = section.style
   const displaySrc = src ?? section.content.src
   const cropped = isImageCropped(section.style)
   const frameAspect =
     ratio === 'original' ? (shape === 'circle' ? '1 / 1' : undefined) : RATIO_ASPECT[ratio]
+  // 링크는 공개·미리보기일 때만 동작
+  const linked = !!live && !!link
+
+  const frameClass = cn(
+    'relative overflow-hidden',
+    SIZE_CLASS[size],
+    SHAPE_RADIUS[shape],
+    draggable && 'cursor-grab touch-none active:cursor-grabbing',
+  )
+  const frameInner = (
+    <>
+      {cropped ? (
+        <img
+          src={displaySrc}
+          alt={alt}
+          draggable={false}
+          style={{
+            objectPosition: `${focusX}% ${focusY}%`,
+            transform: `scale(${zoom})`,
+            transformOrigin: `${focusX}% ${focusY}%`,
+          }}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <img
+          src={displaySrc}
+          alt={alt}
+          draggable={false}
+          style={{ transform: `scale(${zoom})`, transformOrigin: `${focusX}% ${focusY}%` }}
+          className="w-full"
+        />
+      )}
+      {overlay}
+    </>
+  )
 
   return displaySrc ? (
     <div className={cn('flex', JUSTIFY_CLASS[align])}>
-      <div
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        style={{ aspectRatio: frameAspect }}
-        className={cn(
-          'relative overflow-hidden',
-          SIZE_CLASS[size],
-          SHAPE_RADIUS[shape],
-          draggable && 'cursor-grab touch-none active:cursor-grabbing',
-        )}
-      >
-        {cropped ? (
-          <img
-            src={displaySrc}
-            alt={alt}
-            draggable={false}
-            style={{
-              objectPosition: `${focusX}% ${focusY}%`,
-              transform: `scale(${zoom})`,
-              transformOrigin: `${focusX}% ${focusY}%`,
-            }}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <img
-            src={displaySrc}
-            alt={alt}
-            draggable={false}
-            style={{ transform: `scale(${zoom})`, transformOrigin: `${focusX}% ${focusY}%` }}
-            className="w-full"
-          />
-        )}
-        {overlay}
-      </div>
+      {linked ? (
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ aspectRatio: frameAspect }}
+          className={cn(frameClass, 'block')}
+        >
+          {frameInner}
+        </a>
+      ) : (
+        <div
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          style={{ aspectRatio: frameAspect }}
+          className={frameClass}
+        >
+          {frameInner}
+        </div>
+      )}
     </div>
   ) : null
 }

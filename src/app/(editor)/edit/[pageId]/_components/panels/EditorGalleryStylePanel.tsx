@@ -100,11 +100,17 @@ const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
       return
     }
     const next = [...images]
-    next[index] = uploaded
+    // 슬롯의 링크는 교체해도 유지
+    next[index] = { ...uploaded, link: images[index].link }
     updateSectionContent(section.id, { images: next })
     // 교체된 옛 이미지는 Cloudinary에서 삭제
     void deleteImage(target)
   }
+
+  const handleLinkChange = (url: string, value: string) =>
+    updateSectionContent(section.id, {
+      images: images.map((image) => (image.url === url ? { ...image, link: value } : image)),
+    })
 
   return (
     <>
@@ -167,8 +173,10 @@ const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
                   <EditorGalleryItem
                     key={image.url}
                     url={image.url}
+                    link={image.link ?? ''}
                     onReplace={openReplace}
                     onRemove={handleRemove}
+                    onLinkChange={handleLinkChange}
                   />
                 ))}
               </div>

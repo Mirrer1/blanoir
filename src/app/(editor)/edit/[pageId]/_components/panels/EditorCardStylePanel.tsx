@@ -24,9 +24,9 @@ import useEditorStore from '@/store/editor'
 import type { CardItem, CardLayout, CardSection } from '@/types/section'
 
 const LAYOUT_OPTIONS: { value: CardLayout; label: string }[] = [
-  { value: 'vertical', label: '세로형' },
-  { value: 'horizontal', label: '가로형' },
   { value: 'grid', label: '그리드형' },
+  { value: 'horizontal', label: '가로형' },
+  { value: 'vertical', label: '세로형' },
 ]
 
 const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
@@ -132,6 +132,9 @@ const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
   const handleDescriptionChange = (id: string, value: string) =>
     setCards(cards.map((card) => (card.id === id ? { ...card, description: value } : card)))
 
+  const handleLinkChange = (id: string, value: string) =>
+    setCards(cards.map((card) => (card.id === id ? { ...card, link: value } : card)))
+
   return (
     <>
       <EditorStyleField label="레이아웃">
@@ -188,6 +191,7 @@ const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
                     onRemoveImage={handleRemoveImage}
                     onTitleChange={handleTitleChange}
                     onDescriptionChange={handleDescriptionChange}
+                    onLinkChange={handleLinkChange}
                     onRemoveCard={handleRemoveCard}
                   />
                 ))}

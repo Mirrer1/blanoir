@@ -23,9 +23,11 @@ const CELL_CLASS = 'relative aspect-square shrink-0 grow-0 snap-start overflow-h
 const SectionGalleryView = ({
   section,
   pendingUrls = [], // 업로드 진행 중인 미리보기 셀
+  live, // 공개·미리보기에서만 이미지 링크 동작
 }: {
   section: GallerySection
   pendingUrls?: string[]
+  live?: boolean
 }) => {
   const trackRef = useRef<HTMLDivElement>(null)
   const [canLeft, setCanLeft] = useState(false)
@@ -80,6 +82,28 @@ const SectionGalleryView = ({
     return () => window.removeEventListener('resize', updateArrows)
   }, [updateArrows, images.length, pendingUrls.length, effectiveColumns, gapPx])
 
+  // 링크 있으면 공개·미리보기에서 이미지를 감쌈
+  const imageNodes = images.map((image) => {
+    const linked = !!live && !!image.link
+    const img = <img src={image.url} alt={image.alt} className="h-full w-full object-cover" />
+    return (
+      <div key={image.url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
+        {linked ? (
+          <a
+            href={image.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block h-full w-full"
+          >
+            {img}
+          </a>
+        ) : (
+          img
+        )}
+      </div>
+    )
+  })
+
   return (
     <div className="group/carousel relative">
       <div
@@ -88,11 +112,7 @@ const SectionGalleryView = ({
         className="flex snap-x snap-mandatory [scrollbar-width:none] overflow-x-auto [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         style={{ gap: gapPx }}
       >
-        {images.map((image) => (
-          <div key={image.url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
-            <img src={image.url} alt={image.alt} className="h-full w-full object-cover" />
-          </div>
-        ))}
+        {imageNodes}
         {pendingUrls.map((url) => (
           <div key={url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
             <img src={url} alt="" className="h-full w-full object-cover" />

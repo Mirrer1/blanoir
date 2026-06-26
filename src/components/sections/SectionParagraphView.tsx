@@ -12,10 +12,12 @@ const SectionParagraphView = ({
   section,
   placeholder,
   className,
+  live,
 }: {
   section: ParagraphSection
   placeholder?: string
   className?: string
+  live?: boolean
 }) => (
   <SectionTextView
     text={section.content.text}
@@ -25,6 +27,8 @@ const SectionParagraphView = ({
     tag="p"
     placeholder={placeholder}
     className={className}
+    link={section.content.link}
+    live={live}
   />
 )
 

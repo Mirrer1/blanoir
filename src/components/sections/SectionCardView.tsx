@@ -20,9 +20,15 @@ interface SectionCardViewProps {
   section: CardSection
   pendingUrls?: string[] // 업로드 진행 중인 미리보기 카드
   placeholders?: { title: string; description: string } // 에디터에서 빈 값 안내 문구
+  live?: boolean // 공개·미리보기에서만 카드 링크 동작
 }
 
-const SectionCardView = ({ section, pendingUrls = [], placeholders }: SectionCardViewProps) => {
+const SectionCardView = ({
+  section,
+  pendingUrls = [],
+  placeholders,
+  live,
+}: SectionCardViewProps) => {
   const gridRef = useRef<HTMLDivElement>(null)
   const [maxColumns, setMaxColumns] = useState(MAX_COLUMNS)
   const { cards } = section.content
@@ -80,53 +86,77 @@ const SectionCardView = ({ section, pendingUrls = [], placeholders }: SectionCar
     return () => window.removeEventListener('resize', equalize)
   }, [cards, isGrid, effectiveColumns, align])
 
-  return (
-    <div ref={gridRef} className={containerClass} style={containerStyle}>
-      {cards.map((card) => (
-        <div
-          key={card.id}
-          className={cn('border-border overflow-hidden rounded-xl border', isHorizontal && 'flex')}
-        >
-          {card.image && (
-            <img
-              src={card.image}
-              alt={card.alt}
-              className={cn(
-                'object-cover',
-                isHorizontal ? 'aspect-square w-2/5 shrink-0' : 'aspect-video w-full',
-              )}
-            />
-          )}
-          <div
+  // 링크 있으면 공개·미리보기에서 카드 전체를 감쌈
+  const cardNodes = cards.map((card) => {
+    const linked = !!live && !!card.link
+    const cardClass = cn(
+      'border-border overflow-hidden rounded-xl border',
+      isHorizontal && 'flex',
+      linked && 'block',
+    )
+    const cardInner = (
+      <>
+        {card.image && (
+          <img
+            src={card.image}
+            alt={card.alt}
             className={cn(
-              'flex flex-col gap-2 p-4',
-              isHorizontal && 'flex-1 justify-center',
-              alignClass,
+              'object-cover',
+              isHorizontal ? 'aspect-square w-2/5 shrink-0' : 'aspect-video w-full',
+            )}
+          />
+        )}
+        <div
+          className={cn(
+            'flex flex-col gap-2 p-4',
+            isHorizontal && 'flex-1 justify-center',
+            alignClass,
+          )}
+        >
+          <p
+            data-card-title
+            className={cn(
+              titleClass,
+              'font-semibold break-words',
+              !card.title && placeholders && 'text-muted-foreground/40',
             )}
           >
-            <p
-              data-card-title
-              className={cn(
-                titleClass,
-                'font-semibold break-words',
-                !card.title && placeholders && 'text-muted-foreground/40',
-              )}
-            >
-              {card.title || placeholders?.title}
-            </p>
-            <p
-              data-card-desc
-              className={cn(
-                'text-muted-foreground break-words whitespace-pre-wrap',
-                descClass,
-                !card.description && placeholders && 'text-muted-foreground/40',
-              )}
-            >
-              {card.description || placeholders?.description}
-            </p>
-          </div>
+            {card.title || placeholders?.title}
+          </p>
+          <p
+            data-card-desc
+            className={cn(
+              'text-muted-foreground break-words whitespace-pre-wrap',
+              descClass,
+              !card.description && placeholders && 'text-muted-foreground/40',
+            )}
+          >
+            {card.description || placeholders?.description}
+          </p>
         </div>
-      ))}
+      </>
+    )
+
+    return linked ? (
+      <a
+        key={card.id}
+        href={card.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cardClass}
+      >
+        {cardInner}
+      </a>
+    ) : (
+      <div key={card.id} className={cardClass}>
+        {cardInner}
+      </div>
+    )
+  })
+
+  return (
+    <div ref={gridRef} className={containerClass} style={containerStyle}>
+      {cardNodes}
       {pendingUrls.map((url) => (
         <div
           key={url}

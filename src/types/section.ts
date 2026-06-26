@@ -13,14 +13,14 @@ export interface TextStyle {
 export interface TitleSection {
   id: string
   type: 'title'
-  content: { text: string }
+  content: { text: string; link?: string } // link는 공개에서 텍스트 전체를 감싸는 링크
   style: TextStyle
 }
 
 export interface ParagraphSection {
   id: string
   type: 'paragraph'
-  content: { text: string }
+  content: { text: string; link?: string } // link는 공개에서 텍스트 전체를 감싸는 링크
   style: TextStyle
 }
 
@@ -70,7 +70,7 @@ export interface ImageStyle {
 export interface ImageSection {
   id: string
   type: 'image'
-  content: { src: string; alt: string }
+  content: { src: string; alt: string; link?: string } // link는 공개에서 이미지를 감싸는 링크
   style: ImageStyle
 }
 
@@ -105,6 +105,7 @@ export interface GalleryStyle {
 export interface GalleryImage {
   url: string
   alt: string
+  link?: string // 공개에서 이미지를 감싸는 링크
 }
 
 export interface GallerySection {
@@ -127,6 +128,7 @@ export interface CardItem {
   alt: string
   title: string
   description: string
+  link?: string // 공개에서 카드 전체를 감싸는 링크
 }
 
 export interface CardSection {

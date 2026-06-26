@@ -6,6 +6,7 @@ import { GripVertical, ImagePlus, Upload, X } from 'lucide-react'
 
 import { SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorTooltip from '../shell/EditorTooltip'
+import EditorLinkField from './EditorLinkField'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
@@ -17,6 +18,7 @@ interface EditorCardItemProps {
   onRemoveImage: (id: string) => void
   onTitleChange: (id: string, value: string) => void
   onDescriptionChange: (id: string, value: string) => void
+  onLinkChange: (id: string, value: string) => void
   onRemoveCard: (id: string) => void
 }
 
@@ -26,6 +28,7 @@ const EditorCardItem = ({
   onRemoveImage,
   onTitleChange,
   onDescriptionChange,
+  onLinkChange,
   onRemoveCard,
 }: EditorCardItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -108,6 +111,11 @@ const EditorCardItem = ({
         onChange={(e) => onDescriptionChange(card.id, e.target.value)}
         placeholder="카드 설명"
         rows={2}
+      />
+      <EditorLinkField
+        value={card.link ?? ''}
+        resetKey={card.id}
+        onChange={(value) => onLinkChange(card.id, value)}
       />
     </div>
   )

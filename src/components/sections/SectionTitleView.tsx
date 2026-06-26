@@ -14,10 +14,12 @@ const SectionTitleView = ({
   section,
   placeholder,
   className,
+  live,
 }: {
   section: TitleSection
   placeholder?: string
   className?: string
+  live?: boolean
 }) => (
   <SectionTextView
     text={section.content.text}
@@ -27,6 +29,8 @@ const SectionTitleView = ({
     tag={TITLE_TAG[section.style.size]}
     placeholder={placeholder}
     className={className}
+    link={section.content.link}
+    live={live}
   />
 )
 

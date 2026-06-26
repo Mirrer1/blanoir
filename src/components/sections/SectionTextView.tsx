@@ -35,6 +35,8 @@ interface SectionTextViewProps {
   tag: 'h1' | 'h2' | 'h3' | 'p'
   placeholder?: string // 에디터에서만 빈 값일 때 안내 문구로 사용
   className?: string
+  link?: string // 텍스트 전체를 감싸는 링크 URL
+  live?: boolean // 공개·미리보기에서만 링크 동작
 }
 
 const SectionTextView = ({
@@ -45,8 +47,12 @@ const SectionTextView = ({
   tag: Tag,
   placeholder,
   className,
+  link,
+  live,
 }: SectionTextViewProps) => {
   const showPlaceholder = !text && placeholder
+  // 링크는 공개·미리보기이고 텍스트가 있을 때만 동작
+  const linked = !!live && !!link && !!text
 
   return (
     <Tag
@@ -57,7 +63,13 @@ const SectionTextView = ({
         className,
       )}
     >
-      {text || placeholder}
+      {linked ? (
+        <a href={link} target="_blank" rel="noopener noreferrer">
+          {text}
+        </a>
+      ) : (
+        text || placeholder
+      )}
     </Tag>
   )
 }

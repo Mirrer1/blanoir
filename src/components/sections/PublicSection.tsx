@@ -59,14 +59,14 @@ const PublicSection = ({ section }: { section: Section }) =>
         style={{ ...containerBackground(section), minHeight: section.container?.height }}
       >
         <div className="mx-auto w-full max-w-5xl px-3 py-2">
-          {section.type === 'title' && <SectionTitleView section={section} />}
-          {section.type === 'paragraph' && <SectionParagraphView section={section} />}
-          {section.type === 'image' && <SectionImageView section={section} />}
+          {section.type === 'title' && <SectionTitleView section={section} live />}
+          {section.type === 'paragraph' && <SectionParagraphView section={section} live />}
+          {section.type === 'image' && <SectionImageView section={section} live />}
           {section.type === 'divider' && <SectionDivider section={section} />}
           {section.type === 'spacer' && <SectionSpacer section={section} />}
           {section.type === 'button' && <SectionButton section={section} live />}
-          {section.type === 'gallery' && <SectionGalleryView section={section} />}
-          {section.type === 'card' && <SectionCardView section={section} />}
+          {section.type === 'gallery' && <SectionGalleryView section={section} live />}
+          {section.type === 'card' && <SectionCardView section={section} live />}
           {section.type === 'columns' && <SectionColumnsView section={section} />}
         </div>
       </div>

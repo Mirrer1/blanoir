@@ -5,6 +5,7 @@ import { Bold, Italic } from 'lucide-react'
 import { ICON_BASE, SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorAlignField from './EditorAlignField'
 import EditorColorField from './EditorColorField'
+import EditorLinkField from './EditorLinkField'
 import EditorStyleField from './EditorStyleField'
 import { FONT_OPTIONS } from '@/lib/fontOptions'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,7 @@ const SIZE_OPTIONS: { value: TextSize; label: string }[] = [
 
 const EditorTextStylePanel = ({ section }: { section: TitleSection | ParagraphSection }) => {
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
+  const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const { size, align, bold, italic, color, font } = section.style
 
   return (
@@ -81,6 +83,12 @@ const EditorTextStylePanel = ({ section }: { section: TitleSection | ParagraphSe
         label="색상"
         color={color}
         onChange={(value) => updateSectionStyle(section.id, { color: value })}
+      />
+
+      <EditorLinkField
+        value={section.content.link ?? ''}
+        resetKey={section.id}
+        onChange={(value) => updateSectionContent(section.id, { link: value })}
       />
     </>
   )

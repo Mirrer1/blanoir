@@ -5,6 +5,7 @@ import { Info } from 'lucide-react'
 import { SEG_BASE, SEG_OFF, SEG_ON } from '../../controlStyles'
 import EditorAlignField from './EditorAlignField'
 import EditorImageField from './EditorImageField'
+import EditorLinkField from './EditorLinkField'
 import EditorStyleField from './EditorStyleField'
 import { deleteImage } from '@/actions/upload'
 import { cn } from '@/lib/utils'
@@ -30,7 +31,7 @@ const RATIO_OPTIONS: { value: ImageRatio; label: string }[] = [
 const EditorImageStylePanel = ({ section }: { section: ImageSection }) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
-  const { src, alt } = section.content
+  const { src, alt, link } = section.content
   const { size, shape, align, ratio, zoom } = section.style
 
   const handleChange = (uploaded: { url: string; alt: string }) => {
@@ -120,6 +121,12 @@ const EditorImageStylePanel = ({ section }: { section: ImageSection }) => {
           <span>확대한 뒤 이미지를 드래그해 보일 부분을 정하세요.</span>
         </p>
       </EditorStyleField>
+
+      <EditorLinkField
+        value={link ?? ''}
+        resetKey={section.id}
+        onChange={(value) => updateSectionContent(section.id, { link: value })}
+      />
     </>
   )
 }

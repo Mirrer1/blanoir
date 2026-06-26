@@ -125,12 +125,14 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
   return (
     <div
       ref={gridRef}
-      className="group/cols border-border relative grid gap-4 rounded-lg border p-2"
+      className="group/cols relative grid gap-4"
       style={{ gridTemplateColumns: templateColumns }}
     >
       {columns.map((col, i) => {
         const child = col[0]
         const sel = !!child && selectedId === child.id
+        // 빈 이미지 칸은 드롭존 보더가 있어 칸 강조 표시를 끔
+        const childEmpty = child?.type === 'image' && !child.content.src
         return (
           <div key={child?.id ?? `col-${i}`} className="min-w-0">
             {child ? (
@@ -141,7 +143,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
                 }}
                 className={cn(
                   'flex h-full min-h-20 flex-col justify-center rounded-md p-2 transition-colors',
-                  sel && 'ring-foreground/20 ring-2 ring-inset',
+                  !childEmpty && (sel ? 'ring-foreground/20 ring-2 ring-inset' : 'hover:bg-muted'),
                 )}
               >
                 {child.type === 'title' && <SectionTitle section={child} isSelected={sel} />}

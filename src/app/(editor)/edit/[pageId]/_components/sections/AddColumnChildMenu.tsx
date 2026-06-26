@@ -32,7 +32,7 @@ const AddColumnChildMenu = ({ sectionId, colIndex }: { sectionId: string; colInd
     <Menu.Root>
       <Menu.Trigger
         onClick={(e) => e.stopPropagation()}
-        className="border-border text-muted-foreground hover:border-foreground/40 hover:text-foreground flex h-full min-h-20 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed py-4 text-sm transition-colors"
+        className="border-foreground/25 text-muted-foreground hover:border-foreground/40 hover:text-foreground flex h-full min-h-20 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-dashed py-4 text-sm transition-colors"
       >
         <Plus className="size-4" />
         추가

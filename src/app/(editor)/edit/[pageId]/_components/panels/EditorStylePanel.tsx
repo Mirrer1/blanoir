@@ -1,7 +1,6 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { useState } from 'react'
 
 import EditorBackgroundPanel from './EditorBackgroundPanel'
 import EditorButtonStylePanel from './EditorButtonStylePanel'
@@ -13,12 +12,10 @@ import EditorImageStylePanel from './EditorImageStylePanel'
 import EditorSpacerStylePanel from './EditorSpacerStylePanel'
 import EditorTextStylePanel from './EditorTextStylePanel'
 import { cn } from '@/lib/utils'
-import useEditorStore from '@/store/editor'
+import useEditorStore, { type PanelTab } from '@/store/editor'
 import type { Section } from '@/types/section'
 
-type Tab = 'content' | 'background'
-
-const TABS: { key: Tab; label: string }[] = [
+const TABS: { key: PanelTab; label: string }[] = [
   { key: 'content', label: '콘텐츠' },
   { key: 'background', label: '배경' },
 ]
@@ -32,11 +29,12 @@ const EditorStylePanel = ({
 }) => {
   const imageUploading = useEditorStore((s) => s.imageUploading)
   const selectSection = useEditorStore((s) => s.selectSection)
-  const [tab, setTab] = useState<Tab>('content')
+  const panelTab = useEditorStore((s) => s.panelTab)
+  const setPanelTab = useEditorStore((s) => s.setPanelTab)
 
   // 칸 자식은 컨테이너가 없어 배경 탭을 두지 않음
   const tabs = isChild ? TABS.filter((t) => t.key === 'content') : TABS
-  const activeTab = isChild ? 'content' : tab
+  const activeTab = isChild ? 'content' : panelTab
 
   return (
     <div
@@ -50,7 +48,7 @@ const EditorStylePanel = ({
         {tabs.map((t) => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key)}
+            onClick={() => setPanelTab(t.key)}
             className={cn(
               '-mb-px cursor-pointer border-b-2 px-3 py-3 text-xs font-medium transition-colors',
               activeTab === t.key

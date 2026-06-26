@@ -24,6 +24,8 @@ import type {
 
 export type SaveStatus = 'idle' | 'saved' | 'manualSaved' | 'unsaved'
 
+export type PanelTab = 'content' | 'background'
+
 export interface PageSummary {
   pageId: string
   title: string
@@ -47,6 +49,7 @@ interface EditorState {
   sections: Section[]
   myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록, 저장 대상 아님
   selectedSectionId: string | null
+  panelTab: PanelTab
   imageUploading: boolean
   isDirty: boolean
   saveStatus: SaveStatus
@@ -55,7 +58,8 @@ interface EditorState {
 
   setTitle: (title: string) => void
   setPublic: (isPublic: boolean) => void
-  selectSection: (id: string | null) => void
+  selectSection: (id: string | null, tab?: PanelTab) => void
+  setPanelTab: (tab: PanelTab) => void
   setImageUploading: (uploading: boolean) => void
   addSection: (type: SectionType, index?: number, columnsCount?: number) => void
   replaceSections: (sections: Section[]) => void
@@ -112,10 +116,10 @@ const DEFAULT_DIVIDER_STYLE: DividerStyle = {
 const DEFAULT_BUTTON_STYLE: ButtonStyle = {
   color: '',
   textColor: '',
-  shape: 'rounded',
+  shape: 'square',
   size: 'medium',
   width: 'auto',
-  align: 'left',
+  align: 'center',
 }
 
 const DEFAULT_SPACER_STYLE: SpacerStyle = {
@@ -260,6 +264,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
     sections: initial.sections,
     myPages: initial.myPages,
     selectedSectionId: null,
+    panelTab: 'content',
     imageUploading: false,
     isDirty: false,
     saveStatus: 'idle',
@@ -273,8 +278,12 @@ export const createEditorStore = (initial: EditorInitialPage) => {
     // 공개 여부 변경
     setPublic: (isPublic) => set({ isPublic }),
 
-    // 섹션 선택 또는 선택 해제
-    selectSection: (id) => set({ selectedSectionId: id }),
+    // 섹션 선택과 함께 표시할 패널 탭 지정
+    selectSection: (id, tab) =>
+      set(tab ? { selectedSectionId: id, panelTab: tab } : { selectedSectionId: id }),
+
+    // 패널 탭 전환
+    setPanelTab: (panelTab) => set({ panelTab }),
 
     // 이미지 업로드 진행 여부
     setImageUploading: (imageUploading) => set({ imageUploading }),
@@ -288,6 +297,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return {
           sections,
           selectedSectionId: section.id,
+          panelTab: 'content',
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
       }),

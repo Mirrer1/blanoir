@@ -18,11 +18,21 @@ import { sectionImageUrls } from '@/utils/imageUrls'
 
 const EditorSection = ({ section, index }: { section: Section; index: number }) => {
   const selectedSectionId = useEditorStore((s) => s.selectedSectionId)
+  const panelTab = useEditorStore((s) => s.panelTab)
   const selectSection = useEditorStore((s) => s.selectSection)
   const removeSection = useEditorStore((s) => s.removeSection)
   const restoreSection = useEditorStore((s) => s.restoreSection)
   const updateSectionContainer = useEditorStore((s) => s.updateSectionContainer)
   const isSelected = selectedSectionId === section.id
+  const contentSelected = isSelected && panelTab === 'content'
+  const backgroundSelected = isSelected && panelTab === 'background'
+  const isEmptyMedia =
+    (section.type === 'image' && !section.content.src) ||
+    (section.type === 'gallery' && section.content.images.length === 0) ||
+    (section.type === 'card' && section.content.cards.length === 0)
+  const isColumns = section.type === 'columns'
+  const flushContent =
+    isColumns || section.type === 'image' || section.type === 'gallery' || section.type === 'card'
 
   const outerRef = useRef<HTMLDivElement>(null)
   const columnRef = useRef<HTMLDivElement>(null)
@@ -42,9 +52,16 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     [setNodeRef],
   )
 
-  const handleClick = (e: React.MouseEvent) => {
+  // 클릭한 영역에 맞는 탭으로 패널 열기
+  // 열은 클릭할 단일 콘텐츠가 없어 배경 클릭도 콘텐츠(칸 관리) 탭으로 엶
+  const handleBackgroundClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    selectSection(section.id)
+    selectSection(section.id, isColumns ? 'content' : 'background')
+  }
+
+  const handleContentClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    selectSection(section.id, 'content')
   }
 
   // 콘텐츠 칸은 그대로 두고 바깥 컨테이너만 증가
@@ -110,7 +127,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     <SectionReveal animation={section.container?.animation}>
       <div
         ref={setSectionRef}
-        onClick={handleClick}
+        onClick={handleBackgroundClick}
         style={{
           ...containerBackground(section),
           minHeight: section.container?.height,
@@ -119,14 +136,23 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
         }}
         className={cn(
           'group relative flex cursor-pointer flex-col justify-center py-2',
+          !isSorting && !isEmptyMedia && 'hover:bg-muted has-[[data-content]:hover]:bg-transparent',
+          backgroundSelected && !isEmptyMedia && 'ring-foreground/20 ring-2 ring-inset',
           isDragging && 'opacity-0',
         )}
       >
         <div
           ref={columnRef}
+          data-content
+          onClick={handleContentClick}
           className={cn(
-            'relative mx-auto w-full max-w-5xl rounded-md px-3 py-2 transition-colors',
-            isSelected ? 'ring-foreground/20 ring-2 ring-inset' : !isSorting && 'hover:bg-muted/40',
+            'relative mx-auto w-full max-w-5xl rounded-md py-2 transition-colors',
+            !flushContent && 'px-3',
+            !isEmptyMedia &&
+              !isColumns &&
+              (contentSelected
+                ? 'ring-foreground/20 ring-2 ring-inset'
+                : !isSorting && 'hover:bg-muted'),
           )}
         >
           <div
@@ -153,7 +179,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
               <Trash2 className="size-4" />
             </button>
           </div>
-          <EditorSectionContent section={section} isSelected={isSelected} />
+          <EditorSectionContent section={section} isSelected={contentSelected} />
         </div>
         <button
           type="button"

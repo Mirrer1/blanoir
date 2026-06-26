@@ -1,5 +1,4 @@
-import Link from 'next/link'
-
+import LandingBrowseButton from './LandingBrowseButton'
 import FadeIn from '@/components/common/FadeIn'
 import { buttonVariants } from '@/components/ui/button'
 
@@ -13,12 +12,11 @@ const LandingFinalCTA = () => {
           당신의 페이지를 시작하세요
         </h2>
         <p className="text-muted-foreground mt-6 text-lg">무료로 시작하고, 5분 만에 완성하세요.</p>
-        <Link
-          href="/signup"
+        <LandingBrowseButton
           className={buttonVariants({ size: 'lg', className: 'mt-10 h-12 px-8 text-base' })}
         >
-          무료로 시작하기
-        </Link>
+          구경하러 가기
+        </LandingBrowseButton>
       </FadeIn>
     </section>
   )

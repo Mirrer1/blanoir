@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import LandingBrowseButton from './LandingBrowseButton'
 import FadeIn from '@/components/common/FadeIn'
 import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const LandingHero = () => {
   return (
@@ -27,19 +29,17 @@ const LandingHero = () => {
       </FadeIn>
       <FadeIn delay={0.3}>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/signup"
+          <LandingBrowseButton
             className={buttonVariants({ size: 'lg', className: 'h-12 px-8 text-base' })}
           >
-            무료로 시작하기
-          </Link>
+            구경하러 가기
+          </LandingBrowseButton>
           <Link
             href="/login"
-            className={buttonVariants({
-              variant: 'outline',
-              size: 'lg',
-              className: 'h-12 px-8 text-base',
-            })}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'lg' }),
+              'border-foreground/30 h-12 px-8 text-base',
+            )}
           >
             로그인
           </Link>

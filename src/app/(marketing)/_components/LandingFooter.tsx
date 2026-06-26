@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+import LandingBrowseButton from './LandingBrowseButton'
+
 const LandingFooter = () => {
   return (
     <footer className="border-t">
@@ -11,9 +13,7 @@ const LandingFooter = () => {
           <Link href="/login" className="hover:text-foreground">
             로그인
           </Link>
-          <Link href="/signup" className="hover:text-foreground">
-            시작하기
-          </Link>
+          <LandingBrowseButton className="hover:text-foreground">구경하기</LandingBrowseButton>
         </nav>
         <span className="text-muted-foreground text-sm">
           © {new Date().getFullYear()} Blanoir. All rights reserved.

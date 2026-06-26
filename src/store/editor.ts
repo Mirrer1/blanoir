@@ -139,7 +139,7 @@ const DEFAULT_GALLERY_STYLE: GalleryStyle = {
 }
 
 const DEFAULT_CARD_STYLE: CardStyle = {
-  layout: 'vertical',
+  layout: 'grid',
   align: 'left',
 }
 

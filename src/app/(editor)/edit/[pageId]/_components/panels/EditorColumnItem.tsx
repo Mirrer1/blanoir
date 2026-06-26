@@ -40,8 +40,8 @@ const EditorColumnItem = ({ id, order, label, onRemove }: EditorColumnItemProps)
           <GripVertical className="size-4" />
         </button>
       </EditorTooltip>
-      <span className="text-muted-foreground text-xs">{order}</span>
-      <span className="text-sm">{label}</span>
+      <span className="text-muted-foreground mt-0.5 text-xs">{order}</span>
+      <span className="mb-px text-sm">{label}</span>
       {onRemove && (
         <EditorTooltip label="블록 비우기">
           <button

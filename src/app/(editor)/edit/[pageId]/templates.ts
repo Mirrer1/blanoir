@@ -73,7 +73,7 @@ const card = (layout: CardSection['style']['layout'] = 'grid'): CardSection => (
   style: { layout, align: 'left' },
 })
 
-// 칸마다 블록 하나, 6칸 그리드 균등 분할
+// 칸마다 블록 하나를 두고 6칸 그리드를 균등 분할
 const columns = (children: ColumnChild[]): ColumnsSection => ({
   id: nanoid(8),
   type: 'columns',

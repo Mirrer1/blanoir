@@ -5,7 +5,7 @@ export type Provider = 'google' | 'kakao' | 'naver' | 'local'
 const userSchema = new Schema(
   {
     email: { type: String, required: true, unique: true }, // 로그인 이메일
-    password: { type: String, default: null }, // 로컬 가입시 bcrypt 해시, 소셜은 null
+    password: { type: String, default: null }, // 로컬 가입은 bcrypt 해시고 소셜은 null
     resetCode: { type: String, default: null }, // 비번 재설정 인증코드 (bcrypt 해시)
     resetCodeExpiresAt: { type: Date, default: null }, // 인증코드 만료 시각
     resetCodeAttempts: { type: Number, default: 0 }, // 인증코드 검증 실패 횟수 (brute-force 방지)

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import type { GallerySection } from '@/types/section'
 
-// 한 줄에 보일 최대 칸 수, 이미지가 더 많으면 가로 스크롤
+// 한 줄에 보일 최대 칸 수로 이미지가 더 많으면 가로 스크롤
 const MAX_COLUMNS = 3
 // 좁은 화면에선 한 줄 2개
 const NARROW_COLUMNS = 2
@@ -23,7 +23,7 @@ const CELL_CLASS = 'relative aspect-square shrink-0 grow-0 snap-start overflow-h
 const SectionGalleryView = ({
   section,
   pendingUrls = [], // 업로드 진행 중인 미리보기 셀
-  live, // 공개·미리보기에서만 이미지 링크 동작
+  live, // 공개와 미리보기에서만 이미지 링크 동작
 }: {
   section: GallerySection
   pendingUrls?: string[]
@@ -62,7 +62,7 @@ const SectionGalleryView = ({
     }
   }
 
-  // 컨테이너 실제 폭으로 한 줄 칸 수 결정, 모바일 미리보기 박스도 반영
+  // 컨테이너 실제 폭으로 한 줄 칸 수를 정해 모바일 미리보기 박스도 반영
   useEffect(() => {
     const track = trackRef.current
     if (!track) {
@@ -75,14 +75,14 @@ const SectionGalleryView = ({
     return () => observer.disconnect()
   }, [])
 
-  // 칸 수, 이미지 수 변경 시 화살표 가능 여부 재측정
+  // 칸 수와 이미지 수 변경 시 화살표 가능 여부 재측정
   useEffect(() => {
     updateArrows()
     window.addEventListener('resize', updateArrows)
     return () => window.removeEventListener('resize', updateArrows)
   }, [updateArrows, images.length, pendingUrls.length, effectiveColumns, gapPx])
 
-  // 링크 있으면 공개·미리보기에서 이미지를 감쌈
+  // 링크 있으면 공개와 미리보기에서 이미지를 감쌈
   const imageNodes = images.map((image) => {
     const linked = !!live && !!image.link
     const img = <img src={image.url} alt={image.alt} className="h-full w-full object-cover" />

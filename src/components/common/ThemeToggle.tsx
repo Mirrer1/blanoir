@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes'
 
 import { Button } from '@/components/ui/button'
 
-// 라이트/다크 테마 토글 버튼
+// 테마 토글 버튼
 const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme()
 

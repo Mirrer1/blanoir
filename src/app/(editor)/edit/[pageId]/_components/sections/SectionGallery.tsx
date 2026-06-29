@@ -15,7 +15,7 @@ const SectionGallery = ({ section }: { section: GallerySection }) => {
   const [previews, setPreviews] = useState<string[]>([])
   const { images } = section.content
 
-  // 첫 업로드 캔버스에서 처리, 이후 추가/편집은 패널에서
+  // 첫 업로드는 캔버스에서 처리하고 이후 관리는 패널에서
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = Array.from(e.target.files ?? [])
     e.target.value = ''

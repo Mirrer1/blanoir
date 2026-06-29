@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import type { CardSection } from '@/types/section'
 
 const ALIGN_CLASS = { left: 'text-left', center: 'text-center', right: 'text-right' } as const
-// 카드 수가 정하는 한 줄 최대 칸 수, 넘으면 다음 줄로 줄바꿈
+// 카드 수가 정하는 한 줄 최대 칸 수로 넘으면 다음 줄로 줄바꿈
 const MAX_COLUMNS = 3
 // 좁은 화면에선 한 줄 2개
 const NARROW_COLUMNS = 2
@@ -20,7 +20,7 @@ interface SectionCardViewProps {
   section: CardSection
   pendingUrls?: string[] // 업로드 진행 중인 미리보기 카드
   placeholders?: { title: string; description: string } // 에디터에서 빈 값 안내 문구
-  live?: boolean // 공개·미리보기에서만 카드 링크 동작
+  live?: boolean // 공개와 미리보기에서만 카드 링크 동작
 }
 
 const SectionCardView = ({
@@ -86,7 +86,7 @@ const SectionCardView = ({
     return () => window.removeEventListener('resize', equalize)
   }, [cards, isGrid, effectiveColumns, align])
 
-  // 링크 있으면 공개·미리보기에서 카드 전체를 감쌈
+  // 링크 있으면 공개와 미리보기에서 카드 전체를 감쌈
   const cardNodes = cards.map((card) => {
     const linked = !!live && !!card.link
     const cardClass = cn(

@@ -16,7 +16,7 @@ const SectionColumnsView = ({ section }: { section: ColumnsSection }) => {
   const colCount = columns.length
   const [effectiveCols, setEffectiveCols] = useState(colCount)
 
-  // 실제 폭으로 표시 칸 수 결정, 3열은 태블릿급에서 2열 경유 후 모바일 1열
+  // 실제 폭으로 표시 칸 수를 정하고 3열은 태블릿급에서 2열 경유 후 모바일 1열
   useEffect(() => {
     const el = ref.current
     if (!el) {

@@ -47,7 +47,7 @@ interface EditorState {
   title: string
   isPublic: boolean
   sections: Section[]
-  myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록, 저장 대상 아님
+  myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록으로 저장 대상은 아님
   selectedSectionId: string | null
   panelTab: PanelTab
   imageUploading: boolean
@@ -302,7 +302,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         }
       }),
 
-    // 템플릿 적용/실행취소 시 전체 섹션 교체
+    // 템플릿 적용과 실행취소 시 전체 섹션 교체
     replaceSections: (sections) =>
       set((s) => ({
         sections,
@@ -310,7 +310,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
       })),
 
-    // 특정 섹션/칸 자식의 콘텐츠 갱신
+    // 특정 노드의 콘텐츠 갱신
     updateSectionContent: (id, content) =>
       set((s) => {
         const sections = mapNode(
@@ -321,7 +321,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
-    // 특정 섹션/칸 자식의 스타일 갱신
+    // 특정 노드의 스타일 갱신
     updateSectionStyle: (id, style) =>
       set((s) => {
         const sections = mapNode(
@@ -343,7 +343,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
-    // 섹션 삭제, 선택 중이던 섹션이면 선택 해제
+    // 섹션을 삭제하고 선택 중이면 해제
     removeSection: (id) =>
       set((s) => {
         const sections = s.sections.filter((section) => section.id !== id)
@@ -396,7 +396,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         }
       }),
 
-    // 열 칸 블록 비우기, 선택 중이면 해제
+    // 열 칸 블록을 비우고 선택 중이면 해제
     removeColumnChild: (childId) =>
       set((s) => {
         const sections = s.sections.map((section) => {
@@ -448,7 +448,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
-    // 열을 from→to로 이동, 내용·너비 함께
+    // 열을 from에서 to로 옮기며 내용과 너비도 함께 이동
     moveColumn: (sectionId, from, to) =>
       set((s) => {
         const sections = s.sections.map((section) => {

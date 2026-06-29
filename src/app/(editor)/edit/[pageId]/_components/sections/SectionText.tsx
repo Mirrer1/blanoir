@@ -11,7 +11,7 @@ import useEditorStore from '@/store/editor'
 import type { TextStyle } from '@/types/section'
 import { isGradient } from '@/utils/colorFill'
 
-// 미러, textarea, 표시를 같은 그리드 셀에 겹쳐 선택/해제 시 레이아웃 시프트를 없앰
+// 미러, textarea, 표시를 같은 그리드 셀에 겹쳐 선택을 바꿀 때 레이아웃 시프트를 없앰
 const CELL = 'col-start-1 row-start-1'
 
 interface SectionTextProps {

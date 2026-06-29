@@ -61,8 +61,8 @@ export interface ImageStyle {
   size: ImageSize
   shape: ImageShape
   align: TextAlign // 박스가 섹션보다 좁을 때 가로 위치
-  ratio: ImageRatio // 박스 비율, 이미지는 항상 cover
-  zoom: number // 1배(Default), 3배(Max)
+  ratio: ImageRatio // 박스 비율로 이미지는 항상 cover
+  zoom: number // 1배 Default에서 3배 Max
   focusX: number // 초점 가로 위치 0~100%
   focusY: number // 초점 세로 위치 0~100%
 }
@@ -79,8 +79,8 @@ export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonWidth = 'auto' | 'wide' | 'full'
 
 export interface ButtonStyle {
-  color: string // 배경색, 빈 문자열이면 기본(--foreground)
-  textColor: string // 글자색, 빈 문자열이면 기본(--background)
+  color: string // 배경색으로 빈 문자열이면 기본(--foreground)
+  textColor: string // 글자색으로 빈 문자열이면 기본(--background)
   shape: ButtonShape
   size: ButtonSize
   width: ButtonWidth
@@ -138,7 +138,7 @@ export interface CardSection {
   style: CardStyle
 }
 
-// 갤러리·카드·구분선·공백을 뺀 열 칸용 좁은 블록
+// 일부 섹션을 뺀 열 칸용 좁은 블록
 export type ColumnChild = TitleSection | ParagraphSection | ImageSection | ButtonSection
 export type ColumnChildType = ColumnChild['type']
 
@@ -149,7 +149,7 @@ export interface ColumnsStyle {
 export interface ColumnsSection {
   id: string
   type: 'columns'
-  content: { columns: ColumnChild[][] } // 열마다 블록 배열, 현재 슬롯형이라 0~1개
+  content: { columns: ColumnChild[][] } // 열마다 블록 배열로 현재 슬롯형이라 0~1개
   style: ColumnsStyle
 }
 

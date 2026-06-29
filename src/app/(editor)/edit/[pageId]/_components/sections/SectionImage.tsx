@@ -31,7 +31,7 @@ const SectionImage = ({ section, isSelected }: { section: ImageSection; isSelect
   // 확대한 cover거나 zoom이 1보다 크면 보일 부분을 드래그로 옮김
   const canDrag = (isImageCropped(section.style) || zoom > 1) && isSelected && !isUploading
 
-  // 첫 업로드 캔버스에서 처리, 이후 추가/편집은 패널에서
+  // 첫 업로드는 캔버스에서 처리하고 이후 관리는 패널에서
   const handleSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = e.target.files?.[0]
     e.target.value = ''

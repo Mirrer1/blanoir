@@ -26,7 +26,7 @@ const CHILD_LABEL: Record<ColumnChild['type'], string> = {
 }
 const labelOf = (col: ColumnChild[]) => (col[0] ? CHILD_LABEL[col[0].type] : '빈 칸')
 
-// 열 순서·삭제는 패널에서, 너비는 캔버스 경계 드래그
+// 열 순서와 삭제는 패널에서 다루고 너비는 캔버스 드래그로 조절
 const EditorColumnsStylePanel = ({ section }: { section: ColumnsSection }) => {
   const moveColumn = useEditorStore((s) => s.moveColumn)
   const removeColumnChild = useEditorStore((s) => s.removeColumnChild)
@@ -48,7 +48,7 @@ const EditorColumnsStylePanel = ({ section }: { section: ColumnsSection }) => {
     }
   }
 
-  // 즉시 비우고 실행취소 토스트, 이미지는 토스트 닫힐 때 정리
+  // 즉시 비우고 실행취소 토스트를 띄우며 이미지는 토스트 닫힐 때 정리
   const handleRemove = (colIndex: number, child: ColumnChild) => {
     let undone = false
     let cleaned = false

@@ -23,7 +23,7 @@ const pageIdOf = (url: string): string | null =>
 
 interface EditorLinkFieldProps {
   value: string
-  resetKey: string // 다른 섹션 선택 시 링크 종류·펼침 초기화 기준
+  resetKey: string // 다른 섹션 선택 시 링크 입력 상태 초기화 기준
   onChange: (url: string) => void
   alwaysOpen?: boolean
 }

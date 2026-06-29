@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-// 로그인 실패 코드, 안내 메시지 매핑
+// 로그인 실패 코드를 안내 메시지로 매핑
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   OAuthAccountNotLinked: '이미 다른 방법으로 가입된 이메일이에요',
   AccessDenied: '로그인이 거부됐어요',

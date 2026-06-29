@@ -33,7 +33,7 @@ const EditorShell = () => {
     })
   }
 
-  // 업로드 전 빈 이미지와 빈 갤러리·카드는 패널 미표시
+  // 업로드 전 비어 있는 이미지, 갤러리, 카드는 패널 미표시
   const showStylePanel =
     !!selectedNode &&
     !(selectedNode.type === 'image' && !selectedNode.content.src) &&

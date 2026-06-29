@@ -3,7 +3,7 @@ import type { PointerEventHandler, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import type { ImageSection, ImageStyle } from '@/types/section'
 
-// 콘텐츠 가로폭 대비 비율, 크게는 전체
+// 콘텐츠 가로폭 대비 비율이며 크게는 전체폭
 const SIZE_CLASS = { small: 'w-1/3', medium: 'w-2/3', large: 'w-full' } as const
 const SHAPE_RADIUS = {
   square: 'rounded-none',
@@ -17,7 +17,7 @@ const JUSTIFY_CLASS = {
   right: 'justify-end',
 } as const
 
-// 원본은 자연 비율, 정사각/와이드/원형은 프레임에 cover로 꽉 채움
+// 원본은 자연 비율로 두고 그 외는 프레임에 cover로 채움
 export const isImageCropped = (style: ImageStyle) =>
   style.ratio !== 'original' || style.shape === 'circle'
 
@@ -26,7 +26,7 @@ interface SectionImageViewProps {
   src?: string // 미리보기 등 표시 src 교체
   draggable?: boolean // 초점 드래그 커서 표시
   overlay?: ReactNode // 업로드 스피너 등 프레임 위 오버레이
-  live?: boolean // 공개·미리보기에서만 링크 동작
+  live?: boolean // 공개와 미리보기에서만 링크 동작
   onPointerDown?: PointerEventHandler
   onPointerMove?: PointerEventHandler
   onPointerUp?: PointerEventHandler
@@ -48,7 +48,7 @@ const SectionImageView = ({
   const cropped = isImageCropped(section.style)
   const frameAspect =
     ratio === 'original' ? (shape === 'circle' ? '1 / 1' : undefined) : RATIO_ASPECT[ratio]
-  // 링크는 공개·미리보기일 때만 동작
+  // 링크는 공개와 미리보기일 때만 동작
   const linked = !!live && !!link
 
   const frameClass = cn(

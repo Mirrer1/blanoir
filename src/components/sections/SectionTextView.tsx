@@ -36,7 +36,7 @@ interface SectionTextViewProps {
   placeholder?: string // 에디터에서만 빈 값일 때 안내 문구로 사용
   className?: string
   link?: string // 텍스트 전체를 감싸는 링크 URL
-  live?: boolean // 공개·미리보기에서만 링크 동작
+  live?: boolean // 공개와 미리보기에서만 링크 동작
 }
 
 const SectionTextView = ({
@@ -51,7 +51,7 @@ const SectionTextView = ({
   live,
 }: SectionTextViewProps) => {
   const showPlaceholder = !text && placeholder
-  // 링크는 공개·미리보기이고 텍스트가 있을 때만 동작
+  // 링크는 공개와 미리보기이고 텍스트가 있을 때만 동작
   const linked = !!live && !!link && !!text
 
   return (

@@ -13,7 +13,7 @@ const subscribe = (onChange: () => void) => {
   }
 }
 
-// 저장값 우선, 없으면 defaultOpen
+// 저장값이 있으면 우선하고 없으면 defaultOpen
 const useTemplatePanel = (pageId: string, defaultOpen: boolean) => {
   const stored = useSyncExternalStore(
     subscribe,

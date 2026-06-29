@@ -1,7 +1,7 @@
 import SectionTextView from './SectionTextView'
 import type { TitleSection } from '@/types/section'
 
-// 글자 크기는 HTML 태그/클래스 매핑
+// 글자 크기는 태그와 클래스 매핑
 export const TITLE_TAG = { xlarge: 'h1', large: 'h2', medium: 'h3', small: 'p' } as const
 export const TITLE_SIZE = {
   xlarge: 'text-4xl sm:text-5xl',

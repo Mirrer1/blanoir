@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 
-// 태블릿·모바일 경계 1024px
+// 작은 화면 경계 1024px
 const QUERY = '(max-width: 1023px)'
 
 const subscribe = (onChange: () => void) => {

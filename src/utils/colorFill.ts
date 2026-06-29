@@ -8,7 +8,7 @@ export const isGradient = (value: string) => value.includes('gradient')
 const LINEAR =
   /^linear-gradient\(\s*(\d+)deg\s*,\s*(#[0-9a-fA-F]{3,8})\s*,\s*(#[0-9a-fA-F]{3,8})\s*\)$/
 
-// 직선 2색 그레디언트를 시작색·끝색·각도 변수로 분해
+// 직선 2색 그레디언트를 색과 각도 변수로 분해
 const gradientVars = (value: string): CSSProperties | null => {
   const match = value.match(LINEAR)
   if (!match) {
@@ -22,13 +22,13 @@ const gradientVars = (value: string): CSSProperties | null => {
   } as CSSProperties
 }
 
-// 색/그레디언트를 배경으로 적용
+// 색을 배경으로 적용
 export const fillBackground = (value: string): CSSProperties =>
   isGradient(value)
     ? (gradientVars(value) ?? { backgroundImage: value })
     : { backgroundColor: value }
 
-// 색/그레디언트를 글자색으로 적용
+// 색을 글자색으로 적용
 export const fillText = (value: string): CSSProperties => {
   if (!isGradient(value)) {
     return { color: value }
@@ -42,7 +42,7 @@ export const fillText = (value: string): CSSProperties => {
   }
 }
 
-// 섹션 박스 배경 칠 에디터/공개 공유
+// 섹션 박스 배경 칠을 에디터와 공개에서 공유
 // 높이는 콘텐츠 칸 minHeight로 별도로 처리
 export const containerBackground = (section: Section): CSSProperties => {
   const container = section.container
@@ -58,6 +58,6 @@ export const containerBackground = (section: Section): CSSProperties => {
       backgroundPosition: 'center',
     }
   }
-  // 단색/그레디언트 모두 fillBackground
+  // 색은 fillBackground로 처리
   return color ? fillBackground(color) : {}
 }

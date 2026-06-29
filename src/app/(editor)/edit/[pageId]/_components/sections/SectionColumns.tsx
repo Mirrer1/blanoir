@@ -26,7 +26,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
   const colCount = columns.length
   const [effectiveCols, setEffectiveCols] = useState(colCount)
 
-  // 실제 폭으로 표시 칸 수 결정, 3열은 태블릿급에서 2열 경유 후 모바일 1열
+  // 실제 폭으로 표시 칸 수를 정하며 3열은 작은 화면에서 2열을 거쳐 1열로 줄임
   useEffect(() => {
     const el = gridRef.current
     if (!el) {
@@ -40,7 +40,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
     return () => observer.disconnect()
   }, [colCount])
 
-  // 원래 칸 수로 펼쳐졌을 때만 비율 드래그, 좁아지면 균등 줄바꿈
+  // 원래 칸 수로 펼쳐졌을 때만 비율 드래그를 허용하고 좁아지면 균등 줄바꿈
   const isFull = effectiveCols === colCount
   const templateColumns =
     effectiveCols === 1
@@ -49,7 +49,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
         ? widths.map((w) => `${w}fr`).join(' ')
         : `repeat(${effectiveCols}, minmax(0, 1fr))`
 
-  // 경계 핸들 드래그: 중엔 DOM을 직접 따라가 부드럽게, 놓으면 가까운 칸으로 ease-out 안착
+  // 경계 핸들 드래그 중엔 DOM을 직접 따라가 부드럽게 움직이고 놓으면 가까운 칸으로 ease-out 안착
   const handleResize = (e: React.PointerEvent, i: number) => {
     e.preventDefault()
     e.stopPropagation()
@@ -82,7 +82,7 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
       return next
     }
 
-    // 스토어를 거치지 않고 그리드·핸들 위치만 직접 갱신
+    // 스토어를 거치지 않고 그리드와 핸들 위치만 직접 갱신
     const paint = (w: number[]) => {
       grid.style.gridTemplateColumns = w.map((v) => `${v}fr`).join(' ')
       const cum = w.slice(0, i + 1).reduce((a, b) => a + b, 0)

@@ -17,7 +17,7 @@ const JUSTIFY_CLASS = {
   right: 'justify-end',
 } as const
 
-// live면 공개 페이지라 버튼처럼 동작, 아니면 에디터라 비클릭 표시
+// live면 공개 페이지라 버튼처럼 동작하고 아니면 에디터라 비클릭 표시
 const SectionButton = ({ section, live }: { section: ButtonSection; live?: boolean }) => {
   const { text, url } = section.content
   const { color, textColor, shape, size, width, align } = section.style

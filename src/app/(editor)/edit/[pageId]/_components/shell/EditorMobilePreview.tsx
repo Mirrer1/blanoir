@@ -8,7 +8,7 @@ import PublicPageBody from '@/components/sections/PublicPageBody'
 import { buttonVariants } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
 
-// 태블릿/모바일 접속 시 에디터 대신 미리보기로 전환
+// 작은 화면 접속 시 에디터 대신 미리보기로 전환
 const EditorMobilePreview = () => {
   const sections = useEditorStore((s) => s.sections)
 

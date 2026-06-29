@@ -4,7 +4,7 @@ import EditorMobilePreview from './EditorMobilePreview'
 import EditorShell from './EditorShell'
 import useIsSmallScreen from '@/hooks/useIsSmallScreen'
 
-// PC는 편집, 태블릿/모바일은 미리보기 전용으로 분기
+// PC는 편집하고 작은 화면은 미리보기 전용으로 분기
 const EditorViewportGate = () => {
   const isSmallScreen = useIsSmallScreen()
 

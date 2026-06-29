@@ -123,7 +123,7 @@ const SignupForm = () => {
               variant="outline"
               onClick={handleSendCode}
               disabled={verified || sending}
-              className="h-8 shrink-0"
+              className="h-8 w-20 shrink-0"
             >
               {sending ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -145,7 +145,7 @@ const SignupForm = () => {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="overflow-hidden"
             >
               <Field>
@@ -169,7 +169,7 @@ const SignupForm = () => {
                     variant="outline"
                     onClick={handleVerify}
                     disabled={verifying}
-                    className="h-8 shrink-0"
+                    className="h-8 w-20 shrink-0"
                   >
                     {verifying ? <Loader2 className="size-4 animate-spin" /> : '확인'}
                   </Button>

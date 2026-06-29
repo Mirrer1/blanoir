@@ -2,29 +2,43 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, RotateCcw, Trash2 } from 'lucide-react'
+import { Copy, GripVertical, Loader, RotateCcw, Trash2 } from 'lucide-react'
 import { useCallback, useRef } from 'react'
 import { toast } from 'sonner'
 
 import { COLOR_TRANSITION, SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorSectionContent from './EditorSectionContent'
-import { deleteImage } from '@/actions/upload'
+import { copyImages, deleteImage } from '@/actions/upload'
 import SectionReveal from '@/components/sections/SectionReveal'
+import useDualPanel from '@/hooks/useDualPanel'
 import { cn } from '@/lib/utils'
-import useEditorStore from '@/store/editor'
+import useEditorStore, { cloneSection, getEditorStore } from '@/store/editor'
 import type { Section } from '@/types/section'
 import { containerBackground } from '@/utils/colorFill'
 import { sectionImageUrls } from '@/utils/imageUrls'
 
 const EditorSection = ({ section, index }: { section: Section; index: number }) => {
-  const selectedSectionId = useEditorStore((s) => s.selectedSectionId)
   const panelTab = useEditorStore((s) => s.panelTab)
   const selectSection = useEditorStore((s) => s.selectSection)
   const removeSection = useEditorStore((s) => s.removeSection)
   const restoreSection = useEditorStore((s) => s.restoreSection)
+  const insertSection = useEditorStore((s) => s.insertSection)
+  const selectedSectionId = useEditorStore((s) => s.selectedSectionId)
   const updateSectionContainer = useEditorStore((s) => s.updateSectionContainer)
+  const remapSectionImages = useEditorStore((s) => s.remapSectionImages)
+  const setCopying = useEditorStore((s) => s.setCopying)
+  const isCopying = useEditorStore((s) => s.copyingSectionIds.includes(section.id))
+
+  const outerRef = useRef<HTMLDivElement>(null)
+  const columnRef = useRef<HTMLDivElement>(null)
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isSorting } =
+    useSortable({
+      id: section.id,
+      transition: SORTABLE_TRANSITION,
+    })
+
+  const wide = useDualPanel()
   const isSelected = selectedSectionId === section.id
-  const contentSelected = isSelected && panelTab === 'content'
   const ownsSelection =
     section.type === 'columns' &&
     section.content.columns.some((col) => col.some((child) => child.id === selectedSectionId))
@@ -33,16 +47,6 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     (section.type === 'image' && !section.content.src) ||
     (section.type === 'gallery' && section.content.images.length === 0) ||
     (section.type === 'card' && section.content.cards.length === 0)
-  const isColumns = section.type === 'columns'
-
-  const outerRef = useRef<HTMLDivElement>(null)
-  const columnRef = useRef<HTMLDivElement>(null)
-
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isSorting } =
-    useSortable({
-      id: section.id,
-      transition: SORTABLE_TRANSITION,
-    })
 
   // dnd-kit ref와 높이 측정용 ref를 같은 노드에 연결
   const setSectionRef = useCallback(
@@ -100,7 +104,13 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
         return
       }
       cleaned = true
-      sectionImageUrls(removed).forEach((url) => void deleteImage(url))
+      // 공유 중인 URL은 삭제 제외
+      const stillUsed = new Set(getEditorStore().getState().sections.flatMap(sectionImageUrls))
+      sectionImageUrls(removed).forEach((url) => {
+        if (!stillUsed.has(url)) {
+          void deleteImage(url)
+        }
+      })
     }
     removeSection(removed.id)
     toast('섹션을 삭제했어요', {
@@ -123,10 +133,79 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     })
   }
 
+  // 복제 후 이미지는 백그라운드 복사
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const clone = cloneSection(section)
+    const scrollToClone = () =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          document
+            .querySelector(`[data-section-id="${clone.id}"]`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }),
+      )
+    const urls = [...new Set(sectionImageUrls(clone))]
+    if (urls.length === 0) {
+      restoreSection(clone, index + 1)
+      scrollToClone()
+      return
+    }
+    // 이미지 복제 후 패널 열기
+    insertSection(clone, index + 1)
+    selectSection(null)
+    scrollToClone()
+    setCopying(clone.id, true)
+    void (async () => {
+      const copied = await copyImages(urls)
+      const state = getEditorStore().getState()
+      if (state.sections.some((s) => s.id === clone.id)) {
+        remapSectionImages(clone.id, new Map(copied.map((c) => [c.from, c.to])))
+        // 선택 비어 있으면 복제본 열기
+        if (state.selectedSectionId === null) {
+          selectSection(clone.id, 'content')
+        }
+      } else {
+        // 도중 삭제됐으면 새 이미지 정리
+        copied.forEach((c) => void deleteImage(c.to))
+      }
+      setCopying(clone.id, false)
+    })()
+  }
+
+  // 패널 액션 컨트롤 버튼
+  const controls = (
+    <>
+      <button
+        aria-label="순서 변경"
+        className="text-muted-foreground hover:bg-muted flex size-7 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="size-4" />
+      </button>
+      <button
+        aria-label="복제"
+        onClick={handleDuplicate}
+        className="text-muted-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-md"
+      >
+        <Copy className="size-4" />
+      </button>
+      <button
+        aria-label="삭제"
+        onClick={handleRemove}
+        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
+      >
+        <Trash2 className="size-4" />
+      </button>
+    </>
+  )
+
   return (
     <SectionReveal animation={section.container?.animation}>
       <div
         ref={setSectionRef}
+        data-section-id={section.id}
         onClick={handleBackgroundClick}
         style={{
           ...containerBackground(section),
@@ -146,40 +225,50 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
           data-content
           onClick={handleContentClick}
           className={cn(
-            'relative mx-auto w-full max-w-5xl rounded-md p-2 transition-colors',
+            'relative mx-auto w-full rounded-md transition-colors',
+            !wide && selectedSectionId !== null ? 'max-w-[min(64rem,100%-14rem)]' : 'max-w-5xl',
+            section.type === 'columns' ? 'py-2' : 'p-2',
             !isEmptyMedia &&
-              !isColumns &&
-              (contentSelected
+              section.type !== 'columns' &&
+              (isSelected && panelTab === 'content'
                 ? 'ring-foreground/20 ring-2 ring-inset'
                 : !isSorting && 'hover:bg-muted'),
           )}
         >
+          <EditorSectionContent
+            section={section}
+            isSelected={isSelected && panelTab === 'content'}
+          />
+          {isCopying && (
+            <div className="bg-background/60 text-muted-foreground pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-md backdrop-blur-[1px]">
+              <Loader className="size-6 animate-spin" />
+            </div>
+          )}
+          {wide && (
+            <div
+              className={cn(
+                'absolute top-1/2 right-0 z-10 flex translate-x-[calc(100%+0.375rem)] -translate-y-1/2 gap-0.5 transition-opacity',
+                isSelected
+                  ? 'opacity-100'
+                  : 'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100',
+              )}
+            >
+              {controls}
+            </div>
+          )}
+        </div>
+        {!wide && (
           <div
             className={cn(
-              'absolute top-1/2 right-0 z-10 flex translate-x-[calc(100%+0.375rem)] -translate-y-1/2 gap-0.5 opacity-0 transition-opacity',
+              'absolute top-1/2 right-4 z-10 flex w-fit -translate-y-1/2 gap-0.5 transition-opacity',
               isSelected
                 ? 'opacity-100'
-                : 'pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100',
+                : 'pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100',
             )}
           >
-            <button
-              aria-label="순서 변경"
-              className="text-muted-foreground hover:bg-muted flex size-7 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
-              {...attributes}
-              {...listeners}
-            >
-              <GripVertical className="size-4" />
-            </button>
-            <button
-              aria-label="삭제"
-              onClick={handleRemove}
-              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-7 cursor-pointer items-center justify-center rounded-md"
-            >
-              <Trash2 className="size-4" />
-            </button>
+            {controls}
           </div>
-          <EditorSectionContent section={section} isSelected={contentSelected} />
-        </div>
+        )}
         <button
           type="button"
           onPointerDown={handleResizeStart}

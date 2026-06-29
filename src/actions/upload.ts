@@ -65,3 +65,37 @@ export async function deleteImage(url: string): Promise<void> {
     console.error('deleteImage failed', error)
   }
 }
+
+// URL 사본 병렬 생성
+export async function copyImages(urls: string[]): Promise<{ from: string; to: string }[]> {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return []
+    }
+    const userId = session.user.id
+    const results = await Promise.all(
+      urls.map(async (url) => {
+        const publicId = publicIdFromUrl(url)
+        // 본인 폴더 이미지만 복사 허용
+        if (!publicId || !publicId.startsWith(`blanoir/${userId}/`)) {
+          return null
+        }
+        try {
+          const result = await cloudinary.uploader.upload(url, {
+            folder: `blanoir/${userId}`,
+            resource_type: 'image',
+          })
+          return { from: url, to: result.secure_url }
+        } catch (error) {
+          console.error('copyImages item failed', error)
+          return null
+        }
+      }),
+    )
+    return results.filter((result) => result !== null)
+  } catch (error) {
+    console.error('copyImages failed', error)
+    return []
+  }
+}

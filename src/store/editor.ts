@@ -51,6 +51,7 @@ interface EditorState {
   selectedSectionId: string | null
   panelTab: PanelTab
   imageUploading: boolean
+  copyingSectionIds: string[] // 이미지 복사 중인 복제 섹션
   isDirty: boolean
   saveStatus: SaveStatus
   savedSnapshot: string
@@ -61,6 +62,7 @@ interface EditorState {
   selectSection: (id: string | null, tab?: PanelTab) => void
   setPanelTab: (tab: PanelTab) => void
   setImageUploading: (uploading: boolean) => void
+  setCopying: (id: string, copying: boolean) => void
   addSection: (type: SectionType, index?: number, columnsCount?: number) => void
   replaceSections: (sections: Section[]) => void
   updateSectionContent: (id: string, content: Partial<Section['content']>) => void
@@ -68,6 +70,8 @@ interface EditorState {
   updateSectionContainer: (id: string, container: Partial<ContainerStyle>) => void
   removeSection: (id: string) => void
   restoreSection: (section: Section, index: number) => void
+  insertSection: (section: Section, index: number) => void
+  remapSectionImages: (id: string, map: Map<string, string>) => void
   moveSection: (fromIndex: number, toIndex: number) => void
   addColumnChild: (sectionId: string, colIndex: number, type: ColumnChildType) => void
   removeColumnChild: (childId: string) => void
@@ -194,6 +198,20 @@ const createSection = (type: SectionType, columnsCount = 2): Section => {
   return { id, type, content: { text: '' }, style: { ...DEFAULT_TEXT_STYLE } }
 }
 
+// 깊은 복제 후 새 id 발급
+export const cloneSection = (section: Section): Section => {
+  const copy = structuredClone(section)
+  copy.id = nanoid(8)
+  if (copy.type === 'columns') {
+    copy.content.columns.forEach((col) =>
+      col.forEach((child) => {
+        child.id = nanoid(8)
+      }),
+    )
+  }
+  return copy
+}
+
 // 배열 원소를 from→to로 이동
 const moveItem = <T>(arr: T[], from: number, to: number): T[] => {
   const next = [...arr]
@@ -284,6 +302,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
     selectedSectionId: null,
     panelTab: 'content',
     imageUploading: false,
+    copyingSectionIds: [],
     isDirty: false,
     saveStatus: 'idle',
     savedSnapshot: snapshot,
@@ -305,6 +324,14 @@ export const createEditorStore = (initial: EditorInitialPage) => {
 
     // 이미지 업로드 진행 여부
     setImageUploading: (imageUploading) => set({ imageUploading }),
+
+    // 이미지 복사 진행 표시
+    setCopying: (id, copying) =>
+      set((s) => ({
+        copyingSectionIds: copying
+          ? [...s.copyingSectionIds, id]
+          : s.copyingSectionIds.filter((x) => x !== id),
+      })),
 
     // 지정 위치에 새 섹션 삽입 후 선택
     addSection: (type, index, columnsCount) =>
@@ -382,6 +409,70 @@ export const createEditorStore = (initial: EditorInitialPage) => {
           selectedSectionId: section.id,
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
+      }),
+
+    // 선택 변경 없이 섹션만 삽입
+    insertSection: (section, index) =>
+      set((s) => {
+        const sections = [...s.sections]
+        sections.splice(Math.min(index, sections.length), 0, section)
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
+      }),
+
+    // 복사한 새 이미지 URL로 교체
+    remapSectionImages: (id, map) =>
+      set((s) => {
+        if (map.size === 0) {
+          return s
+        }
+        const swap = (url: string) => map.get(url) ?? url
+        const remapChild = (child: ColumnChild): ColumnChild =>
+          child.type === 'image' && child.content.src
+            ? { ...child, content: { ...child.content, src: swap(child.content.src) } }
+            : child
+        const sections = s.sections.map((section) => {
+          if (section.id !== id) {
+            return section
+          }
+          let next = section.container?.backgroundImage
+            ? {
+                ...section,
+                container: {
+                  ...section.container,
+                  backgroundImage: swap(section.container.backgroundImage),
+                },
+              }
+            : section
+          if (next.type === 'image' && next.content.src) {
+            next = { ...next, content: { ...next.content, src: swap(next.content.src) } }
+          } else if (next.type === 'gallery') {
+            next = {
+              ...next,
+              content: {
+                ...next.content,
+                images: next.content.images.map((image) => ({ ...image, url: swap(image.url) })),
+              },
+            }
+          } else if (next.type === 'card') {
+            next = {
+              ...next,
+              content: {
+                ...next.content,
+                cards: next.content.cards.map((card) => ({ ...card, image: swap(card.image) })),
+              },
+            }
+          } else if (next.type === 'columns') {
+            next = {
+              ...next,
+              content: {
+                ...next.content,
+                columns: next.content.columns.map((col) => col.map(remapChild)),
+              },
+            }
+          }
+          return next
+        })
+        return { sections, ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot) }
       }),
 
     // 섹션 순서 이동

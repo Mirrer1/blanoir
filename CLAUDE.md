@@ -50,6 +50,10 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **노트북 패널 상호배타.** 에디터 양옆 템플릿과 스타일 패널이 둘 다 열리면 콘텐츠 바깥 여백에 자리한 순서변경과 삭제 컨트롤이 노트북 폭에서 잘려, `1800px` 미만에선 섹션 편집 시 템플릿 패널을 가려 한 번에 하나만 띄운다(`hooks/useDualPanel`의 matchMedia + `useSyncExternalStore`, 와이드 화면은 종전대로 둘 다 동시 표시). 패널 폭은 종전 그대로 두고 표시 여부만 화면 폭으로 가른다.
 
+**섹션 컨트롤 툴바 정리.** 섹션 호버·선택 시 뜨는 컨트롤(`EditorSection`)에 복제 버튼 추가 — 순서변경·복제·삭제 순. 노트북에서 스타일 패널이 열리면 우측이 좁아져 가로 툴바가 콘텐츠를 덮던 걸, 그때만(`!wide && selectedSectionId !== null`) 콘텐츠 폭을 줄여(`max-w-[min(64rem,100%-14rem)]`, 좌우 균등) 우측에 툴바 자리를 비워 해결(와이드 모니터·패널 닫힘은 종전대로 `max-w-5xl`, 툴바는 풀블리드 우측 `right-4`). 노트북 툴바는 겹침이 사라져 배경·그림자 박스를 빼고 바버튼으로 모니터와 통일. 열 섹션은 칸 자체 `p-2`와 columnRef 가로 패딩이 겹쳐 좌측 선이 8px 더 들어가던 걸 columnRef를 `py-2`(가로 패딩 제거)로 바꿔 다른 섹션과 정렬. `EditorSection`의 단발성 파생값(`panelTight`·`contentSelected`·`isColumns`)은 named const 대신 JSX 속성에 인라인.
+
+**섹션·페이지 복제.** 섹션 컨트롤 복제 버튼 동작 연결 — `store/editor.ts`의 `cloneSection`(깊은 복제 후 새 id, 열 칸 자식까지)으로 복제본을 원본 다음에 삽입(`insertSection`은 선택 변경 없이 삽입). 이미지 있는 섹션은 `actions/upload.ts`의 `copyImages`로 **백그라운드 병렬 복사** 후 새 URL로 교체(`remapSectionImages`)해 원본과 독립, 복사 중엔 스피너 오버레이(`copyingSectionIds`)를 띄우고 완료되면 그 패널을 연다. 복제 후 복제본으로 부드럽게 스크롤(`data-section-id`). 삭제 정리(`EditorSection`)는 남은 섹션이 아직 쓰는 URL은 제외해 공유본 보호. 대시보드 페이지 복제도 추가 — `actions/page.ts`의 `duplicatePage`가 본인 페이지를 조회해 섹션·이미지를 전부 복제(이미지 한 번에 병렬 복사로 속도 최적화, 열 칸 이미지 포함), 복제본은 비공개로 시작. 제목은 `utils/copyTitle.ts`의 `makeCopyTitle`로 `제목 - 복사본`·같은 이름 있으면 `복사본(2)`처럼 번호 증가(이미 붙은 표기는 기준 제목 복원). 대시보드 목록을 클라이언트 그리드(`DashboardPageGrid`, `useOptimistic`)로 빼 복제 누르면 임시 카드(`DashboardPendingCard`, 스피너·복사 제목 미리 표시)가 즉시 떴다 완료 시 실제 카드로 교체, 여러 번 누르면 임시 카드도 여러 개. 복제 순수 로직은 단위 테스트(`copyTitle`·`cloneSection`·`insertSection`·`remapSectionImages`).
+
 **남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404, 우선순위 낮음), E2E 테스트(Playwright 1~2 시나리오). 공개 페이지 자체 다크 토글은 안 하기로.
 
 ## 문서 안내

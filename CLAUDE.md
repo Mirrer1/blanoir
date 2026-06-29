@@ -48,6 +48,8 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **인증 보강.** 회원가입에 이메일 인증 추가 — 가입 전이라 `EmailVerification` 모델(이메일 키·코드 해시·만료·시도·완료)에 보관하고 `sendSignupCode`(중복 이메일 거절)·`verifySignupCode`(TTL 10분·5회 제한)·`registerUser`(인증 완료 필수, 성공 시 레코드 삭제), 코드 생성·메일은 비번찾기와 공유(`generateCode`·`lib/email` 공용 발송). 폼은 이메일 인풋을 맨 위로+옆 인증 버튼, 코드 인풋이 motion으로 등장, 인증 전 가입 비활성(`SignupForm`). 로그인엔 이메일 저장(localStorage·로컬 로그인만·`useSyncExternalStore`로 기본값)+비밀번호 찾기를 버튼 위 한 줄로 배치. 인증 라우팅을 `proxy.ts` 미들웨어로 통합 — 비로그인은 보호 경로(`/dashboard`·`/settings`·`/edit`) 차단, 로그인은 게스트 전용(`/`·로그인·가입·비번찾기)→대시보드, 양쪽 `Cache-Control: no-store`로 뒤로가기 캐시 차단. 랜딩 구경하기는 로그인으로 연결.
 
+**노트북 패널 상호배타.** 에디터 양옆 템플릿과 스타일 패널이 둘 다 열리면 콘텐츠 바깥 여백에 자리한 순서변경과 삭제 컨트롤이 노트북 폭에서 잘려, `1800px` 미만에선 섹션 편집 시 템플릿 패널을 가려 한 번에 하나만 띄운다(`hooks/useDualPanel`의 matchMedia + `useSyncExternalStore`, 와이드 화면은 종전대로 둘 다 동시 표시). 패널 폭은 종전 그대로 두고 표시 여부만 화면 폭으로 가른다.
+
 **남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404, 우선순위 낮음), E2E 테스트(Playwright 1~2 시나리오). 공개 페이지 자체 다크 토글은 안 하기로.
 
 ## 문서 안내

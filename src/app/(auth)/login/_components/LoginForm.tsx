@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -21,15 +22,42 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>
 
+const SAVED_EMAIL_KEY = 'blanoir-saved-email'
+
+const noopSubscribe = () => () => {}
+
 const LoginForm = () => {
   const router = useRouter()
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) })
 
+  const [override, setOverride] = useState<boolean | null>(null)
+  const savedExists = useSyncExternalStore(
+    noopSubscribe,
+    () => localStorage.getItem(SAVED_EMAIL_KEY) !== null,
+    () => false,
+  )
+  const remember = override ?? savedExists
+
+  // 저장된 이메일이 있으면 입력란에 채움
+  useEffect(() => {
+    const saved = localStorage.getItem(SAVED_EMAIL_KEY)
+    if (saved) {
+      setValue('email', saved)
+    }
+  }, [setValue])
+
   const onSubmit = async ({ email, password }: LoginValues) => {
+    if (remember) {
+      localStorage.setItem(SAVED_EMAIL_KEY, email)
+    } else {
+      localStorage.removeItem(SAVED_EMAIL_KEY)
+    }
+
     try {
       const res = await signIn('credentials', { email, password, redirect: false })
       if (res?.error) {
@@ -70,15 +98,23 @@ const LoginForm = () => {
           />
           <FieldErrorText message={errors.password?.message} />
         </Field>
+        <div className="flex items-center justify-between text-xs">
+          <label className="text-muted-foreground hover:text-foreground flex cursor-pointer items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setOverride(e.target.checked)}
+              className="accent-foreground size-3.5 cursor-pointer"
+            />
+            <span className="mt-px">이메일 저장</span>
+          </label>
+          <Link href="/forgot-password" className="text-muted-foreground hover:text-foreground">
+            비밀번호 찾기
+          </Link>
+        </div>
         <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
           {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '로그인'}
         </Button>
-        <Link
-          href="/forgot-password"
-          className="text-muted-foreground hover:text-foreground text-center text-sm"
-        >
-          비밀번호를 잊으셨나요?
-        </Link>
       </FieldGroup>
     </form>
   )

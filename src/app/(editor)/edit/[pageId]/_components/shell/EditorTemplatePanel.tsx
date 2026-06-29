@@ -65,26 +65,23 @@ const EditorTemplatePanel = ({
         </button>
       </div>
       <div className="flex flex-col gap-2 overflow-y-auto p-3">
-        {EDITOR_TEMPLATES.map((template) => {
-          const Icon = template.icon
-          return (
-            <button
-              key={template.id}
-              onClick={() => handleApply(template)}
-              className="hover:border-foreground/30 hover:bg-muted/50 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-left transition-colors"
-            >
-              <span className="bg-muted text-foreground flex size-9 shrink-0 items-center justify-center rounded-md">
-                <Icon className="size-4.5" />
+        {EDITOR_TEMPLATES.map((template) => (
+          <button
+            key={template.id}
+            onClick={() => handleApply(template)}
+            className="hover:border-foreground/30 hover:bg-muted/50 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-left transition-colors"
+          >
+            <span className="bg-muted text-foreground flex size-9 shrink-0 items-center justify-center rounded-md">
+              <template.icon className="size-4.5" />
+            </span>
+            <span className="flex flex-col gap-0.5">
+              <span className="text-sm font-medium">{template.label}</span>
+              <span className="text-muted-foreground text-xs leading-snug">
+                {template.description}
               </span>
-              <span className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">{template.label}</span>
-                <span className="text-muted-foreground text-xs leading-snug">
-                  {template.description}
-                </span>
-              </span>
-            </button>
-          )
-        })}
+            </span>
+          </button>
+        ))}
       </div>
     </div>
   )

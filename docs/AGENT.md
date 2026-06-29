@@ -126,6 +126,11 @@ const SignUpPage = () => {
 export default SignUpPage
 ```
 
+### JSX 렌더
+
+- return 안에서 변수 선언이나 계산을 하지 않는다. 계산은 return 위에서 끝내고 return은 미리 만든 값만 렌더한다.
+- `.map()` 콜백을 return 안에 두고 그 안에서 `const`를 선언하지 않는다. 표시용 데이터를 return 위에서 배열로 만들어 두고 JSX는 표현식 본문으로 렌더한다.
+
 ### 컴포넌트 분리 기준
 
 다음 중 하나라도 해당하면 별도 컴포넌트로 분리:

@@ -122,60 +122,73 @@ const SectionColumns = ({ section }: { section: ColumnsSection }) => {
     window.addEventListener('pointerup', onUp)
   }
 
+  // 각 칸의 표시 정보를 미리 계산
+  const columnSlots = columns.map((col, i) => {
+    const child = col[0]
+    return {
+      key: child?.id ?? `col-${i}`,
+      child,
+      colIndex: i,
+      selected: !!child && selectedId === child.id,
+      // 빈 이미지 칸은 드롭존 보더가 있어 강조를 끔
+      emptyImage: child?.type === 'image' && !child.content.src,
+    }
+  })
+
+  // 너비 조절 핸들 위치를 미리 계산
+  const resizeHandles = isFull
+    ? widths.slice(0, -1).map((_, i) => ({
+        key: `handle-${i}`,
+        index: i,
+        left: (widths.slice(0, i + 1).reduce((a, b) => a + b, 0) / total) * 100,
+      }))
+    : []
+
   return (
     <div
       ref={gridRef}
       className="group/cols relative grid gap-4"
       style={{ gridTemplateColumns: templateColumns }}
     >
-      {columns.map((col, i) => {
-        const child = col[0]
-        const sel = !!child && selectedId === child.id
-        // 빈 이미지 칸은 드롭존 보더가 있어 칸 강조 표시를 끔
-        const childEmpty = child?.type === 'image' && !child.content.src
-        return (
-          <div key={child?.id ?? `col-${i}`} className="min-w-0">
-            {child ? (
-              <div
-                onClick={(e) => {
-                  e.stopPropagation()
-                  selectSection(child.id)
-                }}
-                className={cn(
-                  'flex h-full min-h-20 flex-col justify-center rounded-md p-2 transition-colors',
-                  !childEmpty && (sel ? 'ring-foreground/20 ring-2 ring-inset' : 'hover:bg-muted'),
-                )}
-              >
-                {child.type === 'title' && <SectionTitle section={child} isSelected={sel} />}
-                {child.type === 'paragraph' && (
-                  <SectionParagraph section={child} isSelected={sel} />
-                )}
-                {child.type === 'button' && <SectionButton section={child} />}
-                {child.type === 'image' && <SectionImage section={child} isSelected={sel} />}
-              </div>
-            ) : (
-              <AddColumnChildMenu sectionId={section.id} colIndex={i} />
-            )}
-          </div>
-        )
-      })}
-
-      {isFull &&
-        widths.slice(0, -1).map((_, i) => {
-          const cum = widths.slice(0, i + 1).reduce((a, b) => a + b, 0)
-          return (
-            <button
-              key={`handle-${i}`}
-              aria-label="너비 조절"
-              onPointerDown={(e) => handleResize(e, i)}
-              onClick={(e) => e.stopPropagation()}
-              style={{ left: `${(cum / total) * 100}%` }}
-              className="group/handle absolute top-0 bottom-0 z-20 flex w-4 -translate-x-1/2 cursor-col-resize items-center justify-center opacity-0 transition-opacity group-hover/cols:opacity-100"
+      {columnSlots.map(({ key, child, colIndex, selected, emptyImage }) => (
+        <div key={key} className="min-w-0">
+          {child ? (
+            <div
+              onClick={(e) => {
+                e.stopPropagation()
+                selectSection(child.id)
+              }}
+              className={cn(
+                'flex h-full min-h-20 flex-col justify-center rounded-md p-2 transition-colors',
+                !emptyImage &&
+                  (selected ? 'ring-foreground/20 ring-2 ring-inset' : 'hover:bg-muted'),
+              )}
             >
-              <span className="bg-foreground/20 group-hover/handle:bg-foreground/40 h-10 w-1 rounded-full transition-colors" />
-            </button>
-          )
-        })}
+              {child.type === 'title' && <SectionTitle section={child} isSelected={selected} />}
+              {child.type === 'paragraph' && (
+                <SectionParagraph section={child} isSelected={selected} />
+              )}
+              {child.type === 'button' && <SectionButton section={child} />}
+              {child.type === 'image' && <SectionImage section={child} isSelected={selected} />}
+            </div>
+          ) : (
+            <AddColumnChildMenu sectionId={section.id} colIndex={colIndex} />
+          )}
+        </div>
+      ))}
+
+      {resizeHandles.map(({ key, index, left }) => (
+        <button
+          key={key}
+          aria-label="너비 조절"
+          onPointerDown={(e) => handleResize(e, index)}
+          onClick={(e) => e.stopPropagation()}
+          style={{ left: `${left}%` }}
+          className="group/handle absolute top-0 bottom-0 z-20 flex w-4 -translate-x-1/2 cursor-col-resize items-center justify-center opacity-0 transition-opacity group-hover/cols:opacity-100"
+        >
+          <span className="bg-foreground/20 group-hover/handle:bg-foreground/40 h-10 w-1 rounded-full transition-colors" />
+        </button>
+      ))}
     </div>
   )
 }

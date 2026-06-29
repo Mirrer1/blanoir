@@ -3,11 +3,13 @@
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
 
-import { deleteImage } from './upload'
+import { copyImages, deleteImage } from './upload'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
 import type { Section } from '@/types/section'
+import { makeCopyTitle } from '@/utils/copyTitle'
+import { sectionImageUrls } from '@/utils/imageUrls'
 
 // 서버 에러 공통 메시지
 const UNEXPECTED_ERROR = '잠시 후 다시 시도해 주세요'
@@ -30,6 +32,106 @@ const collectImageUrls = (sections: Section[]): string[] => {
     }
   }
   return urls
+}
+
+// 섹션 깊은 복제 후 새 id 발급
+const cloneSections = (sections: Section[]): Section[] => {
+  const cloned = structuredClone(sections)
+  for (const section of cloned) {
+    section.id = nanoid(8)
+    if (section.type === 'columns') {
+      section.content.columns.forEach((col) =>
+        col.forEach((child) => {
+          child.id = nanoid(8)
+        }),
+      )
+    }
+  }
+  return cloned
+}
+
+// 복사한 새 이미지 URL로 교체
+const applyUrlMap = (sections: Section[], map: Map<string, string>) => {
+  const swap = (url: string) => map.get(url) ?? url
+  for (const section of sections) {
+    if (section.container?.backgroundImage) {
+      section.container.backgroundImage = swap(section.container.backgroundImage)
+    }
+    if (section.type === 'image' && section.content.src) {
+      section.content.src = swap(section.content.src)
+    }
+    if (section.type === 'gallery') {
+      section.content.images.forEach((image) => {
+        image.url = swap(image.url)
+      })
+    }
+    if (section.type === 'card') {
+      section.content.cards.forEach((card) => {
+        card.image = swap(card.image)
+      })
+    }
+    if (section.type === 'columns') {
+      section.content.columns.forEach((col) =>
+        col.forEach((child) => {
+          if (child.type === 'image' && child.content.src) {
+            child.content.src = swap(child.content.src)
+          }
+        }),
+      )
+    }
+  }
+}
+
+type DuplicateResult = { ok: true; pageId: string } | { ok: false; message: string }
+
+export async function duplicatePage(pageId: string): Promise<DuplicateResult> {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return { ok: false, message: '로그인이 필요해요' }
+    }
+
+    await connectDB()
+
+    // 소유권을 필터에 넣어 본인 페이지만 복제
+    const source = await Page.findOne({ pageId, userId: session.user.id }).lean<{
+      title: string
+      sections: Section[]
+    } | null>()
+    if (!source) {
+      return { ok: false, message: '권한이 없어요' }
+    }
+
+    const sections = cloneSections(source.sections)
+
+    // 페이지 이미지를 병렬 복사해 원본과 독립
+    const urls = [...new Set(sections.flatMap(sectionImageUrls))]
+    if (urls.length > 0) {
+      const copied = await copyImages(urls)
+      applyUrlMap(sections, new Map(copied.map((item) => [item.from, item.to])))
+    }
+
+    const titles = await Page.find({ userId: session.user.id })
+      .select('title')
+      .lean<{ title: string }[]>()
+    const title = makeCopyTitle(source.title, new Set(titles.map((page) => page.title)))
+
+    const newPageId = nanoid(10)
+    await Page.create({
+      pageId: newPageId,
+      userId: session.user.id,
+      title,
+      sections,
+      isPublic: false,
+    })
+
+    revalidatePath('/dashboard')
+
+    return { ok: true, pageId: newPageId }
+  } catch (error) {
+    console.error('duplicatePage failed', error)
+    return { ok: false, message: UNEXPECTED_ERROR }
+  }
 }
 
 type CreatePageResult = { ok: true; pageId: string } | { ok: false; message: string }

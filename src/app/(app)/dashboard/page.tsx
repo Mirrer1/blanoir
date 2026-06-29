@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 import DashboardEmpty from './_components/DashboardEmpty'
-import DashboardPageCard from './_components/DashboardPageCard'
+import DashboardPageGrid from './_components/DashboardPageGrid'
 import NewPageButton from './_components/NewPageButton'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
@@ -42,15 +42,7 @@ const DashboardPage = async () => {
         )}
       </div>
       <div className="mt-8">
-        {items.length === 0 ? (
-          <DashboardEmpty />
-        ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((page) => (
-              <DashboardPageCard key={page.pageId} page={page} />
-            ))}
-          </div>
-        )}
+        {items.length === 0 ? <DashboardEmpty /> : <DashboardPageGrid items={items} />}
       </div>
     </div>
   )

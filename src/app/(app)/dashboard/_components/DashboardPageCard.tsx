@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import DashboardDeleteButton from './DashboardDeleteButton'
+import DashboardDuplicateButton from './DashboardDuplicateButton'
 
 interface DashboardPageCardProps {
   page: {
@@ -11,9 +12,10 @@ interface DashboardPageCardProps {
     thumbnail: string
     textPreview: string
   }
+  onDuplicate: () => void
 }
 
-const DashboardPageCard = ({ page }: DashboardPageCardProps) => {
+const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
   const title = page.title || '제목 없는 페이지'
   const updatedLabel = new Date(page.updatedAt).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -70,6 +72,7 @@ const DashboardPageCard = ({ page }: DashboardPageCardProps) => {
         </div>
         <span className="text-muted-foreground text-xs">{updatedLabel} 수정</span>
       </Link>
+      <DashboardDuplicateButton onDuplicate={onDuplicate} />
       <DashboardDeleteButton pageId={page.pageId} title={title} />
     </div>
   )

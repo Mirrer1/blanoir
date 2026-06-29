@@ -1,8 +1,33 @@
 import { describe, expect, it } from 'vitest'
 
 import type { EditorStore } from './editor'
-import { createEditorStore, findNode } from './editor'
-import type { ColumnsSection, Section, TitleSection } from '@/types/section'
+import { cloneSection, createEditorStore, findNode } from './editor'
+import type {
+  CardSection,
+  ColumnsSection,
+  ContainerStyle,
+  GallerySection,
+  ImageSection,
+  Section,
+  TitleSection,
+} from '@/types/section'
+
+const IMAGE_STYLE = {
+  size: 'medium',
+  shape: 'square',
+  align: 'center',
+  ratio: 'original',
+  zoom: 1,
+  focusX: 50,
+  focusY: 50,
+} as const
+
+const imageChild = (id: string, src: string): ImageSection => ({
+  id,
+  type: 'image',
+  content: { src, alt: '' },
+  style: IMAGE_STYLE,
+})
 
 const TEXT_STYLE = {
   size: 'medium',
@@ -174,5 +199,95 @@ describe('moveColumn', () => {
     expect(col.content.columns[0]).toHaveLength(0)
     expect(col.content.columns[2][0].id).toBe(childId)
     expect(col.style.widths).toEqual([2, 1, 3])
+  })
+})
+
+describe('cloneSection', () => {
+  it('새 id를 발급하고 내용은 유지', () => {
+    const clone = cloneSection(titleChild('orig', '제목'))
+    expect(clone.id).not.toBe('orig')
+    expect(clone.type).toBe('title')
+    expect(clone.content).toEqual({ text: '제목' })
+  })
+
+  it('열 섹션은 칸 자식까지 새 id', () => {
+    const clone = cloneSection(columnsWith([[titleChild('c1')], [titleChild('c2')]]))
+    const cols = (clone as ColumnsSection).content.columns
+    expect(clone.id).not.toBe('col')
+    expect(cols[0][0].id).not.toBe('c1')
+    expect(cols[1][0].id).not.toBe('c2')
+  })
+
+  it('깊은 복제라 원본과 분리됨', () => {
+    const original = titleChild('orig', '제목')
+    const clone = cloneSection(original) as TitleSection
+    clone.content.text = '변경'
+    expect(original.content.text).toBe('제목')
+  })
+})
+
+describe('insertSection', () => {
+  it('선택 변경 없이 지정 위치에 삽입', () => {
+    const store = makeStore([titleChild('a'), titleChild('b')])
+    store.getState().selectSection('a')
+
+    store.getState().insertSection(titleChild('x'), 1)
+    expect(store.getState().sections.map((s) => s.id)).toEqual(['a', 'x', 'b'])
+    expect(store.getState().selectedSectionId).toBe('a')
+  })
+})
+
+describe('remapSectionImages', () => {
+  it('이미지 src를 새 URL로 교체', () => {
+    const store = makeStore([imageChild('img', 'old.jpg')])
+    store.getState().remapSectionImages('img', new Map([['old.jpg', 'new.jpg']]))
+    expect((store.getState().sections[0] as ImageSection).content.src).toBe('new.jpg')
+  })
+
+  it('갤러리와 컨테이너 배경을 교체', () => {
+    const gallery: GallerySection & { container?: ContainerStyle } = {
+      id: 'g',
+      type: 'gallery',
+      content: { images: [{ url: 'g-old.jpg', alt: '' }] },
+      style: { displayMode: 'grid', shape: 'square', gap: 'small' },
+      container: { backgroundImage: 'bg-old.jpg' },
+    }
+    const store = makeStore([gallery])
+    store.getState().remapSectionImages(
+      'g',
+      new Map([
+        ['g-old.jpg', 'g-new.jpg'],
+        ['bg-old.jpg', 'bg-new.jpg'],
+      ]),
+    )
+    const result = store.getState().sections[0] as GallerySection & { container?: ContainerStyle }
+    expect(result.content.images[0].url).toBe('g-new.jpg')
+    expect(result.container?.backgroundImage).toBe('bg-new.jpg')
+  })
+
+  it('카드 이미지를 교체', () => {
+    const card: CardSection = {
+      id: 'c',
+      type: 'card',
+      content: { cards: [{ id: '1', image: 'old.jpg', alt: '', title: '', description: '' }] },
+      style: { layout: 'grid', align: 'left' },
+    }
+    const store = makeStore([card])
+    store.getState().remapSectionImages('c', new Map([['old.jpg', 'new.jpg']]))
+    expect((store.getState().sections[0] as CardSection).content.cards[0].image).toBe('new.jpg')
+  })
+
+  it('열 칸 이미지를 교체', () => {
+    const store = makeStore([columnsWith([[imageChild('ci', 'old.jpg')], []])])
+    store.getState().remapSectionImages('col', new Map([['old.jpg', 'new.jpg']]))
+    const child = columnsOf(store).content.columns[0][0] as ImageSection
+    expect(child.content.src).toBe('new.jpg')
+  })
+
+  it('빈 맵이면 변경 없음', () => {
+    const store = makeStore([imageChild('img', 'old.jpg')])
+    const before = store.getState().sections
+    store.getState().remapSectionImages('img', new Map())
+    expect(store.getState().sections).toBe(before)
   })
 })

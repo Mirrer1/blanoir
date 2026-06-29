@@ -253,6 +253,24 @@ export const findNode = (sections: Section[], id: string | null): EditorNode | n
   return null
 }
 
+// 노드를 담은 top-level 섹션을 조회 후 칸 자식이면 부모 열 섹션을 리턴
+export const findContainerSection = (sections: Section[], id: string | null): Section | null => {
+  if (!id) {
+    return null
+  }
+  for (const section of sections) {
+    if (section.id === id) {
+      return section
+    }
+    if (section.type === 'columns') {
+      if (section.content.columns.some((col) => col.some((child) => child.id === id))) {
+        return section
+      }
+    }
+  }
+  return null
+}
+
 // 서버 데이터로 초기화된 페이지별 스토어 생성
 export const createEditorStore = (initial: EditorInitialPage) => {
   const snapshot = serializeContent(initial.title, initial.sections)
@@ -392,6 +410,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return {
           sections,
           selectedSectionId: child.id,
+          panelTab: 'content',
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
       }),
@@ -433,6 +452,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         return {
           sections,
           selectedSectionId: child.id,
+          panelTab: 'content',
           ...dirtyFrom(s.title, sections, s.savedSnapshot, s.initialSnapshot),
         }
       }),

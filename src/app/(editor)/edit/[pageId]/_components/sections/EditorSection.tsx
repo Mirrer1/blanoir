@@ -25,14 +25,15 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
   const updateSectionContainer = useEditorStore((s) => s.updateSectionContainer)
   const isSelected = selectedSectionId === section.id
   const contentSelected = isSelected && panelTab === 'content'
-  const backgroundSelected = isSelected && panelTab === 'background'
+  const ownsSelection =
+    section.type === 'columns' &&
+    section.content.columns.some((col) => col.some((child) => child.id === selectedSectionId))
+  const backgroundSelected = (isSelected || ownsSelection) && panelTab === 'background'
   const isEmptyMedia =
     (section.type === 'image' && !section.content.src) ||
     (section.type === 'gallery' && section.content.images.length === 0) ||
     (section.type === 'card' && section.content.cards.length === 0)
   const isColumns = section.type === 'columns'
-  const flushContent =
-    isColumns || section.type === 'image' || section.type === 'gallery' || section.type === 'card'
 
   const outerRef = useRef<HTMLDivElement>(null)
   const columnRef = useRef<HTMLDivElement>(null)
@@ -53,10 +54,9 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
   )
 
   // 클릭한 영역에 맞는 탭으로 패널 열기
-  // 열은 클릭할 단일 콘텐츠가 없어 배경 클릭도 콘텐츠(칸 관리) 탭으로 엶
   const handleBackgroundClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    selectSection(section.id, isColumns ? 'content' : 'background')
+    selectSection(section.id, 'background')
   }
 
   const handleContentClick = (e: React.MouseEvent) => {
@@ -146,8 +146,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
           data-content
           onClick={handleContentClick}
           className={cn(
-            'relative mx-auto w-full max-w-5xl rounded-md py-2 transition-colors',
-            !flushContent && 'px-3',
+            'relative mx-auto w-full max-w-5xl rounded-md p-2 transition-colors',
             !isEmptyMedia &&
               !isColumns &&
               (contentSelected

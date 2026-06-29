@@ -11,14 +11,12 @@ import EditorTemplatePanel from './EditorTemplatePanel'
 import useAutoSave from '@/hooks/useAutoSave'
 import useTemplatePanel from '@/hooks/useTemplatePanel'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
-import useEditorStore, { findNode } from '@/store/editor'
+import useEditorStore, { findContainerSection, findNode } from '@/store/editor'
 
 const EditorShell = () => {
-  // 선택은 top-level 섹션 또는 열 칸 자식 모두 가리킬 수 있음
   const selectedNode = useEditorStore((s) => findNode(s.sections, s.selectedSectionId))
-  const isChildSelected = useEditorStore(
-    (s) =>
-      !!s.selectedSectionId && !s.sections.some((section) => section.id === s.selectedSectionId),
+  const containerSection = useEditorStore((s) =>
+    findContainerSection(s.sections, s.selectedSectionId),
   )
 
   const pageId = useEditorStore((s) => s.pageId)
@@ -94,7 +92,7 @@ const EditorShell = () => {
               <EditorStylePanel
                 key={selectedNode.id}
                 section={selectedNode}
-                isChild={isChildSelected}
+                containerSection={containerSection ?? selectedNode}
               />
             </motion.aside>
           )}

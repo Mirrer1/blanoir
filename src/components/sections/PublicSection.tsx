@@ -58,7 +58,7 @@ const PublicSection = ({ section }: { section: Section }) =>
         className="flex flex-col justify-center py-2"
         style={{ ...containerBackground(section), minHeight: section.container?.height }}
       >
-        <div className="mx-auto w-full max-w-5xl px-3 py-2">
+        <div className="mx-auto w-full max-w-5xl p-2">
           {section.type === 'title' && <SectionTitleView section={section} live />}
           {section.type === 'paragraph' && <SectionParagraphView section={section} live />}
           {section.type === 'image' && <SectionImageView section={section} live />}

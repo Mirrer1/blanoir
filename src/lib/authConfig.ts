@@ -24,14 +24,6 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    // 로그인 경로 접근 가드
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isProtected =
-        nextUrl.pathname.startsWith('/dashboard') || nextUrl.pathname.startsWith('/edit')
-
-      return isProtected ? isLoggedIn : true
-    },
     // 토큰의 id/handle 세션 노출
     session({ session, token }) {
       if (token.id) {

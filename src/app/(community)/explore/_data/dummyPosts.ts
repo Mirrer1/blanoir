@@ -1,0 +1,126 @@
+// 추후 DB 조회로 바꿀 둘러보기 UI 퍼블리싱용 더미 데이터
+export type ExploreCategory = 'profile' | 'portfolio' | 'store' | 'wedding' | 'resume' | 'event'
+export type ExploreCategoryKey = ExploreCategory | 'all'
+
+export const CATEGORIES: { key: ExploreCategory; label: string }[] = [
+  { key: 'profile', label: '프로필' },
+  { key: 'portfolio', label: '포트폴리오' },
+  { key: 'store', label: '매장' },
+  { key: 'wedding', label: '청첩장' },
+  { key: 'resume', label: '이력서' },
+  { key: 'event', label: '이벤트' },
+]
+
+export interface ExplorePost {
+  pageId: string
+  title: string
+  category: ExploreCategory
+  authorName: string
+  authorHandle: string
+  authorImage: string
+  thumbnail: string
+  likeCount: number
+  useCount: number
+  allowRemix: boolean
+}
+
+const thumb = (seed: string) => `https://picsum.photos/seed/${seed}/640/360`
+
+export const DUMMY_POSTS: ExplorePost[] = [
+  {
+    pageId: 'demo-wedding',
+    title: '준호 ♥ 서연 결혼합니다',
+    category: 'wedding',
+    authorName: '김준호',
+    authorHandle: 'junho',
+    authorImage: thumb('avatar-junho'),
+    thumbnail: thumb('wedding'),
+    likeCount: 248,
+    useCount: 31,
+    allowRemix: true,
+  },
+  {
+    pageId: 'demo-cafe',
+    title: '카페 별빛 — 메뉴와 오시는 길',
+    category: 'store',
+    authorName: '카페별빛',
+    authorHandle: 'cafe_byeolbit',
+    authorImage: '',
+    thumbnail: thumb('cafe'),
+    likeCount: 132,
+    useCount: 18,
+    allowRemix: true,
+  },
+  {
+    pageId: 'demo-portfolio',
+    title: '이서준 · 그래픽 디자인 포트폴리오',
+    category: 'portfolio',
+    authorName: '이서준',
+    authorHandle: 'seojun',
+    authorImage: thumb('avatar-seojun'),
+    thumbnail: thumb('portfolio'),
+    likeCount: 97,
+    useCount: 12,
+    allowRemix: false,
+  },
+  {
+    pageId: 'demo-resume',
+    title: '프론트엔드 개발자 박민재 이력서',
+    category: 'resume',
+    authorName: '박민재',
+    authorHandle: 'minjae',
+    authorImage: '',
+    thumbnail: '',
+    likeCount: 64,
+    useCount: 9,
+    allowRemix: true,
+  },
+  {
+    pageId: 'demo-profile',
+    title: '안녕하세요, 일러스트레이터 하늘이에요',
+    category: 'profile',
+    authorName: '하늘',
+    authorHandle: 'haneul',
+    authorImage: thumb('avatar-haneul'),
+    thumbnail: thumb('illust'),
+    likeCount: 53,
+    useCount: 4,
+    allowRemix: false,
+  },
+  {
+    pageId: 'demo-event',
+    title: '봄맞이 플리마켓 안내',
+    category: 'event',
+    authorName: '동네마켓',
+    authorHandle: 'town_market',
+    authorImage: '',
+    thumbnail: thumb('market'),
+    likeCount: 41,
+    useCount: 7,
+    allowRemix: true,
+  },
+  {
+    pageId: 'demo-studio',
+    title: '소소 공방 — 도자기 원데이 클래스',
+    category: 'store',
+    authorName: '소소공방',
+    authorHandle: 'soso',
+    authorImage: thumb('avatar-soso'),
+    thumbnail: thumb('pottery'),
+    likeCount: 38,
+    useCount: 5,
+    allowRemix: true,
+  },
+  {
+    pageId: 'demo-band',
+    title: '인디밴드 노을 첫 단독 공연',
+    category: 'event',
+    authorName: '노을',
+    authorHandle: 'noeul',
+    authorImage: '',
+    thumbnail: thumb('band'),
+    likeCount: 29,
+    useCount: 2,
+    allowRemix: false,
+  },
+]

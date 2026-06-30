@@ -6,9 +6,8 @@ interface LandingBrowseButtonProps {
   children: ReactNode
 }
 
-// 구경하기 기능 준비 전이라 로그인으로 연결
 const LandingBrowseButton = ({ className, children }: LandingBrowseButtonProps) => (
-  <Link href="/login" className={className}>
+  <Link href="/explore" className={className}>
     {children}
   </Link>
 )

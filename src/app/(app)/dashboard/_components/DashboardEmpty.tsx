@@ -1,4 +1,4 @@
-import NewPageButton from './NewPageButton'
+import NewPageButton from '@/components/common/NewPageButton'
 
 const DashboardEmpty = () => {
   return (

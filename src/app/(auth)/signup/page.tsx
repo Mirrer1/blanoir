@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import OrDivider from '../_components/OrDivider'
@@ -11,6 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+
+export const metadata: Metadata = { title: '회원가입' }
 
 const SignupPage = () => {
   return (

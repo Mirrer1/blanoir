@@ -1,4 +1,5 @@
 import { Mail } from 'lucide-react'
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import LogoutButton from '../_components/LogoutButton'
@@ -19,6 +20,8 @@ const PROVIDER_LABEL: Record<Provider, string> = {
   naver: '네이버',
   local: '이메일',
 }
+
+export const metadata: Metadata = { title: '설정' }
 
 interface LoadedUser {
   name: string

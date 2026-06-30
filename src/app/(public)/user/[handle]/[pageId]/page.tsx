@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PublicPageProps): Promise<Met
   const { handle, pageId } = await params
   const page = await loadPage(handle, pageId)
   if (!page || !page.isPublic) {
-    return { title: 'Blanoir' }
+    return { title: { absolute: SITE_NAME } }
   }
 
   const title = page.title || '제목 없는 페이지'

@@ -12,6 +12,7 @@ import type { Section } from '@/types/section'
 
 // 에디터는 비공개 작업으로 검색에 미노출
 export const metadata: Metadata = {
+  title: '편집기',
   robots: { index: false, follow: false },
 }
 

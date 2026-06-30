@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import OrDivider from '../_components/OrDivider'
@@ -19,6 +20,8 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   AccessDenied: '로그인이 거부됐어요',
 }
 const OAUTH_ERROR_FALLBACK = '소셜 로그인에 실패했어요. 다시 시도해 주세요'
+
+export const metadata: Metadata = { title: '로그인' }
 
 const LoginPage = async ({ searchParams }: { searchParams: Promise<{ error?: string }> }) => {
   const { error } = await searchParams

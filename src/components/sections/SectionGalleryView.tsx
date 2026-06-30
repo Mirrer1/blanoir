@@ -126,7 +126,7 @@ const SectionGalleryView = ({
         <button
           aria-label="이전"
           onClick={(e) => slide(e, -1)}
-          className="bg-background/80 text-foreground hover:bg-background absolute top-1/2 left-2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border opacity-0 shadow-md backdrop-blur transition-opacity group-hover/carousel:opacity-100"
+          className="bg-background/80 text-foreground hover:bg-background absolute top-1/2 left-2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border opacity-0 shadow-md backdrop-blur transition-[opacity,background-color] group-hover/carousel:opacity-100"
         >
           <ChevronLeft className="size-4" />
         </button>
@@ -135,7 +135,7 @@ const SectionGalleryView = ({
         <button
           aria-label="다음"
           onClick={(e) => slide(e, 1)}
-          className="bg-background/80 text-foreground hover:bg-background absolute top-1/2 right-2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border opacity-0 shadow-md backdrop-blur transition-opacity group-hover/carousel:opacity-100"
+          className="bg-background/80 text-foreground hover:bg-background absolute top-1/2 right-2 flex size-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border opacity-0 shadow-md backdrop-blur transition-[opacity,background-color] group-hover/carousel:opacity-100"
         >
           <ChevronRight className="size-4" />
         </button>

@@ -178,7 +178,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
     <>
       <button
         aria-label="순서 변경"
-        className="text-muted-foreground hover:bg-muted flex size-7 cursor-grab items-center justify-center rounded-md active:cursor-grabbing"
+        className="text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex size-7 cursor-grab items-center justify-center rounded-md transition-colors active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >
@@ -187,7 +187,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
       <button
         aria-label="복제"
         onClick={handleDuplicate}
-        className="text-muted-foreground hover:bg-muted flex size-7 cursor-pointer items-center justify-center rounded-md"
+        className="text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex size-7 cursor-pointer items-center justify-center rounded-md transition-colors"
       >
         <Copy className="size-4" />
       </button>

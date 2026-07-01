@@ -51,7 +51,7 @@ interface EditorState {
   myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록
   selectedSectionId: string | null
   panelTab: PanelTab
-  imageUploading: boolean
+  uploadingSectionIds: string[] // 업로드 중인 섹션 id로 해당 패널만 잠금
   copyingSectionIds: string[] // 이미지 복사 중인 복제 섹션
   isDirty: boolean
   saveStatus: SaveStatus
@@ -62,7 +62,7 @@ interface EditorState {
   setPublic: (isPublic: boolean) => void
   selectSection: (id: string | null, tab?: PanelTab) => void
   setPanelTab: (tab: PanelTab) => void
-  setImageUploading: (uploading: boolean) => void
+  setUploading: (id: string, uploading: boolean) => void
   setCopying: (id: string, copying: boolean) => void
   addSection: (type: SectionType, index?: number, columnsCount?: number) => void
   replaceSections: (sections: Section[]) => void
@@ -304,7 +304,7 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         myPages: initial.myPages,
         selectedSectionId: null,
         panelTab: 'content',
-        imageUploading: false,
+        uploadingSectionIds: [],
         copyingSectionIds: [],
         isDirty: false,
         saveStatus: 'idle',
@@ -328,8 +328,13 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         // 패널 탭 전환
         setPanelTab: (panelTab) => set({ panelTab }),
 
-        // 이미지 업로드 진행 여부
-        setImageUploading: (imageUploading) => set({ imageUploading }),
+        // 섹션별 이미지 업로드 진행 표시
+        setUploading: (id, uploading) =>
+          set((s) => ({
+            uploadingSectionIds: uploading
+              ? [...s.uploadingSectionIds, id]
+              : s.uploadingSectionIds.filter((x) => x !== id),
+          })),
 
         // 이미지 복사 진행 표시
         setCopying: (id, copying) =>

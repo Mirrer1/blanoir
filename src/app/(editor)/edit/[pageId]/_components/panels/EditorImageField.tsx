@@ -11,13 +11,21 @@ interface EditorImageFieldProps {
   label: string
   url: string
   alt?: string
+  sectionId: string
   onChange: (uploaded: UploadedImage) => void
   onRemove: () => void
 }
 
 // 단일 이미지 업로드 필드
-const EditorImageField = ({ label, url, alt = '', onChange, onRemove }: EditorImageFieldProps) => {
-  const { isUploading, uploadOne } = useImageUpload()
+const EditorImageField = ({
+  label,
+  url,
+  alt = '',
+  sectionId,
+  onChange,
+  onRemove,
+}: EditorImageFieldProps) => {
+  const { isUploading, uploadOne } = useImageUpload(sectionId)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const openPicker = () => inputRef.current?.click()

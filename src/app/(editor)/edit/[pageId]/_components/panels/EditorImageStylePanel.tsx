@@ -55,6 +55,7 @@ const EditorImageStylePanel = ({ section }: { section: ImageSection }) => {
         label="이미지"
         url={src}
         alt={alt}
+        sectionId={section.id}
         onChange={handleChange}
         onRemove={handleRemove}
       />

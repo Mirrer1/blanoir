@@ -32,7 +32,7 @@ const LAYOUT_OPTIONS: { value: CardLayout; label: string }[] = [
 const EditorCardStylePanel = ({ section }: { section: CardSection }) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
-  const { uploadOne, uploadMany } = useImageUpload()
+  const { uploadOne, uploadMany } = useImageUpload(section.id)
   const addInputRef = useRef<HTMLInputElement>(null)
   const pickInputRef = useRef<HTMLInputElement>(null)
   const pickTargetRef = useRef<string | null>(null)

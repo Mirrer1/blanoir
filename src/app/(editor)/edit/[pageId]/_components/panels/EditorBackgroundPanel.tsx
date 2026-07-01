@@ -34,6 +34,7 @@ const EditorBackgroundPanel = ({ section }: { section: Section }) => {
       <EditorImageField
         label="배경 이미지"
         url={backgroundImage}
+        sectionId={section.id}
         onChange={handleChange}
         onRemove={handleRemove}
       />

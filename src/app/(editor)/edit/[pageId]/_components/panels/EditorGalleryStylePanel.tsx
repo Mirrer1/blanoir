@@ -36,7 +36,7 @@ const GAP_OPTIONS: { value: GalleryGap; label: string }[] = [
 const EditorGalleryStylePanel = ({ section }: { section: GallerySection }) => {
   const updateSectionContent = useEditorStore((s) => s.updateSectionContent)
   const updateSectionStyle = useEditorStore((s) => s.updateSectionStyle)
-  const { uploadOne, uploadMany } = useImageUpload()
+  const { uploadOne, uploadMany } = useImageUpload(section.id)
   const addInputRef = useRef<HTMLInputElement>(null)
   const replaceInputRef = useRef<HTMLInputElement>(null)
   const replaceTargetRef = useRef<string | null>(null)

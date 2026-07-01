@@ -35,21 +35,35 @@ const upload = async (file: File): Promise<UploadedImage | null> => {
   return { url: result.url, alt: altFromFileName(file.name) }
 }
 
-// 이미지 업로드 공용 훅
-const useImageUpload = () => {
-  const setImageUploading = useEditorStore((s) => s.setImageUploading)
+// sectionId로 섹션 잠금을 등록하는 이미지 업로드 공용 훅
+const useImageUpload = (sectionId?: string) => {
+  const setUploading = useEditorStore((s) => s.setUploading)
   const [isUploading, setIsUploading] = useState(false)
+
+  const begin = () => {
+    setIsUploading(true)
+    if (sectionId) {
+      setUploading(sectionId, true)
+    }
+  }
+
+  const end = () => {
+    setIsUploading(false)
+    if (sectionId) {
+      setUploading(sectionId, false)
+    }
+  }
 
   const uploadOne = async (file: File): Promise<UploadedImage | null> => {
     if (!isValidImage(file)) {
       return null
     }
-    setIsUploading(true)
-    setImageUploading(true)
-    const uploaded = await upload(file)
-    setIsUploading(false)
-    setImageUploading(false)
-    return uploaded
+    begin()
+    try {
+      return await upload(file)
+    } finally {
+      end()
+    }
   }
 
   const uploadMany = async (files: File[]): Promise<UploadedImage[]> => {
@@ -57,18 +71,19 @@ const useImageUpload = () => {
     if (!valid.length) {
       return []
     }
-    setIsUploading(true)
-    setImageUploading(true)
-    const uploaded: UploadedImage[] = []
-    for (const file of valid) {
-      const one = await upload(file)
-      if (one) {
-        uploaded.push(one)
+    begin()
+    try {
+      const uploaded: UploadedImage[] = []
+      for (const file of valid) {
+        const one = await upload(file)
+        if (one) {
+          uploaded.push(one)
+        }
       }
+      return uploaded
+    } finally {
+      end()
     }
-    setIsUploading(false)
-    setImageUploading(false)
-    return uploaded
   }
 
   return { isUploading, uploadOne, uploadMany }

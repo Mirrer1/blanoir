@@ -27,7 +27,7 @@ const EditorStylePanel = ({
   section: Section
   containerSection: Section
 }) => {
-  const imageUploading = useEditorStore((s) => s.imageUploading)
+  const uploadingIds = useEditorStore((s) => s.uploadingSectionIds)
   const selectSection = useEditorStore((s) => s.selectSection)
   const panelTab = useEditorStore((s) => s.panelTab)
   const setPanelTab = useEditorStore((s) => s.setPanelTab)
@@ -38,7 +38,8 @@ const EditorStylePanel = ({
       className={cn(
         'border-border bg-background flex h-full w-80 flex-col overflow-y-auto border-l',
         '[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
-        imageUploading && 'pointer-events-none opacity-60',
+        (uploadingIds.includes(section.id) || uploadingIds.includes(containerSection.id)) &&
+          'pointer-events-none opacity-60',
       )}
     >
       <div className="border-border flex items-center gap-1 border-b px-4">

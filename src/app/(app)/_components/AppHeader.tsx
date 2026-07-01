@@ -6,7 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 
 const AppHeader = () => {
   return (
-    <header className="bg-background sticky top-0 z-40 w-full shrink-0 border-b">
+    <header className="bg-background w-full shrink-0 border-b">
       <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-6">
         <Link href="/dashboard" className="font-heading text-lg font-extrabold tracking-tight">
           Blanoir

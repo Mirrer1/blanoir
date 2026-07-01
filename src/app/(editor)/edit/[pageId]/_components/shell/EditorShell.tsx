@@ -50,12 +50,16 @@ const EditorShell = () => {
     })
   }
 
-  // 마운트 시 body 스크롤 잠금
+  // 루트 스크롤바 거터를 없애는 문서 스크롤 잠금
   useEffect(() => {
-    const previous = document.body.style.overflow
+    const html = document.documentElement
+    const previousHtml = html.style.overflow
+    const previousBody = document.body.style.overflow
+    html.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     return () => {
-      document.body.style.overflow = previous
+      html.style.overflow = previousHtml
+      document.body.style.overflow = previousBody
     }
   }, [])
 

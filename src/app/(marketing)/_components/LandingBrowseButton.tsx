@@ -6,8 +6,9 @@ interface LandingBrowseButtonProps {
   children: ReactNode
 }
 
+// TODO: 둘러보기 구현 후 롤백
 const LandingBrowseButton = ({ className, children }: LandingBrowseButtonProps) => (
-  <Link href="/explore" className={className}>
+  <Link href="/login" className={className}>
     {children}
   </Link>
 )

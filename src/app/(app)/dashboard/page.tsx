@@ -43,7 +43,8 @@ const DashboardPage = async () => {
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl font-extrabold tracking-tight">내 페이지</h1>
         <div className="flex items-center gap-2">
-          <Link href="/explore" className={cn(buttonVariants({ variant: 'outline' }))}>
+          {/* TODO: 둘러보기 구현 후 롤백 */}
+          <Link href="/explore" className={cn(buttonVariants({ variant: 'outline' }), 'hidden')}>
             <LayoutGrid className="size-4" />
             템플릿 사용
           </Link>

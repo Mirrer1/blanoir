@@ -23,7 +23,7 @@ const EditorHeader = () => {
   const isDirty = useEditorStore((s) => s.isDirty)
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b pr-2 pl-0.5">
       <div className="flex min-w-0 items-center gap-2">
         <EditorLeaveGuard />
         <EditorTitle />

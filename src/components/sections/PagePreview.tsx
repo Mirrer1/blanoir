@@ -25,7 +25,7 @@ const PagePreview = ({ open, onOpenChange, sections, actions }: PagePreviewProps
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Popup className="bg-background fixed inset-0 z-[60] flex flex-col transition-opacity duration-300 ease-out data-[ending-style]:opacity-0 data-[starting-style]:opacity-0">
+        <Dialog.Popup className="bg-background fixed inset-0 z-[60] flex flex-col transition-[opacity,transform] duration-300 ease-out data-[starting-style]:scale-[0.98] data-[starting-style]:opacity-0">
           <Dialog.Title className="sr-only">미리보기</Dialog.Title>
           <div className="relative flex h-14 shrink-0 items-center justify-between border-b pr-2 pl-0.5">
             <Dialog.Close

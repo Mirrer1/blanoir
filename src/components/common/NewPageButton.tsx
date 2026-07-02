@@ -26,7 +26,8 @@ const NewPageButton = () => {
 
   return (
     <Button onClick={handleClick} disabled={pending}>
-      <Plus className="size-4" />새 페이지
+      <Plus className="size-4" />
+      <span className="pb-px">새 페이지</span>
     </Button>
   )
 }

@@ -35,6 +35,14 @@ const upload = async (file: File): Promise<UploadedImage | null> => {
   return { url: result.url, alt: altFromFileName(file.name) }
 }
 
+// 에디터 스토어 잠금 없이 한 장을 검증해 업로드
+export const uploadImageFile = async (file: File): Promise<UploadedImage | null> => {
+  if (!isValidImage(file)) {
+    return null
+  }
+  return upload(file)
+}
+
 // sectionId로 섹션 잠금을 등록하는 이미지 업로드 공용 훅
 const useImageUpload = (sectionId?: string) => {
   const setUploading = useEditorStore((s) => s.setUploading)

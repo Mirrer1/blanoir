@@ -1,15 +1,8 @@
 // 추후 DB 조회로 바꿀 둘러보기 UI 퍼블리싱용 더미 데이터
-export type ExploreCategory = 'profile' | 'portfolio' | 'store' | 'wedding' | 'resume' | 'event'
-export type ExploreCategoryKey = ExploreCategory | 'all'
+import type { ExploreCategory } from './categories'
 
-export const CATEGORIES: { key: ExploreCategory; label: string }[] = [
-  { key: 'profile', label: '프로필' },
-  { key: 'portfolio', label: '포트폴리오' },
-  { key: 'store', label: '매장' },
-  { key: 'wedding', label: '청첩장' },
-  { key: 'resume', label: '이력서' },
-  { key: 'event', label: '이벤트' },
-]
+export { CATEGORIES } from './categories'
+export type { ExploreCategory, ExploreCategoryKey } from './categories'
 
 export interface ExplorePost {
   pageId: string

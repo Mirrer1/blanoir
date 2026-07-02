@@ -4,7 +4,7 @@ import { Camera, Loader2, Trash2, UserRound } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-import { uploadImage } from '@/actions/upload'
+import { deleteImage, uploadImage } from '@/actions/upload'
 import { updateProfileImage } from '@/actions/user'
 import { Button } from '@/components/ui/button'
 
@@ -36,6 +36,8 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
 
     const saved = await updateProfileImage(uploaded.url)
     if (!saved.ok) {
+      // 저장 실패 시 방금 올린 이미지는 orphan이 되므로 정리
+      void deleteImage(uploaded.url)
       toast.error(saved.message)
       setIsUploading(false)
       return

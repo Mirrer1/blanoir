@@ -12,7 +12,7 @@ import ExploreLikeButton from './ExploreLikeButton'
 import ExplorePopularFeed from './ExplorePopularFeed'
 import ExplorePreview from './ExplorePreview'
 
-const ExploreDetail = ({ post }: { post: ExplorePost }) => {
+const ExploreDetail = ({ post, isLoggedIn }: { post: ExplorePost; isLoggedIn: boolean }) => {
   const others = authorOtherPosts(post)
   const popular = popularFeed(post)
 
@@ -29,8 +29,8 @@ const ExploreDetail = ({ post }: { post: ExplorePost }) => {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <ExploreLikeButton count={post.likeCount} />
-            <ExplorePreview allowRemix={post.allowRemix} />
+            <ExploreLikeButton count={post.likeCount} isLoggedIn={isLoggedIn} />
+            <ExplorePreview allowRemix={post.allowRemix} isLoggedIn={isLoggedIn} />
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@ const ExploreDetail = ({ post }: { post: ExplorePost }) => {
         />
       </div>
 
-      <ExploreComments />
+      <ExploreComments isLoggedIn={isLoggedIn} />
 
       {others.length > 0 && (
         <section className="flex flex-col gap-4">

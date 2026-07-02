@@ -1,16 +1,38 @@
 'use client'
 
 import { Share2 } from 'lucide-react'
-import { toast } from 'sonner'
+import Link from 'next/link'
+import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
+import ExploreLoginGate from './ExploreLoginGate'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
-// 실제 공유는 공유 화면 슬라이스에서 연결
-const ExploreShareButton = () => (
-  <Button onClick={() => toast('곧 공유할 수 있어요')}>
-    <Share2 className="size-4" />
-    공유하기
-  </Button>
-)
+const ExploreShareButton = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+  const [gateOpen, setGateOpen] = useState(false)
+
+  if (isLoggedIn) {
+    return (
+      <Link href="/explore/share" className={cn(buttonVariants())}>
+        <Share2 className="size-4" />
+        공유하기
+      </Link>
+    )
+  }
+
+  return (
+    <>
+      <Button onClick={() => setGateOpen(true)}>
+        <Share2 className="size-4" />
+        공유하기
+      </Button>
+      <ExploreLoginGate
+        open={gateOpen}
+        onOpenChange={setGateOpen}
+        message="로그인하고 내 페이지를 공유해보세요"
+      />
+    </>
+  )
+}
 
 export default ExploreShareButton

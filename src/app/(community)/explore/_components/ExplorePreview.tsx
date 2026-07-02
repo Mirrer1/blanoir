@@ -8,7 +8,13 @@ import ExploreTemplateButton from './ExploreTemplateButton'
 import PagePreview from '@/components/sections/PagePreview'
 import { Button } from '@/components/ui/button'
 
-const ExplorePreview = ({ allowRemix }: { allowRemix: boolean }) => {
+const ExplorePreview = ({
+  allowRemix,
+  isLoggedIn,
+}: {
+  allowRemix: boolean
+  isLoggedIn: boolean
+}) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -21,7 +27,7 @@ const ExplorePreview = ({ allowRemix }: { allowRemix: boolean }) => {
         open={open}
         onOpenChange={setOpen}
         sections={DUMMY_SECTIONS}
-        actions={allowRemix ? <ExploreTemplateButton /> : undefined}
+        actions={allowRemix ? <ExploreTemplateButton isLoggedIn={isLoggedIn} /> : undefined}
       />
     </>
   )

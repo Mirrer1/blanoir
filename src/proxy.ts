@@ -7,7 +7,10 @@ const { auth } = NextAuth(authConfig)
 
 // 로그인해야 들어갈 수 있는 경로
 const isProtected = (path: string) =>
-  path.startsWith('/dashboard') || path.startsWith('/settings') || path.startsWith('/edit')
+  path.startsWith('/dashboard') ||
+  path.startsWith('/settings') ||
+  path.startsWith('/edit') ||
+  path.startsWith('/explore/share')
 
 // 로그인하면 안 보여줄 게스트 전용 경로
 const isGuestOnly = (path: string) =>

@@ -2,13 +2,13 @@ import { DUMMY_COMMENTS } from '../_data/dummyDetail'
 import ExploreAvatar from './ExploreAvatar'
 import ExploreCommentForm from './ExploreCommentForm'
 
-const ExploreComments = () => {
+const ExploreComments = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const total = DUMMY_COMMENTS.reduce((sum, comment) => sum + 1 + comment.replies.length, 0)
 
   return (
     <section className="flex flex-col gap-6">
       <h2 className="font-heading text-lg font-semibold tracking-tight">댓글 {total}</h2>
-      <ExploreCommentForm />
+      <ExploreCommentForm isLoggedIn={isLoggedIn} />
       <ul className="flex flex-col gap-6">
         {DUMMY_COMMENTS.map((comment) => (
           <li key={comment.id} className="flex flex-col gap-4">

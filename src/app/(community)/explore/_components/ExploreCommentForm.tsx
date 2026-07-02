@@ -3,13 +3,19 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import ExploreLoginGate from './ExploreLoginGate'
 import { Button } from '@/components/ui/button'
 
 // 실제 등록은 API 슬라이스에서 연결
-const ExploreCommentForm = () => {
+const ExploreCommentForm = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const [text, setText] = useState('')
+  const [gateOpen, setGateOpen] = useState(false)
 
   const handleSubmit = () => {
+    if (!isLoggedIn) {
+      setGateOpen(true)
+      return
+    }
     if (!text.trim()) {
       return
     }
@@ -31,6 +37,11 @@ const ExploreCommentForm = () => {
           등록
         </Button>
       </div>
+      <ExploreLoginGate
+        open={gateOpen}
+        onOpenChange={setGateOpen}
+        message="로그인하고 댓글을 남겨보세요"
+      />
     </div>
   )
 }

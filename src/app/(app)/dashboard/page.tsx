@@ -46,7 +46,7 @@ const DashboardPage = async () => {
           {/* TODO: 둘러보기 구현 후 롤백 */}
           <Link href="/explore" className={cn(buttonVariants({ variant: 'outline' }), 'hidden')}>
             <LayoutGrid className="size-4" />
-            템플릿 사용
+            <span className="pb-px">템플릿 사용</span>
           </Link>
           {items.length > 0 && (
             <div className="hidden lg:block">

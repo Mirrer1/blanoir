@@ -3,18 +3,14 @@ import Link from 'next/link'
 
 import type { ExplorePost } from '../_data/dummyPosts'
 import ExploreAvatar from './ExploreAvatar'
-import { cn } from '@/lib/utils'
 
-const ExploreCard = ({ post, noLift }: { post: ExplorePost; noLift?: boolean }) => {
+const ExploreCard = ({ post }: { post: ExplorePost }) => {
   const title = post.title || '제목 없는 페이지'
 
   return (
     <Link
       href={`/explore/${post.pageId}`}
-      className={cn(
-        'hover:border-foreground/30 group flex flex-col gap-3 rounded-lg border p-4 transition-all',
-        !noLift && 'hover:-translate-y-1',
-      )}
+      className="hover:border-foreground/30 group flex flex-col gap-3 rounded-lg border p-4 transition-colors"
     >
       {post.thumbnail ? (
         <img

@@ -52,7 +52,7 @@ const ExploreCardCarousel = ({ posts }: { posts: ExplorePost[] }) => {
       >
         {posts.map((post) => (
           <div key={post.pageId} className="w-64 shrink-0 sm:w-72">
-            <ExploreCard post={post} noLift />
+            <ExploreCard post={post} />
           </div>
         ))}
       </div>

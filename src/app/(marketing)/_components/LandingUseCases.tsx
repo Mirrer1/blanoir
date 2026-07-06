@@ -20,7 +20,7 @@ const LandingUseCases = () => {
       <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {USE_CASES.map(({ title, description }, index) => (
           <FadeIn key={title} delay={index * 0.08}>
-            <div className="hover:border-foreground/30 flex flex-col gap-2 rounded-lg border p-8 transition-all hover:-translate-y-1">
+            <div className="hover:border-foreground/30 flex flex-col gap-2 rounded-lg border p-8 transition-colors">
               <h3 className="font-heading text-lg font-bold">{title}</h3>
               <p className="text-muted-foreground">{description}</p>
             </div>

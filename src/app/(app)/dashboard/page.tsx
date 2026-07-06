@@ -23,16 +23,22 @@ const DashboardPage = async () => {
   }
 
   await connectDB()
-  const pages = await Page.find({ userId: session.user.id })
-    .sort({ updatedAt: -1 })
-    .lean<
-      { pageId: string; title: string; isPublic: boolean; updatedAt: Date; sections: Section[] }[]
-    >()
+  const pages = await Page.find({ userId: session.user.id }).sort({ updatedAt: -1 }).lean<
+    {
+      pageId: string
+      title: string
+      isPublic: boolean
+      sharedToCommunity: boolean
+      updatedAt: Date
+      sections: Section[]
+    }[]
+  >()
 
   const items = pages.map((page) => ({
     pageId: page.pageId,
     title: page.title,
     isPublic: page.isPublic,
+    sharedToCommunity: !!page.sharedToCommunity,
     updatedAt: page.updatedAt.toISOString(),
     thumbnail: firstImageUrl(page.sections),
     textPreview: firstTextContent(page.sections),
@@ -43,8 +49,7 @@ const DashboardPage = async () => {
       <div className="flex items-center justify-between">
         <h1 className="font-heading text-2xl font-extrabold tracking-tight">내 페이지</h1>
         <div className="flex items-center gap-2">
-          {/* TODO: 둘러보기 구현 후 롤백 */}
-          <Link href="/explore" className={cn(buttonVariants({ variant: 'outline' }), 'hidden')}>
+          <Link href="/explore" className={cn(buttonVariants({ variant: 'outline' }))}>
             <LayoutGrid className="size-4" />
             <span className="pb-px">템플릿 사용</span>
           </Link>

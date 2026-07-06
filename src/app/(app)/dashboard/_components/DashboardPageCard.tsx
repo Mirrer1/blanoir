@@ -1,3 +1,4 @@
+import { Share2 } from 'lucide-react'
 import Link from 'next/link'
 
 import DashboardDeleteButton from './DashboardDeleteButton'
@@ -8,6 +9,7 @@ interface DashboardPageCardProps {
     pageId: string
     title: string
     isPublic: boolean
+    sharedToCommunity: boolean
     updatedAt: string
     thumbnail: string
     textPreview: string
@@ -27,7 +29,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
     <div className="group relative">
       <Link
         href={`/edit/${page.pageId}`}
-        className="group-hover:border-foreground/30 flex flex-col gap-3 rounded-lg border p-4 transition-all group-hover:-translate-y-1"
+        className="group-hover:border-foreground/30 flex flex-col gap-3 rounded-lg border p-4 transition-colors"
       >
         {page.thumbnail ? (
           <img
@@ -72,6 +74,12 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
         </div>
         <span className="text-muted-foreground text-xs">{updatedLabel} 수정</span>
       </Link>
+      {page.sharedToCommunity && (
+        <span className="pointer-events-none absolute top-3 left-2 z-10 flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-xs font-medium text-white backdrop-blur">
+          <Share2 className="size-3" />
+          공유됨
+        </span>
+      )}
       <DashboardDuplicateButton onDuplicate={onDuplicate} />
       <DashboardDeleteButton pageId={page.pageId} title={title} />
     </div>

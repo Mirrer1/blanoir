@@ -12,6 +12,7 @@ export interface DashboardItem {
   pageId: string
   title: string
   isPublic: boolean
+  sharedToCommunity: boolean
   updatedAt: string
   thumbnail: string
   textPreview: string
@@ -33,7 +34,7 @@ const DashboardPageGrid = ({ items }: { items: DashboardItem[] }) => {
     // 복사 제목을 미리 계산해 처음부터 표시
     const title = makeCopyTitle(source.title, new Set(items.map((item) => item.title)))
     startTransition(async () => {
-      addPending({ ...source, pageId: pendingId, pending: true, title })
+      addPending({ ...source, pageId: pendingId, pending: true, title, sharedToCommunity: false })
       const result = await duplicatePage(source.pageId)
       if (!result.ok) {
         toast.error(result.message)

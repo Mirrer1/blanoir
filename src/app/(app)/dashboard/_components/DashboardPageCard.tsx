@@ -75,7 +75,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
         <span className="text-muted-foreground text-xs">{updatedLabel} 수정</span>
       </Link>
       {page.sharedToCommunity && (
-        <span className="pointer-events-none absolute top-3 left-2 z-10 flex items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-xs font-medium text-white backdrop-blur">
+        <span className="pointer-events-none absolute top-3 left-2 z-10 flex items-center gap-1 rounded-full bg-black/55 px-2 py-1 text-xs leading-none font-medium text-white backdrop-blur">
           <Share2 className="size-3" />
           공유됨
         </span>

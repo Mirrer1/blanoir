@@ -1,6 +1,7 @@
 'use client'
 
 import { Search } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
 import { CATEGORIES, type ExploreCategoryKey, type ExplorePost } from '../_data/dummyPosts'
@@ -22,10 +23,49 @@ const CATEGORY_TABS: { key: ExploreCategoryKey; label: string }[] = [
   ...CATEGORIES,
 ]
 
+const CATEGORY_KEYS = new Set<string>(CATEGORY_TABS.map((tab) => tab.key))
+const isSort = (value: string | null): value is SortKey => value === 'recent' || value === 'popular'
+
 const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
-  const [query, setQuery] = useState('')
-  const [category, setCategory] = useState<ExploreCategoryKey>('all')
-  const [sort, setSort] = useState<SortKey>('popular')
+  const searchParams = useSearchParams()
+  const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
+  const [category, setCategory] = useState<ExploreCategoryKey>(() => {
+    const value = searchParams.get('category')
+    return value && CATEGORY_KEYS.has(value) ? (value as ExploreCategoryKey) : 'all'
+  })
+  const [sort, setSort] = useState<SortKey>(() => {
+    const value = searchParams.get('sort')
+    return isSort(value) ? value : 'popular'
+  })
+
+  // 필터 URL 히스토리에 반영해 복원
+  const syncUrl = (next: { q: string; category: ExploreCategoryKey; sort: SortKey }) => {
+    const params = new URLSearchParams()
+    if (next.q) {
+      params.set('q', next.q)
+    }
+    if (next.category !== 'all') {
+      params.set('category', next.category)
+    }
+    if (next.sort !== 'popular') {
+      params.set('sort', next.sort)
+    }
+    const search = params.toString()
+    window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname)
+  }
+
+  const applyQuery = (value: string) => {
+    setQuery(value)
+    syncUrl({ q: value, category, sort })
+  }
+  const applyCategory = (value: ExploreCategoryKey) => {
+    setCategory(value)
+    syncUrl({ q: query, category: value, sort })
+  }
+  const applySort = (value: SortKey) => {
+    setSort(value)
+    syncUrl({ q: query, category, sort: value })
+  }
 
   const keyword = query.trim().toLowerCase()
   const filtered = posts.filter(
@@ -43,7 +83,7 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
           <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
           <Input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => applyQuery(e.target.value)}
             placeholder="제목 검색"
             className="pl-8"
           />
@@ -52,13 +92,13 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
           <ExploreCategoryBar
             tabs={CATEGORY_TABS}
             active={category}
-            onSelect={setCategory}
+            onSelect={applyCategory}
             className="hidden flex-1 lg:block"
           />
           <ExploreCategoryDropdown
             tabs={CATEGORY_TABS}
             active={category}
-            onSelect={setCategory}
+            onSelect={applyCategory}
             className="flex-1 lg:hidden"
           />
           <div className="bg-muted flex shrink-0 gap-0.5 rounded-lg p-0.5">
@@ -66,7 +106,7 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
               <button
                 key={option.key}
                 type="button"
-                onClick={() => setSort(option.key)}
+                onClick={() => applySort(option.key)}
                 className={cn(
                   'h-7 cursor-pointer rounded-md px-3 text-sm font-medium transition-colors',
                   sort === option.key

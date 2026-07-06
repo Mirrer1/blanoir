@@ -1,6 +1,7 @@
 import { LayoutDashboard } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 import ExploreBrowser from './_components/ExploreBrowser'
 import ExploreShareButton from './_components/ExploreShareButton'
@@ -33,7 +34,9 @@ const ExplorePage = async () => {
         </div>
       </div>
       <div className="mt-8">
-        <ExploreBrowser posts={posts} />
+        <Suspense>
+          <ExploreBrowser posts={posts} />
+        </Suspense>
       </div>
     </div>
   )

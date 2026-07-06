@@ -36,11 +36,11 @@ const ExploreCard = ({ post, noLift }: { post: ExplorePost; noLift?: boolean }) 
           <span className="text-muted-foreground truncate text-sm">{post.authorName}</span>
         </div>
         <div className="text-muted-foreground flex shrink-0 items-center gap-3 text-xs">
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 leading-none">
             <Heart className="size-3.5" />
             {post.likeCount}
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 leading-none">
             <Repeat2 className="size-3.5" />
             {post.useCount}
           </span>

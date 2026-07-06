@@ -24,10 +24,11 @@ const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {
 
   const session = await auth()
   const isLoggedIn = !!session?.user
+  const isOwner = session?.user?.id === detail.authorId
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <ExploreDetail detail={detail} isLoggedIn={isLoggedIn} />
+      <ExploreDetail detail={detail} isLoggedIn={isLoggedIn} isOwner={isOwner} />
     </div>
   )
 }

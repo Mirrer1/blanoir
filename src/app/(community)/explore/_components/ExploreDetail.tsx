@@ -6,7 +6,15 @@ import ExplorePopularFeed from './ExplorePopularFeed'
 import ExplorePreview from './ExplorePreview'
 import type { SharedDetail } from '@/lib/explore'
 
-const ExploreDetail = ({ detail, isLoggedIn }: { detail: SharedDetail; isLoggedIn: boolean }) => {
+const ExploreDetail = ({
+  detail,
+  isLoggedIn,
+  isOwner,
+}: {
+  detail: SharedDetail
+  isLoggedIn: boolean
+  isOwner: boolean
+}) => {
   const { post, communityPost, sections, others, popular } = detail
 
   return (
@@ -24,8 +32,10 @@ const ExploreDetail = ({ detail, isLoggedIn }: { detail: SharedDetail; isLoggedI
           <div className="flex shrink-0 items-center gap-2">
             <ExploreLikeButton count={post.likeCount} isLoggedIn={isLoggedIn} />
             <ExplorePreview
+              pageId={post.pageId}
               sections={sections}
               allowRemix={post.allowRemix}
+              isOwner={isOwner}
               isLoggedIn={isLoggedIn}
             />
           </div>

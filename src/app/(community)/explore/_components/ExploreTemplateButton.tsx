@@ -1,26 +1,40 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 import ExploreLoginGate from './ExploreLoginGate'
+import { remixPage } from '@/actions/explore'
 import { Button } from '@/components/ui/button'
 
-// 실제 복제는 API 슬라이스에서 연결
-const ExploreTemplateButton = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const ExploreTemplateButton = ({ pageId, isLoggedIn }: { pageId: string; isLoggedIn: boolean }) => {
+  const router = useRouter()
   const [gateOpen, setGateOpen] = useState(false)
+  const [pending, setPending] = useState(false)
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!isLoggedIn) {
       setGateOpen(true)
       return
     }
-    toast('곧 사용할 수 있어요')
+    setPending(true)
+    const result = await remixPage(pageId)
+    if (!result.ok) {
+      toast.error(result.message)
+      setPending(false)
+      return
+    }
+    router.push(`/edit/${result.pageId}`)
   }
 
   return (
     <>
-      <Button onClick={handleClick}>템플릿 사용하기</Button>
+      <Button onClick={handleClick} disabled={pending}>
+        {pending && <Loader2 className="size-4 animate-spin" />}
+        템플릿 사용하기
+      </Button>
       <ExploreLoginGate
         open={gateOpen}
         onOpenChange={setGateOpen}

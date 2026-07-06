@@ -9,12 +9,16 @@ import { Button } from '@/components/ui/button'
 import type { Section } from '@/types/section'
 
 const ExplorePreview = ({
+  pageId,
   sections,
   allowRemix,
+  isOwner,
   isLoggedIn,
 }: {
+  pageId: string
   sections: Section[]
   allowRemix: boolean
+  isOwner: boolean
   isLoggedIn: boolean
 }) => {
   const [open, setOpen] = useState(false)
@@ -29,7 +33,11 @@ const ExplorePreview = ({
         open={open}
         onOpenChange={setOpen}
         sections={sections}
-        actions={allowRemix ? <ExploreTemplateButton isLoggedIn={isLoggedIn} /> : undefined}
+        actions={
+          allowRemix && !isOwner ? (
+            <ExploreTemplateButton pageId={pageId} isLoggedIn={isLoggedIn} />
+          ) : undefined
+        }
       />
     </>
   )

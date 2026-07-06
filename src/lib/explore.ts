@@ -55,6 +55,7 @@ export async function getSharedPosts(): Promise<ExplorePost[]> {
 
 export interface SharedDetail {
   post: ExplorePost
+  authorId: string
   communityPost: string
   sections: Section[]
   others: ExplorePost[]
@@ -89,6 +90,7 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
 
   return {
     post,
+    authorId: String(page.userId!._id),
     communityPost: page.communityPost,
     sections: page.sections,
     others: filterPosts(otherDocs),

@@ -1,20 +1,13 @@
-import {
-  DUMMY_POST_IMAGE,
-  DUMMY_POST_TEXT,
-  authorOtherPosts,
-  popularFeed,
-} from '../_data/dummyDetail'
-import type { ExplorePost } from '../_data/dummyPosts'
 import ExploreAvatar from './ExploreAvatar'
 import ExploreCardCarousel from './ExploreCardCarousel'
 import ExploreComments from './ExploreComments'
 import ExploreLikeButton from './ExploreLikeButton'
 import ExplorePopularFeed from './ExplorePopularFeed'
 import ExplorePreview from './ExplorePreview'
+import type { SharedDetail } from '@/lib/explore'
 
-const ExploreDetail = ({ post, isLoggedIn }: { post: ExplorePost; isLoggedIn: boolean }) => {
-  const others = authorOtherPosts(post)
-  const popular = popularFeed(post)
+const ExploreDetail = ({ detail, isLoggedIn }: { detail: SharedDetail; isLoggedIn: boolean }) => {
+  const { post, communityPost, sections, others, popular } = detail
 
   return (
     <article className="flex flex-col gap-12">
@@ -30,7 +23,11 @@ const ExploreDetail = ({ post, isLoggedIn }: { post: ExplorePost; isLoggedIn: bo
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <ExploreLikeButton count={post.likeCount} isLoggedIn={isLoggedIn} />
-            <ExplorePreview allowRemix={post.allowRemix} isLoggedIn={isLoggedIn} />
+            <ExplorePreview
+              sections={sections}
+              allowRemix={post.allowRemix}
+              isLoggedIn={isLoggedIn}
+            />
           </div>
         </div>
       </div>
@@ -43,14 +40,12 @@ const ExploreDetail = ({ post, isLoggedIn }: { post: ExplorePost; isLoggedIn: bo
         />
       )}
 
-      <div className="flex flex-col gap-6">
-        <p className="leading-relaxed whitespace-pre-line">{DUMMY_POST_TEXT}</p>
-        <img
-          src={DUMMY_POST_IMAGE}
-          alt=""
-          className="bg-muted w-full rounded-xl border object-cover"
+      {communityPost && (
+        <div
+          className="space-y-4 leading-relaxed [&_blockquote]:border-l-2 [&_blockquote]:pl-3 [&_h2]:text-lg [&_h2]:font-semibold [&_img]:rounded-xl [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+          dangerouslySetInnerHTML={{ __html: communityPost }}
         />
-      </div>
+      )}
 
       <ExploreComments isLoggedIn={isLoggedIn} />
 
@@ -63,10 +58,12 @@ const ExploreDetail = ({ post, isLoggedIn }: { post: ExplorePost; isLoggedIn: bo
         </section>
       )}
 
-      <section className="flex flex-col gap-4">
-        <h2 className="font-heading text-lg font-semibold tracking-tight">인기 페이지</h2>
-        <ExplorePopularFeed posts={popular} />
-      </section>
+      {popular.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <h2 className="font-heading text-lg font-semibold tracking-tight">인기 페이지</h2>
+          <ExplorePopularFeed posts={popular} />
+        </section>
+      )}
     </article>
   )
 }

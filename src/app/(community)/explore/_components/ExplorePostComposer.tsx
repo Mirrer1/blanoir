@@ -71,12 +71,8 @@ const ExplorePostComposer = ({
     sync()
   }
 
-  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    event.target.value = ''
-    if (!file) {
-      return
-    }
+  // 버튼과 붙여넣기가 공유하는 업로드 후 삽입
+  const uploadAndInsert = async (file: File) => {
     setUploading(true)
     onUploadingChange(true)
     const uploaded = await uploadImageFile(file)
@@ -93,6 +89,25 @@ const ExplorePostComposer = ({
       `<img src="${uploaded.url}" alt="${uploaded.alt}" class="my-3 w-full rounded-lg border" />`,
     )
     sync()
+  }
+
+  const handleFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (file) {
+      void uploadAndInsert(file)
+    }
+  }
+
+  // 캡처나 이미지 붙여넣기도 업로드 경로에 포함
+  const handlePaste = (event: React.ClipboardEvent<HTMLDivElement>) => {
+    const file = Array.from(event.clipboardData.items)
+      .find((item) => item.type.startsWith('image/'))
+      ?.getAsFile()
+    if (file) {
+      event.preventDefault()
+      void uploadAndInsert(file)
+    }
   }
 
   return (
@@ -136,6 +151,7 @@ const ExplorePostComposer = ({
         contentEditable
         suppressContentEditableWarning
         onInput={sync}
+        onPaste={handlePaste}
         data-placeholder="글과 사진으로 이 페이지를 자유롭게 소개해보세요"
         className="[&:empty]:before:text-muted-foreground/40 [&_blockquote]:border-border [&_blockquote]:text-muted-foreground min-h-64 p-4 leading-relaxed break-words whitespace-pre-wrap outline-none [&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:pl-3 [&_h2]:my-2 [&_h2]:text-xl [&_h2]:font-bold [&_img]:my-3 [&_img]:w-full [&_img]:rounded-lg [&_img]:border [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 [&:empty]:before:content-[attr(data-placeholder)]"
       />

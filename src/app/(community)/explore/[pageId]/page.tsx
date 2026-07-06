@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import ExploreDetail from '../_components/ExploreDetail'
-import { findDummyPost } from '../_data/dummyDetail'
 import { auth } from '@/lib/auth'
+import { getSharedDetail } from '@/lib/explore'
 
 interface ExploreDetailPageProps {
   params: Promise<{ pageId: string }>
@@ -11,14 +11,14 @@ interface ExploreDetailPageProps {
 
 export async function generateMetadata({ params }: ExploreDetailPageProps): Promise<Metadata> {
   const { pageId } = await params
-  const post = findDummyPost(pageId)
-  return { title: post?.title ?? '둘러보기' }
+  const detail = await getSharedDetail(pageId)
+  return { title: detail?.post.title ?? '둘러보기' }
 }
 
 const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {
   const { pageId } = await params
-  const post = findDummyPost(pageId)
-  if (!post) {
+  const detail = await getSharedDetail(pageId)
+  if (!detail) {
     notFound()
   }
 
@@ -27,7 +27,7 @@ const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <ExploreDetail post={post} isLoggedIn={isLoggedIn} />
+      <ExploreDetail detail={detail} isLoggedIn={isLoggedIn} />
     </div>
   )
 }

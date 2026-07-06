@@ -3,15 +3,17 @@
 import { Eye } from 'lucide-react'
 import { useState } from 'react'
 
-import { DUMMY_SECTIONS } from '../_data/dummyDetail'
 import ExploreTemplateButton from './ExploreTemplateButton'
 import PagePreview from '@/components/sections/PagePreview'
 import { Button } from '@/components/ui/button'
+import type { Section } from '@/types/section'
 
 const ExplorePreview = ({
+  sections,
   allowRemix,
   isLoggedIn,
 }: {
+  sections: Section[]
   allowRemix: boolean
   isLoggedIn: boolean
 }) => {
@@ -26,7 +28,7 @@ const ExplorePreview = ({
       <PagePreview
         open={open}
         onOpenChange={setOpen}
-        sections={DUMMY_SECTIONS}
+        sections={sections}
         actions={allowRemix ? <ExploreTemplateButton isLoggedIn={isLoggedIn} /> : undefined}
       />
     </>

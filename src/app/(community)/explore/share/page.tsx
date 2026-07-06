@@ -17,18 +17,30 @@ const ExploreSharePage = async () => {
   }
 
   await connectDB()
-  const pages = await Page.find({ userId: session.user.id })
-    .sort({ updatedAt: -1 })
-    .lean<{ pageId: string; title: string; isPublic: boolean; sections: Section[] }[]>()
+  const pages = await Page.find({ userId: session.user.id }).sort({ updatedAt: -1 }).lean<
+    {
+      pageId: string
+      title: string
+      isPublic: boolean
+      sharedToCommunity: boolean
+      remixedFrom?: string
+      sections: Section[]
+    }[]
+  >()
 
   // 빈 페이지를 제외하고 공개 페이지를 위로 정렬
   const items = pages
-    .filter((page) => page.sections.length > 0)
-    .sort((a, b) => Number(b.isPublic) - Number(a.isPublic))
+    .filter((page) => page.sections.length > 0 && !page.remixedFrom)
+    .sort(
+      (a, b) =>
+        Number(!!a.sharedToCommunity) - Number(!!b.sharedToCommunity) ||
+        Number(b.isPublic) - Number(a.isPublic),
+    )
     .map((page) => ({
       pageId: page.pageId,
       title: page.title,
       isPublic: page.isPublic,
+      sharedToCommunity: !!page.sharedToCommunity,
       thumbnail: firstImageUrl(page.sections),
       textPreview: firstTextContent(page.sections),
     }))

@@ -28,6 +28,7 @@ const pageSchema = new Schema(
     useCount: { type: Number, default: 0 }, // 템플릿 사용 수
     likeCount: { type: Number, default: 0 }, // 좋아요 수
     sharedAt: { type: Date }, // 둘러보기 공유 시각
+    remixedFrom: { type: String }, // 템플릿으로 가져온 원본 pageId
   },
   { timestamps: true },
 )

@@ -68,6 +68,9 @@ export async function shareToCommunity(input: ShareInput): Promise<ShareResult> 
     if (page.sections.length === 0) {
       return { ok: false, message: '빈 페이지는 공유할 수 없어요' }
     }
+    if (page.remixedFrom) {
+      return { ok: false, message: '가져온 템플릿은 공유할 수 없어요' }
+    }
 
     page.sharedToCommunity = true
     page.allowRemix = allowRemix
@@ -147,6 +150,7 @@ export async function remixPage(pageId: string): Promise<RemixResult> {
       title,
       sections,
       isPublic: false,
+      remixedFrom: pageId,
     })
     await Page.updateOne({ pageId, sharedToCommunity: true }, { $inc: { useCount: 1 } })
 

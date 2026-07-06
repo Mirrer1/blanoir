@@ -33,8 +33,9 @@ const ExploreSharePageSelect = ({ pages, selected, onSelect }: ExploreSharePageS
               pages.map((page) => (
                 <Menu.Item
                   key={page.pageId}
+                  disabled={page.sharedToCommunity}
                   onClick={() => onSelect(page.pageId)}
-                  className="data-[highlighted]:bg-muted flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none"
+                  className="data-[highlighted]:bg-muted flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
                 >
                   <Check
                     className={cn(
@@ -43,16 +44,22 @@ const ExploreSharePageSelect = ({ pages, selected, onSelect }: ExploreSharePageS
                     )}
                   />
                   <span className="truncate">{page.title || '제목 없는 페이지'}</span>
-                  <span
-                    className={cn(
-                      'ml-auto inline-flex w-12 shrink-0 items-center justify-center rounded-full py-1 text-xs leading-none',
-                      page.isPublic
-                        ? 'bg-foreground text-background'
-                        : 'text-muted-foreground border',
-                    )}
-                  >
-                    {page.isPublic ? '공개' : '비공개'}
-                  </span>
+                  {page.sharedToCommunity ? (
+                    <span className="text-muted-foreground ml-auto shrink-0 rounded-full border px-2 py-1 text-xs leading-none">
+                      공유됨
+                    </span>
+                  ) : (
+                    <span
+                      className={cn(
+                        'ml-auto inline-flex w-12 shrink-0 items-center justify-center rounded-full py-1 text-xs leading-none',
+                        page.isPublic
+                          ? 'bg-foreground text-background'
+                          : 'text-muted-foreground border',
+                      )}
+                    >
+                      {page.isPublic ? '공개' : '비공개'}
+                    </span>
+                  )}
                 </Menu.Item>
               ))
             )}

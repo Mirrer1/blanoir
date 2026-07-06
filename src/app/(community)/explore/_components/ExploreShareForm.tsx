@@ -27,6 +27,7 @@ export interface SharePageItem {
   pageId: string
   title: string
   isPublic: boolean
+  sharedToCommunity: boolean
   thumbnail: string
   textPreview: string
 }

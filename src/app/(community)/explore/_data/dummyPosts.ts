@@ -1,21 +1,9 @@
 // 추후 DB 조회로 바꿀 둘러보기 UI 퍼블리싱용 더미 데이터
-import type { ExploreCategory } from './categories'
+import type { ExplorePost } from '@/types/explore'
 
 export { CATEGORIES } from './categories'
 export type { ExploreCategory, ExploreCategoryKey } from './categories'
-
-export interface ExplorePost {
-  pageId: string
-  title: string
-  category: ExploreCategory
-  authorName: string
-  authorHandle: string
-  authorImage: string
-  thumbnail: string
-  likeCount: number
-  useCount: number
-  allowRemix: boolean
-}
+export type { ExplorePost } from '@/types/explore'
 
 const thumb = (seed: string) => `https://picsum.photos/seed/${seed}/640/360`
 

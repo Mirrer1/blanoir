@@ -1,5 +1,7 @@
 // 공유와 목록이 함께 쓰는 둘러보기 카테고리 상수
-export type ExploreCategory = 'profile' | 'portfolio' | 'store' | 'wedding' | 'resume' | 'event'
+import type { ExploreCategory } from '@/types/explore'
+
+export type { ExploreCategory }
 export type ExploreCategoryKey = ExploreCategory | 'all'
 
 export const CATEGORIES: { key: ExploreCategory; label: string }[] = [

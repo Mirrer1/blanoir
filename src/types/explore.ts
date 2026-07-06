@@ -10,6 +10,22 @@ export const CATEGORY_KEYS = [
   'event',
 ] as const
 
+export type ExploreCategory = (typeof CATEGORY_KEYS)[number]
+
+// 둘러보기 목록 카드에 쓰는 뷰 모델
+export interface ExplorePost {
+  pageId: string
+  title: string
+  category?: ExploreCategory
+  authorName: string
+  authorHandle: string
+  authorImage: string
+  thumbnail: string
+  likeCount: number
+  useCount: number
+  allowRemix: boolean
+}
+
 export const shareSchema = z.object({
   pageId: z.string().min(1),
   // 빈 문자열은 미선택으로 간주

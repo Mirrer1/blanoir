@@ -1,5 +1,7 @@
 import { type InferSchemaType, type Model, Schema, model, models } from 'mongoose'
 
+import { CATEGORY_KEYS } from '@/types/explore'
+
 const sectionSchema = new Schema(
   {
     id: { type: String, required: true }, // 섹션 고유 ID
@@ -18,6 +20,14 @@ const pageSchema = new Schema(
     title: { type: String, default: '' }, // 페이지 제목
     sections: { type: [sectionSchema], default: [] }, // 섹션 데이터 배열
     isPublic: { type: Boolean, default: false }, // 공개 여부 (기본 비공개)
+    sharedToCommunity: { type: Boolean, default: false, index: true }, // 둘러보기 공유 여부
+    allowRemix: { type: Boolean, default: false }, // 템플릿 사용 허용
+    category: { type: String, enum: [...CATEGORY_KEYS] }, // 둘러보기 카테고리
+    communityPost: { type: String, default: '' }, // 소개 게시글 HTML
+    communityImage: { type: String, default: '' }, // 대표 이미지 URL
+    useCount: { type: Number, default: 0 }, // 템플릿 사용 수
+    likeCount: { type: Number, default: 0 }, // 좋아요 수
+    sharedAt: { type: Date }, // 둘러보기 공유 시각
   },
   { timestamps: true },
 )

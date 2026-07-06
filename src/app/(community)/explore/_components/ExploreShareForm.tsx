@@ -9,6 +9,7 @@ import { CATEGORIES, type ExploreCategory } from '../_data/categories'
 import ExplorePostComposer from './ExplorePostComposer'
 import ExploreSharePageSelect from './ExploreSharePageSelect'
 import ExploreShareRepImage from './ExploreShareRepImage'
+import { shareToCommunity } from '@/actions/explore'
 import { deleteImage } from '@/actions/upload'
 import { Button } from '@/components/ui/button'
 import type { UploadedImage } from '@/hooks/useImageUpload'
@@ -38,12 +39,13 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
   const [repOverride, setRepOverride] = useState<UploadedImage | null>(null)
   const [post, setPost] = useState('')
   const [busy, setBusy] = useState(0)
+  const [submitting, setSubmitting] = useState(false)
   const [guardOpen, setGuardOpen] = useState(false)
 
   const uploadedPostImages = useRef<Set<string>>(new Set())
   const bumpBusy = (uploading: boolean) => setBusy((count) => count + (uploading ? 1 : -1))
   const defaultImage = pages.find((page) => page.pageId === pageId)?.thumbnail ?? ''
-  const canShare = pageId !== '' && busy === 0
+  const canShare = pageId !== '' && busy === 0 && !submitting
   const isDirty =
     pageId !== '' || category !== '' || !allowRemix || repOverride !== null || hasPostContent(post)
 
@@ -75,9 +77,23 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
     }
   }
 
-  // TODO: 다음 슬라이스에서 shareToCommunity 액션 연결
-  const handleShare = () => {
-    toast('곧 공유할 수 있어요')
+  // 공유 성공 시 저장된 이미지는 정리 없이 목록으로 이동
+  const handleShare = async () => {
+    setSubmitting(true)
+    const result = await shareToCommunity({
+      pageId,
+      category,
+      allowRemix,
+      communityImage: repOverride?.url ?? defaultImage,
+      communityPost: post,
+    })
+    if (result.ok) {
+      toast.success('둘러보기에 공유했어요')
+      router.push('/explore')
+    } else {
+      toast.error(result.message)
+      setSubmitting(false)
+    }
   }
 
   return (

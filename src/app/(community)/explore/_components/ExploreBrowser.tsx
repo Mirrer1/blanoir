@@ -25,6 +25,7 @@ const CATEGORY_TABS: { key: ExploreCategoryKey; label: string }[] = [
 
 const CATEGORY_KEYS = new Set<string>(CATEGORY_TABS.map((tab) => tab.key))
 const isSort = (value: string | null): value is SortKey => value === 'recent' || value === 'popular'
+const popularScore = (post: ExplorePost) => post.viewCount + post.useCount
 
 const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
   const searchParams = useSearchParams()
@@ -74,7 +75,7 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
       post.title.toLowerCase().includes(keyword),
   )
   const visible =
-    sort === 'popular' ? [...filtered].sort((a, b) => b.likeCount - a.likeCount) : filtered
+    sort === 'popular' ? [...filtered].sort((a, b) => popularScore(b) - popularScore(a)) : filtered
 
   return (
     <div className="flex flex-col gap-6">

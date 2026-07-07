@@ -15,7 +15,7 @@ type SharedLean = {
   communityImage: string
   communityPost: string
   sections: Section[]
-  likeCount: number
+  viewCount?: number
   useCount: number
   allowRemix: boolean
   userId: { _id: Types.ObjectId; name: string; handle: string; profileImage: string } | null
@@ -37,7 +37,7 @@ const toPost = (page: SharedLean): ExplorePost | null => {
     authorHandle: page.userId.handle,
     authorImage: page.userId.profileImage,
     thumbnail: page.communityImage || firstImageUrl(page.sections),
-    likeCount: page.likeCount,
+    viewCount: page.viewCount ?? 0,
     useCount: page.useCount,
     allowRemix: page.allowRemix,
   }
@@ -79,7 +79,7 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
       .populate('userId', AUTHOR_FIELDS)
       .lean<SharedLean[]>(),
     Page.find({ sharedToCommunity: true, pageId: { $ne: pageId } })
-      .sort({ likeCount: -1 })
+      .sort({ viewCount: -1 })
       .limit(POPULAR_LIMIT)
       .populate('userId', AUTHOR_FIELDS)
       .lean<SharedLean[]>(),

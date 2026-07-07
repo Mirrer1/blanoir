@@ -26,7 +26,7 @@ const pageSchema = new Schema(
     communityPost: { type: String, default: '' }, // 소개 게시글 HTML
     communityImage: { type: String, default: '' }, // 대표 이미지 URL
     useCount: { type: Number, default: 0 }, // 템플릿 사용 수
-    likeCount: { type: Number, default: 0 }, // 좋아요 수
+    viewCount: { type: Number, default: 0 }, // 조회 수
     sharedAt: { type: Date }, // 둘러보기 공유 시각
     remixedFrom: { type: String }, // 템플릿으로 가져온 원본 pageId
   },

@@ -1,4 +1,4 @@
-import { Heart, ImageIcon, Repeat2 } from 'lucide-react'
+import { Eye, ImageIcon, Repeat2 } from 'lucide-react'
 import Link from 'next/link'
 
 import type { ExplorePost } from '../_data/dummyPosts'
@@ -32,11 +32,11 @@ const ExploreCard = ({ post }: { post: ExplorePost }) => {
           <span className="text-muted-foreground truncate text-sm">{post.authorName}</span>
         </div>
         <div className="text-muted-foreground flex shrink-0 items-center gap-3 text-xs">
-          <span className="flex items-center gap-1 leading-none">
-            <Heart className="size-3.5" />
-            {post.likeCount}
+          <span className="flex items-center gap-1">
+            <Eye className="size-3.5" />
+            {post.viewCount}
           </span>
-          <span className="flex items-center gap-1 leading-none">
+          <span className="flex items-center gap-1">
             <Repeat2 className="size-3.5" />
             {post.useCount}
           </span>

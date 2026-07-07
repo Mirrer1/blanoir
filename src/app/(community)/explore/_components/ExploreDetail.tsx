@@ -4,9 +4,9 @@ import Link from 'next/link'
 import ExploreAvatar from './ExploreAvatar'
 import ExploreCardCarousel from './ExploreCardCarousel'
 import ExploreComments from './ExploreComments'
-import ExploreLikeButton from './ExploreLikeButton'
 import ExplorePopularFeed from './ExplorePopularFeed'
 import ExplorePreview from './ExplorePreview'
+import ExploreViewCount from './ExploreViewCount'
 import { buttonVariants } from '@/components/ui/button'
 import type { SharedDetail } from '@/lib/explore'
 import { cn } from '@/lib/utils'
@@ -41,8 +41,8 @@ const ExploreDetail = ({
               <p className="text-muted-foreground truncate text-sm">@{post.authorHandle}</p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <ExploreLikeButton count={post.likeCount} isLoggedIn={isLoggedIn} />
+          <div className="flex shrink-0 items-center gap-3">
+            <ExploreViewCount pageId={post.pageId} initialCount={post.viewCount} />
             <ExplorePreview
               pageId={post.pageId}
               sections={sections}

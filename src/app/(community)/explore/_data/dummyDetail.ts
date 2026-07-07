@@ -19,7 +19,7 @@ export const authorOtherPosts = (post: ExplorePost): ExplorePost[] => {
 export const popularFeed = (post: ExplorePost): ExplorePost[] => {
   const base = [...DUMMY_POSTS]
     .filter((item) => item.pageId !== post.pageId)
-    .sort((a, b) => b.likeCount - a.likeCount)
+    .sort((a, b) => b.viewCount - a.viewCount)
   return [...base, ...base, ...base]
 }
 

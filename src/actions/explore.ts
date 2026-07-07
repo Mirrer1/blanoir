@@ -2,6 +2,7 @@
 
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
+import { cookies } from 'next/headers'
 import sanitizeHtml from 'sanitize-html'
 
 import { auth } from '@/lib/auth'
@@ -116,6 +117,73 @@ export async function unshareFromCommunity(pageId: string): Promise<UnshareResul
   } catch (error) {
     console.error('unshareFromCommunity failed', error)
     return { ok: false, message: UNEXPECTED_ERROR }
+  }
+}
+
+// 6시간 간격으로 같은 방문자 중복 조회 방지
+const VIEW_TTL_MS = 6 * 60 * 60 * 1000
+const VIEW_COOKIE = 'bl_views'
+
+// 브라우저가 최근 본 페이지와 시간
+type ViewMap = Record<string, number>
+
+function parseViewCookie(raw: string | undefined): ViewMap {
+  if (!raw) {
+    return {}
+  }
+  try {
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? (parsed as ViewMap) : {}
+  } catch {
+    return {}
+  }
+}
+
+type RecordViewResult = { counted: boolean; viewCount: number }
+
+// 상세 진입 시 클라이언트가 호출해 조회수 증가
+export async function recordView(pageId: string): Promise<RecordViewResult> {
+  try {
+    const store = await cookies()
+    const now = Date.now()
+    const views = parseViewCookie(store.get(VIEW_COOKIE)?.value)
+
+    // TTL 안의 재방문은 카운트에서 제외
+    const last = views[pageId]
+    if (last && now - last < VIEW_TTL_MS) {
+      return { counted: false, viewCount: 0 }
+    }
+
+    await connectDB()
+    const updated = await Page.findOneAndUpdate(
+      { pageId, sharedToCommunity: true },
+      { $inc: { viewCount: 1 } },
+      { new: true },
+    ).lean<{ viewCount: number } | null>()
+    if (!updated) {
+      return { counted: false, viewCount: 0 }
+    }
+
+    const next: ViewMap = { [pageId]: now }
+    for (const [id, at] of Object.entries(views)) {
+      if (id !== pageId && now - at < VIEW_TTL_MS) {
+        next[id] = at
+      }
+    }
+    store.set(VIEW_COOKIE, JSON.stringify(next), {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: VIEW_TTL_MS / 1000,
+      path: '/',
+    })
+
+    // 목록 카드 조회수도 다음 진입 때 최신값 반영
+    revalidatePath('/explore')
+
+    return { counted: true, viewCount: updated.viewCount }
+  } catch (error) {
+    console.error('recordView failed', error)
+    return { counted: false, viewCount: 0 }
   }
 }
 

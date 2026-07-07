@@ -21,7 +21,7 @@ export interface ExplorePost {
   authorHandle: string
   authorImage: string
   thumbnail: string
-  likeCount: number
+  viewCount: number
   useCount: number
   allowRemix: boolean
 }

@@ -1,14 +1,10 @@
-import { LayoutDashboard } from 'lucide-react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Suspense } from 'react'
 
 import ExploreBrowser from './_components/ExploreBrowser'
 import ExploreShareButton from './_components/ExploreShareButton'
-import { buttonVariants } from '@/components/ui/button'
 import { auth } from '@/lib/auth'
 import { getSharedPosts } from '@/lib/explore'
-import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: '둘러보기',
@@ -24,14 +20,7 @@ const ExplorePage = async () => {
     <div className="mx-auto max-w-5xl px-6 py-12">
       <div className="flex items-center justify-between gap-3">
         <h1 className="font-heading text-2xl font-extrabold tracking-tight">둘러보기</h1>
-        <div className="flex shrink-0 items-center gap-2">
-          {isLoggedIn && (
-            <Link href="/dashboard" className={cn(buttonVariants({ variant: 'outline' }))}>
-              <LayoutDashboard className="size-4" />내 페이지
-            </Link>
-          )}
-          <ExploreShareButton isLoggedIn={isLoggedIn} />
-        </div>
+        <ExploreShareButton isLoggedIn={isLoggedIn} />
       </div>
       <div className="mt-8">
         <Suspense>

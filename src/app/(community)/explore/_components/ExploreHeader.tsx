@@ -1,8 +1,10 @@
-import { Settings } from 'lucide-react'
+import { LayoutDashboard, Settings } from 'lucide-react'
 import Link from 'next/link'
 
+import IconTooltip from '@/components/common/IconTooltip'
 import ThemeToggle from '@/components/common/ThemeToggle'
 import { buttonVariants } from '@/components/ui/button'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { auth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
 
@@ -17,25 +19,40 @@ const ExploreHeader = async () => {
         <Link href={homeHref} className="font-heading text-lg font-extrabold tracking-tight">
           Blanoir
         </Link>
-        <nav className="flex items-center gap-1">
-          <ThemeToggle />
-          {isLoggedIn ? (
-            <Link
-              href="/settings"
-              className={buttonVariants({ variant: 'ghost', size: 'icon' })}
-              aria-label="설정"
-            >
-              <Settings className="size-5" />
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className={cn(buttonVariants({ variant: 'ghost' }), 'border-foreground/30')}
-            >
-              로그인
-            </Link>
-          )}
-        </nav>
+        <TooltipProvider delay={300}>
+          <nav className="flex items-center gap-1">
+            {isLoggedIn && (
+              <IconTooltip label="내 페이지">
+                <Link
+                  href="/dashboard"
+                  className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                  aria-label="내 페이지"
+                >
+                  <LayoutDashboard className="size-5" />
+                </Link>
+              </IconTooltip>
+            )}
+            <ThemeToggle tooltip="테마" />
+            {isLoggedIn ? (
+              <IconTooltip label="설정">
+                <Link
+                  href="/settings"
+                  className={buttonVariants({ variant: 'ghost', size: 'icon' })}
+                  aria-label="설정"
+                >
+                  <Settings className="size-5" />
+                </Link>
+              </IconTooltip>
+            ) : (
+              <Link
+                href="/login"
+                className={cn(buttonVariants({ variant: 'ghost' }), 'border-foreground/30')}
+              >
+                로그인
+              </Link>
+            )}
+          </nav>
+        </TooltipProvider>
       </div>
     </header>
   )

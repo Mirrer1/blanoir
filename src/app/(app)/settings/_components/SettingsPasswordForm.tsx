@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -70,9 +69,10 @@ const SettingsPasswordForm = () => {
         <Button
           type="submit"
           className="w-fit min-w-36 self-end"
-          disabled={!isValid || isSubmitting}
+          disabled={!isValid}
+          loading={isSubmitting}
         >
-          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '비밀번호 변경'}
+          비밀번호 변경
         </Button>
       </FieldGroup>
     </form>

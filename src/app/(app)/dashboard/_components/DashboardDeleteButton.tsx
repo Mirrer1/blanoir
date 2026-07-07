@@ -1,7 +1,7 @@
 'use client'
 
 import { AlertDialog } from '@base-ui/react/alert-dialog'
-import { Loader2, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -52,8 +52,8 @@ const DashboardDeleteButton = ({ pageId, title }: DashboardDeleteButtonProps) =>
               <AlertDialog.Close render={<Button variant="outline" size="sm" />}>
                 취소
               </AlertDialog.Close>
-              <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleting}>
-                {deleting ? <Loader2 className="size-4 animate-spin" /> : '삭제'}
+              <Button variant="destructive" size="sm" onClick={handleDelete} loading={deleting}>
+                삭제
               </Button>
             </div>
           </AlertDialog.Popup>

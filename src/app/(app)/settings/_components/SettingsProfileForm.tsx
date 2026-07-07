@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
@@ -69,7 +68,7 @@ const SettingsProfileForm = ({ defaultName, defaultHandle }: SettingsProfileForm
         <Field>
           <FieldLabel htmlFor="handle">페이지 주소</FieldLabel>
           <p className="text-muted-foreground -mt-1 text-xs">
-            공개 페이지가 열리는 내 주소예요. 영문 소문자·숫자·밑줄(_)만 쓸 수 있어요.
+            공개 페이지가 열리는 주소로 영문 소문자·숫자·밑줄(_)만 쓸 수 있어요
           </p>
           <div
             onClick={() => handleInputRef.current?.focus()}
@@ -101,9 +100,10 @@ const SettingsProfileForm = ({ defaultName, defaultHandle }: SettingsProfileForm
       <Button
         type="submit"
         className="mt-2 w-fit min-w-36 self-end"
-        disabled={!isDirty || isSubmitting}
+        disabled={!isDirty}
+        loading={isSubmitting}
       >
-        {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '저장'}
+        저장
       </Button>
     </form>
   )

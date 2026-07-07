@@ -203,8 +203,8 @@ const SignupForm = () => {
           />
           <FieldErrorText message={errors.password?.message} />
         </Field>
-        <Button type="submit" className="h-11 w-full" disabled={!verified || isSubmitting}>
-          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '회원가입'}
+        <Button type="submit" className="h-11 w-full" disabled={!verified} loading={isSubmitting}>
+          회원가입
         </Button>
       </FieldGroup>
     </form>

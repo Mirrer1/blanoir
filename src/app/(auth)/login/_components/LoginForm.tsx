@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -112,8 +111,8 @@ const LoginForm = () => {
             비밀번호 찾기
           </Link>
         </div>
-        <Button type="submit" className="h-11 w-full" disabled={isSubmitting}>
-          {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : '로그인'}
+        <Button type="submit" className="h-11 w-full" loading={isSubmitting}>
+          로그인
         </Button>
       </FieldGroup>
     </form>

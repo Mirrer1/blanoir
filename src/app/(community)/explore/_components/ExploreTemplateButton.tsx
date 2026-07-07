@@ -1,6 +1,5 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -31,8 +30,7 @@ const ExploreTemplateButton = ({ pageId, isLoggedIn }: { pageId: string; isLogge
 
   return (
     <>
-      <Button onClick={handleClick} disabled={pending}>
-        {pending && <Loader2 className="size-4 animate-spin" />}
+      <Button onClick={handleClick} loading={pending}>
         템플릿 사용하기
       </Button>
       <ExploreLoginGate

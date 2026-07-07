@@ -35,6 +35,8 @@ const EditPage = async ({ params }: EditPageProps) => {
     title: string
     sections: unknown[]
     isPublic: boolean
+    sharedToCommunity: boolean
+    remixedFrom?: string
   } | null>()
 
   // 없는 페이지거나 내 페이지가 아니면 노출하지 않음
@@ -53,6 +55,8 @@ const EditPage = async ({ params }: EditPageProps) => {
     handle: session.user.handle,
     title: page.title,
     isPublic: page.isPublic,
+    sharedToCommunity: !!page.sharedToCommunity,
+    remixedFrom: page.remixedFrom,
     sections: page.sections as Section[],
     myPages: myPages.map((p) => ({ pageId: p.pageId, title: p.title, isPublic: p.isPublic })),
   }

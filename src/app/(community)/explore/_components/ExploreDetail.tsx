@@ -1,10 +1,15 @@
+import { Pencil } from 'lucide-react'
+import Link from 'next/link'
+
 import ExploreAvatar from './ExploreAvatar'
 import ExploreCardCarousel from './ExploreCardCarousel'
 import ExploreComments from './ExploreComments'
 import ExploreLikeButton from './ExploreLikeButton'
 import ExplorePopularFeed from './ExplorePopularFeed'
 import ExplorePreview from './ExplorePreview'
+import { buttonVariants } from '@/components/ui/button'
 import type { SharedDetail } from '@/lib/explore'
+import { cn } from '@/lib/utils'
 
 const ExploreDetail = ({
   detail,
@@ -38,6 +43,15 @@ const ExploreDetail = ({
               isOwner={isOwner}
               isLoggedIn={isLoggedIn}
             />
+            {isOwner && (
+              <Link
+                href={`/explore/share?pageId=${post.pageId}&from=detail`}
+                className={cn(buttonVariants())}
+              >
+                <Pencil className="size-4" />
+                수정
+              </Link>
+            )}
           </div>
         </div>
       </div>

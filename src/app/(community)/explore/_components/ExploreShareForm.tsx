@@ -2,20 +2,20 @@
 
 import { AlertDialog } from '@base-ui/react/alert-dialog'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { CATEGORIES, type ExploreCategory } from '../_data/categories'
 import ExplorePostComposer from './ExplorePostComposer'
 import ExploreSharePageSelect from './ExploreSharePageSelect'
 import ExploreShareRepImage from './ExploreShareRepImage'
-import { shareToCommunity } from '@/actions/explore'
+import { shareToCommunity, unshareFromCommunity } from '@/actions/explore'
 import { deleteImage } from '@/actions/upload'
 import { Button } from '@/components/ui/button'
 import type { UploadedImage } from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'
 
-// 태그를 뺀 텍스트나 이미지 유무로 소개 입력 여부 판단
+// 입력 여부 판단
 const hasPostContent = (html: string) =>
   /<img/i.test(html) ||
   html
@@ -32,25 +32,52 @@ export interface SharePageItem {
   textPreview: string
 }
 
-const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
+export interface ShareEdit {
+  page: SharePageItem
+  from: 'editor' | 'detail'
+  alreadyShared: boolean
+  category: ExploreCategory | ''
+  allowRemix: boolean
+  communityImage: string
+  communityPost: string
+}
+
+const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: ShareEdit }) => {
   const router = useRouter()
-  const [pageId, setPageId] = useState('')
-  const [category, setCategory] = useState<ExploreCategory | ''>('')
-  const [allowRemix, setAllowRemix] = useState(true)
+  const [pageId, setPageId] = useState(edit?.page.pageId ?? '')
+  const [category, setCategory] = useState<ExploreCategory | ''>(edit?.category ?? '')
+  const [allowRemix, setAllowRemix] = useState(edit?.allowRemix ?? true)
   const [repOverride, setRepOverride] = useState<UploadedImage | null>(null)
-  const [post, setPost] = useState('')
+  const [post, setPost] = useState(edit?.communityPost ?? '')
   const [busy, setBusy] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [guardOpen, setGuardOpen] = useState(false)
 
   const uploadedPostImages = useRef<Set<string>>(new Set())
   const bumpBusy = (uploading: boolean) => setBusy((count) => count + (uploading ? 1 : -1))
-  const defaultImage = pages.find((page) => page.pageId === pageId)?.thumbnail ?? ''
+  const defaultImage = edit
+    ? edit.communityImage
+    : (pages.find((page) => page.pageId === pageId)?.thumbnail ?? '')
   const canShare = pageId !== '' && busy === 0 && !submitting
-  const isDirty =
-    pageId !== '' || category !== '' || !allowRemix || repOverride !== null || hasPostContent(post)
+  let returnPath = '/explore'
+  if (edit) {
+    returnPath =
+      edit.from === 'detail' ? `/explore/${edit.page.pageId}` : `/edit/${edit.page.pageId}`
+  }
+  const unshareReturnPath = edit?.from === 'detail' ? '/explore' : returnPath
+  const isDirty = edit
+    ? repOverride !== null ||
+      post !== edit.communityPost ||
+      category !== edit.category ||
+      allowRemix !== edit.allowRemix
+    : pageId !== '' ||
+      category !== '' ||
+      !allowRemix ||
+      repOverride !== null ||
+      hasPostContent(post)
+  const isDirtyRef = useRef(isDirty)
 
-  // 페이지를 바꾸면 덮어쓴 이미지 정리
+  // 페이지 바꾸면 덮어쓴 이미지 정리
   const handlePageChange = (id: string) => {
     if (repOverride) {
       void deleteImage(repOverride.url)
@@ -59,17 +86,22 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
     setPageId(id)
   }
 
-  // 저장 없이 나가므로 올린 이미지를 정리하고 이동
-  const handleLeave = () => {
+  // 세션 중 업로드 이미지 정리
+  const cleanupUploads = () => {
     if (repOverride) {
       void deleteImage(repOverride.url)
     }
     uploadedPostImages.current.forEach((url) => void deleteImage(url))
     uploadedPostImages.current.clear()
-    router.push('/explore')
   }
 
-  // 작성물이 있으면 확인 모달을 거치고 없으면 바로 나감
+  // 업로드 이미지 정리 후 이동
+  const handleLeave = () => {
+    cleanupUploads()
+    router.push(returnPath)
+  }
+
+  // 작성 컨텐츠 여부 확인
   const handleCancel = () => {
     if (isDirty) {
       setGuardOpen(true)
@@ -89,20 +121,72 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
       communityPost: post,
     })
     if (result.ok) {
-      toast.success('둘러보기에 공유했어요')
-      router.push('/explore')
+      toast.success(edit?.alreadyShared ? '템플릿 정보를 수정했어요' : '템플릿으로 추가했어요')
+      router.push(returnPath)
     } else {
       toast.error(result.message)
       setSubmitting(false)
     }
   }
 
+  // 해제 후 올린 이미지 정리
+  const handleUnshare = async () => {
+    setSubmitting(true)
+    const result = await unshareFromCommunity(pageId)
+    if (result.ok) {
+      cleanupUploads()
+      toast.success('템플릿을 삭제했어요')
+      router.push(unshareReturnPath)
+    } else {
+      toast.error(result.message)
+      setSubmitting(false)
+    }
+  }
+
+  // 이탈 가드용 최신 dirty 동기화
+  useEffect(() => {
+    isDirtyRef.current = isDirty
+  }, [isDirty])
+
+  // 새로고침이나 닫기 경고
+  useEffect(() => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isDirtyRef.current) {
+        event.preventDefault()
+        event.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [])
+
+  // 뒤로가기 작성 컨텐츠 여부 확인 모달
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href)
+    const onPopState = () => {
+      if (isDirtyRef.current) {
+        window.history.pushState(null, '', window.location.href)
+        setGuardOpen(true)
+      } else {
+        router.back()
+      }
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [router])
+
   return (
     <div className="flex flex-col gap-6">
       <section className="flex flex-col gap-4 rounded-lg border p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <span className="font-medium">공유할 페이지</span>
-          <ExploreSharePageSelect pages={pages} selected={pageId} onSelect={handlePageChange} />
+          <span className="font-medium">템플릿으로 만들 페이지</span>
+          {edit ? (
+            <span className="max-w-full truncate text-sm font-medium">
+              {edit.page.title || '제목 없는 페이지'}
+            </span>
+          ) : (
+            <ExploreSharePageSelect pages={pages} selected={pageId} onSelect={handlePageChange} />
+          )}
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="font-medium">카테고리</span>
@@ -174,6 +258,7 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
         </p>
         <div className="mt-8">
           <ExplorePostComposer
+            initialHtml={edit?.communityPost}
             onChange={setPost}
             onUploadingChange={bumpBusy}
             onImageUploaded={(url) => uploadedPostImages.current.add(url)}
@@ -182,11 +267,21 @@ const ExploreShareForm = ({ pages }: { pages: SharePageItem[] }) => {
       </section>
 
       <div className="flex justify-end gap-2">
+        {edit?.alreadyShared && (
+          <Button
+            variant="outline"
+            onClick={handleUnshare}
+            disabled={submitting}
+            className="text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive dark:border-destructive/50 dark:hover:bg-destructive/20 mr-auto"
+          >
+            템플릿 삭제
+          </Button>
+        )}
         <Button variant="outline" onClick={handleCancel}>
           취소
         </Button>
         <Button onClick={handleShare} disabled={!canShare}>
-          공유하기
+          {edit?.alreadyShared ? '수정' : '템플릿 추가'}
         </Button>
       </div>
 

@@ -38,6 +38,8 @@ export interface EditorInitialPage {
   handle: string
   title: string
   isPublic: boolean
+  sharedToCommunity: boolean
+  remixedFrom?: string
   sections: Section[]
   myPages: PageSummary[]
 }
@@ -47,6 +49,8 @@ interface EditorState {
   handle: string
   title: string
   isPublic: boolean
+  sharedToCommunity: boolean
+  remixedFrom?: string
   sections: Section[]
   myPages: PageSummary[] // 버튼 링크용 내 다른 페이지 목록
   selectedSectionId: string | null
@@ -300,6 +304,8 @@ export const createEditorStore = (initial: EditorInitialPage) => {
         handle: initial.handle,
         title: initial.title,
         isPublic: initial.isPublic,
+        sharedToCommunity: initial.sharedToCommunity,
+        remixedFrom: initial.remixedFrom,
         sections: initial.sections,
         myPages: initial.myPages,
         selectedSectionId: null,

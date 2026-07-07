@@ -89,6 +89,36 @@ export async function shareToCommunity(input: ShareInput): Promise<ShareResult> 
   }
 }
 
+type UnshareResult = { ok: true } | { ok: false; message: string }
+
+export async function unshareFromCommunity(pageId: string): Promise<UnshareResult> {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return { ok: false, message: '로그인이 필요해요' }
+    }
+
+    await connectDB()
+
+    // 소유권을 필터에 추가해 본인 페이지만 공유 해제
+    const result = await Page.updateOne(
+      { pageId, userId: session.user.id },
+      { $set: { sharedToCommunity: false } },
+    )
+    if (result.matchedCount === 0) {
+      return { ok: false, message: '권한이 없어요' }
+    }
+
+    revalidatePath('/explore')
+    revalidatePath('/dashboard')
+
+    return { ok: true }
+  } catch (error) {
+    console.error('unshareFromCommunity failed', error)
+    return { ok: false, message: UNEXPECTED_ERROR }
+  }
+}
+
 // 공유 페이지 이미지를 리믹스하는 사용자 폴더로 복사
 async function copyImagesInto(urls: string[], userId: string): Promise<Map<string, string>> {
   const map = new Map<string, string>()
@@ -137,7 +167,7 @@ export async function remixPage(pageId: string): Promise<RemixResult> {
       remapImageUrls(sections, await copyImagesInto(urls, session.user.id))
     }
 
-    // 내 페이지 제목과 겹치지 않게 복사본 표기를 붙임
+    // 페이지 제목 중복 방지
     const titles = await Page.find({ userId: session.user.id })
       .select('title')
       .lean<{ title: string }[]>()

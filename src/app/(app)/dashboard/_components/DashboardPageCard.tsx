@@ -77,7 +77,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
       {page.sharedToCommunity && (
         <span className="pointer-events-none absolute top-3 left-2 z-10 flex items-center gap-1 rounded-full bg-black/55 px-2 py-1 text-xs leading-none font-medium text-white backdrop-blur">
           <Share2 className="size-3" />
-          공유됨
+          템플릿 공개
         </span>
       )}
       <DashboardDuplicateButton onDuplicate={onDuplicate} />

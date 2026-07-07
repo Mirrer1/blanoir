@@ -28,7 +28,9 @@ const ExploreSharePageSelect = ({ pages, selected, onSelect }: ExploreSharePageS
         <Menu.Positioner sideOffset={6} align="start" className="z-50">
           <Menu.Popup className="bg-background max-h-72 w-64 origin-top overflow-y-auto rounded-lg border p-1 shadow-md transition-[transform,opacity] duration-150 ease-out data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
             {pages.length === 0 ? (
-              <p className="text-muted-foreground px-2 py-1.5 text-sm">공유할 페이지가 없어요</p>
+              <p className="text-muted-foreground px-2 py-1.5 text-sm">
+                템플릿으로 만들 페이지가 없어요
+              </p>
             ) : (
               pages.map((page) => (
                 <Menu.Item
@@ -46,7 +48,7 @@ const ExploreSharePageSelect = ({ pages, selected, onSelect }: ExploreSharePageS
                   <span className="truncate">{page.title || '제목 없는 페이지'}</span>
                   {page.sharedToCommunity ? (
                     <span className="text-muted-foreground ml-auto shrink-0 rounded-full border px-2 py-1 text-xs leading-none">
-                      공유됨
+                      템플릿 공개
                     </span>
                   ) : (
                     <span

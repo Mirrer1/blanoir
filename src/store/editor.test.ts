@@ -58,6 +58,7 @@ const makeStore = (sections: Section[] = []) =>
     handle: 'h',
     title: 't',
     isPublic: false,
+    sharedToCommunity: false,
     sections,
     myPages: [],
   })

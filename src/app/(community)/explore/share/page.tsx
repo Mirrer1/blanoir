@@ -1,16 +1,21 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
-import ExploreShareForm from '../_components/ExploreShareForm'
+import ExploreShareForm, { type ShareEdit } from '../_components/ExploreShareForm'
 import { auth } from '@/lib/auth'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
+import type { ExploreCategory } from '@/types/explore'
 import type { Section } from '@/types/section'
 import { firstImageUrl, firstTextContent } from '@/utils/pageMeta'
 
-export const metadata: Metadata = { title: '공유하기' }
+export const metadata: Metadata = { title: '템플릿 추가' }
 
-const ExploreSharePage = async () => {
+interface ExploreSharePageProps {
+  searchParams: Promise<{ pageId?: string; from?: string }>
+}
+
+const ExploreSharePage = async ({ searchParams }: ExploreSharePageProps) => {
   const session = await auth()
   if (!session?.user?.id) {
     redirect('/login')
@@ -24,6 +29,10 @@ const ExploreSharePage = async () => {
       isPublic: boolean
       sharedToCommunity: boolean
       remixedFrom?: string
+      category?: ExploreCategory
+      allowRemix: boolean
+      communityImage: string
+      communityPost: string
       sections: Section[]
     }[]
   >()
@@ -45,11 +54,36 @@ const ExploreSharePage = async () => {
       textPreview: firstTextContent(page.sections),
     }))
 
+  // 넘어온 페이지면 고정하고 기존 값 프리필
+  const { pageId: editPageId, from } = await searchParams
+  const target = editPageId
+    ? pages.find(
+        (page) => page.pageId === editPageId && page.sections.length > 0 && !page.remixedFrom,
+      )
+    : undefined
+  const targetItem = target && items.find((item) => item.pageId === target.pageId)
+  const edit: ShareEdit | undefined =
+    target && targetItem
+      ? {
+          page: targetItem,
+          from: from === 'detail' ? 'detail' : 'editor',
+          alreadyShared: !!target.sharedToCommunity,
+          category: target.category ?? '',
+          allowRemix: target.sharedToCommunity ? !!target.allowRemix : true,
+          communityImage: target.sharedToCommunity
+            ? target.communityImage || firstImageUrl(target.sections)
+            : firstImageUrl(target.sections),
+          communityPost: target.sharedToCommunity ? (target.communityPost ?? '') : '',
+        }
+      : undefined
+
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
-      <h1 className="font-heading text-2xl font-extrabold tracking-tight">템플릿으로 공유하기</h1>
+      <h1 className="font-heading text-2xl font-extrabold tracking-tight">
+        {edit?.alreadyShared ? '템플릿 관리' : '템플릿 추가'}
+      </h1>
       <div className="mt-8">
-        <ExploreShareForm pages={items} />
+        <ExploreShareForm pages={items} edit={edit} />
       </div>
     </div>
   )

@@ -12,7 +12,7 @@ interface ExploreDetailPageProps {
 export async function generateMetadata({ params }: ExploreDetailPageProps): Promise<Metadata> {
   const { pageId } = await params
   const detail = await getSharedDetail(pageId)
-  return { title: detail?.post.title ?? '둘러보기' }
+  return { title: detail?.post.title ?? '템플릿' }
 }
 
 const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {

@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react'
+import { ArrowLeft, Pencil } from 'lucide-react'
 import Link from 'next/link'
 
 import ExploreAvatar from './ExploreAvatar'
@@ -24,6 +24,13 @@ const ExploreDetail = ({
 
   return (
     <article className="flex flex-col gap-12">
+      <Link
+        href="/explore"
+        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), '-mb-6 w-fit')}
+      >
+        <ArrowLeft className="size-4" />
+        목록
+      </Link>
       <div className="flex flex-col gap-5">
         <h1 className="font-heading text-2xl font-extrabold tracking-tight">{post.title}</h1>
         <div className="flex items-center justify-between gap-3">

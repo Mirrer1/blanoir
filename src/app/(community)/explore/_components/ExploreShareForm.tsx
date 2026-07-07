@@ -52,6 +52,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
   const [busy, setBusy] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [guardOpen, setGuardOpen] = useState(false)
+  const [unshareOpen, setUnshareOpen] = useState(false)
 
   const uploadedPostImages = useRef<Set<string>>(new Set())
   const bumpBusy = (uploading: boolean) => setBusy((count) => count + (uploading ? 1 : -1))
@@ -64,7 +65,6 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
     returnPath =
       edit.from === 'detail' ? `/explore/${edit.page.pageId}` : `/edit/${edit.page.pageId}`
   }
-  const unshareReturnPath = edit?.from === 'detail' ? '/explore' : returnPath
   const isDirty = edit
     ? repOverride !== null ||
       post !== edit.communityPost ||
@@ -110,7 +110,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
     }
   }
 
-  // 공유 성공 시 저장된 이미지는 정리 없이 목록으로 이동
+  // 템플릿 추가는 상세, 편집은 이전으로 이동
   const handleShare = async () => {
     setSubmitting(true)
     const result = await shareToCommunity({
@@ -122,7 +122,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
     })
     if (result.ok) {
       toast.success(edit?.alreadyShared ? '템플릿 정보를 수정했어요' : '템플릿으로 추가했어요')
-      router.push(returnPath)
+      router.push(edit ? returnPath : `/explore/${pageId}`)
     } else {
       toast.error(result.message)
       setSubmitting(false)
@@ -136,7 +136,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
     if (result.ok) {
       cleanupUploads()
       toast.success('템플릿을 삭제했어요')
-      router.push(unshareReturnPath)
+      router.push(edit?.from === 'detail' ? '/explore' : returnPath)
     } else {
       toast.error(result.message)
       setSubmitting(false)
@@ -240,7 +240,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
         <div>
           <h2 className="font-heading text-lg font-semibold tracking-tight">대표 이미지</h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            목록과 상세 위에 보여요. 기본은 페이지 첫 이미지예요
+            목록과 상세 위에 보이고 기본은 페이지 첫 이미지예요
           </p>
         </div>
         <ExploreShareRepImage
@@ -270,7 +270,7 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
         {edit?.alreadyShared && (
           <Button
             variant="outline"
-            onClick={handleUnshare}
+            onClick={() => setUnshareOpen(true)}
             disabled={submitting}
             className="text-destructive border-destructive/40 hover:bg-destructive/10 hover:text-destructive dark:border-destructive/50 dark:hover:bg-destructive/20 mr-auto"
           >
@@ -301,6 +301,28 @@ const ExploreShareForm = ({ pages, edit }: { pages: SharePageItem[]; edit?: Shar
               </AlertDialog.Close>
               <Button size="sm" onClick={handleLeave}>
                 나가기
+              </Button>
+            </div>
+          </AlertDialog.Popup>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+
+      <AlertDialog.Root open={unshareOpen} onOpenChange={setUnshareOpen}>
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/40 transition-opacity duration-150 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
+          <AlertDialog.Popup className="bg-background fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border p-6 shadow-lg transition-all duration-150 data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0">
+            <AlertDialog.Title className="text-base font-semibold">
+              템플릿을 삭제할까요?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="text-muted-foreground mt-2 text-sm">
+              페이지는 그대로 두고 템플릿 목록에서만 내려가요.
+            </AlertDialog.Description>
+            <div className="mt-6 flex justify-end gap-2">
+              <AlertDialog.Close render={<Button variant="outline" size="sm" />}>
+                취소
+              </AlertDialog.Close>
+              <Button variant="destructive" size="sm" onClick={handleUnshare} loading={submitting}>
+                삭제
               </Button>
             </div>
           </AlertDialog.Popup>

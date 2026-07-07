@@ -36,11 +36,11 @@ const SocialButtons = () => {
         <Button
           key={id}
           variant="ghost"
-          className={`h-11 w-full justify-center gap-2 text-sm font-medium ${className}`}
+          className={`h-9 w-full justify-center gap-2 text-sm font-medium ${className}`}
           onClick={() => signIn(id, { callbackUrl: '/dashboard' })}
         >
-          {icon}
-          {label}
+          <span className="flex w-5 shrink-0 justify-center">{icon}</span>
+          <span className="w-28 text-left">{label}</span>
         </Button>
       ))}
     </div>

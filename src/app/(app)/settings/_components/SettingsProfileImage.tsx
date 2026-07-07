@@ -86,7 +86,7 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
           className="leading-none"
         >
           <Camera />
-          <span className="translate-y-px">{image ? '사진 변경' : '사진 추가'}</span>
+          {image ? '사진 변경' : '사진 추가'}
         </Button>
         {image ? (
           <button
@@ -96,7 +96,7 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
             className="border-destructive/50 text-destructive hover:bg-destructive/10 inline-flex h-7 cursor-pointer items-center gap-1 rounded-md border px-2.5 text-[0.8rem] leading-none font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
           >
             <Trash2 className="size-3.5" />
-            <span className="translate-y-px">제거</span>
+            제거
           </button>
         ) : null}
       </div>

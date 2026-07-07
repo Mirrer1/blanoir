@@ -10,24 +10,24 @@ import {
   Italic,
   List,
   ListOrdered,
-  Loader2,
   type LucideIcon,
   Quote,
   Strikethrough,
   Underline,
 } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { nanoid } from 'nanoid'
+import { useCallback, useRef } from 'react'
 
 import { uploadImageFile } from '@/hooks/useImageUpload'
-import { cn } from '@/lib/utils'
 
 interface ExplorePostComposerProps {
   onChange?: (html: string) => void
   onUploadingChange: (uploading: boolean) => void
-  onImageUploaded?: (url: string) => void // 이탈 시 정리용으로 올린 URL 추적
+  onImageUploaded?: (url: string) => void // 이탈 시 정리용 URL 추적
+  initialHtml?: string // 편집 모드 소개글 프리필
 }
 
-// execCommand 기반 툴바 항목을 그룹별로 정의
+// execCommand 툴바 항목 그룹
 const TOOL_GROUPS: { command: string; arg?: string; label: string; icon: LucideIcon }[][] = [
   [
     { command: 'bold', label: '굵게', icon: Bold },
@@ -53,41 +53,114 @@ const TOOL_GROUPS: { command: string; arg?: string; label: string; icon: LucideI
 const TOOL_BUTTON =
   'flex size-8 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground'
 
+// lucide Loader 스피너
+const LOADER_SVG =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-6 animate-spin"><line x1="12" x2="12" y1="2" y2="6"/><line x1="12" x2="12" y1="18" y2="22"/><line x1="4.93" x2="7.76" y1="4.93" y2="7.76"/><line x1="16.24" x2="19.07" y1="16.24" y2="19.07"/><line x1="2" x2="6" y1="12" y2="12"/><line x1="18" x2="22" y1="12" y2="12"/><line x1="4.93" x2="7.76" y1="19.07" y2="16.24"/><line x1="16.24" x2="19.07" y1="7.76" y2="4.93"/></svg>'
+
+// 복사 오버레이
+const UPLOADING_OVERLAY =
+  'bg-background/60 text-muted-foreground pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-lg backdrop-blur-[1px]'
+
 const ExplorePostComposer = ({
   onChange,
   onUploadingChange,
   onImageUploaded,
+  initialHtml,
 }: ExplorePostComposerProps) => {
   const editorRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
+  const initialHtmlRef = useRef(initialHtml ?? '')
+
+  const attachEditor = useCallback((node: HTMLDivElement | null) => {
+    editorRef.current = node
+    if (node) {
+      node.innerHTML = initialHtmlRef.current
+    }
+  }, [])
 
   const sync = () => onChange?.(editorRef.current?.innerHTML ?? '')
 
-  // 편집 영역 선택을 유지하도록 mousedown을 막고 명령 실행
+  // 선택 유지 후 명령 실행
   const exec = (command: string, arg?: string) => {
     editorRef.current?.focus()
     document.execCommand(command, false, arg)
     sync()
   }
 
-  // 버튼과 붙여넣기가 공유하는 업로드 후 삽입
-  const uploadAndInsert = async (file: File) => {
-    setUploading(true)
-    onUploadingChange(true)
-    const uploaded = await uploadImageFile(file)
-    setUploading(false)
-    onUploadingChange(false)
-    if (!uploaded) {
+  // 커서 자리에 노드 삽입
+  const insertAtCaret = (node: Node) => {
+    const editor = editorRef.current
+    if (!editor) {
       return
     }
-    onImageUploaded?.(uploaded.url)
+    const selection = window.getSelection()
+    if (selection && selection.rangeCount > 0 && editor.contains(selection.anchorNode)) {
+      const range = selection.getRangeAt(0)
+      range.collapse(false)
+      range.insertNode(node)
+      range.setStartAfter(node)
+      range.collapse(true)
+      selection.removeAllRanges()
+      selection.addRange(range)
+    } else {
+      editor.appendChild(node)
+    }
+  }
+
+  // 낙관적 삽입 후 백그라운드 업로드
+  const uploadAndInsert = async (file: File) => {
+    const id = nanoid(6)
+    const localUrl = URL.createObjectURL(file)
+
+    // 로딩 미리보기 즉시 삽입
+    const wrapper = document.createElement('span')
+    wrapper.contentEditable = 'false'
+    wrapper.dataset.uploading = id
+    wrapper.className = 'relative my-3 block'
+    const preview = document.createElement('img')
+    preview.src = localUrl
+    preview.className = 'w-full rounded-lg border'
+    preview.style.margin = '0'
+    const overlay = document.createElement('span')
+    overlay.className = UPLOADING_OVERLAY
+    overlay.innerHTML = LOADER_SVG
+    wrapper.append(preview, overlay)
+
     editorRef.current?.focus()
-    document.execCommand(
-      'insertHTML',
-      false,
-      `<img src="${uploaded.url}" alt="${uploaded.alt}" class="my-3 w-full rounded-lg border" />`,
-    )
+    insertAtCaret(wrapper)
+    sync()
+
+    onUploadingChange(true)
+    const uploaded = await uploadImageFile(file)
+
+    // 실패하면 영역 공백 처리
+    if (!uploaded) {
+      onUploadingChange(false)
+      URL.revokeObjectURL(localUrl)
+      editorRef.current?.querySelector(`[data-uploading="${id}"]`)?.remove()
+      sync()
+      return
+    }
+
+    // 교체 전 프리패치
+    await new Promise<void>((resolve) => {
+      const preloaded = new Image()
+      preloaded.onload = () => resolve()
+      preloaded.onerror = () => resolve()
+      preloaded.src = uploaded.url
+    })
+
+    URL.revokeObjectURL(localUrl)
+    onImageUploaded?.(uploaded.url)
+    const placeholder = editorRef.current?.querySelector(`[data-uploading="${id}"]`)
+    if (placeholder) {
+      const img = document.createElement('img')
+      img.src = uploaded.url
+      img.alt = uploaded.alt
+      img.className = 'my-3 w-full rounded-lg border'
+      placeholder.replaceWith(img)
+    }
+    onUploadingChange(false)
     sync()
   }
 
@@ -135,19 +208,14 @@ const ExplorePostComposer = ({
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={uploading}
           aria-label="이미지 추가"
-          className={cn(TOOL_BUTTON, 'disabled:cursor-not-allowed disabled:opacity-60')}
+          className={TOOL_BUTTON}
         >
-          {uploading ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <ImagePlus className="size-4" />
-          )}
+          <ImagePlus className="size-4" />
         </button>
       </div>
       <div
-        ref={editorRef}
+        ref={attachEditor}
         contentEditable
         suppressContentEditableWarning
         onInput={sync}

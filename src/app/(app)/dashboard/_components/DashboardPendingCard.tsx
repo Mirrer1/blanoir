@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import { Loader } from 'lucide-react'
 
 interface DashboardPendingCardProps {
   item: {
@@ -28,8 +28,8 @@ const DashboardPendingCard = ({ item }: DashboardPendingCardProps) => {
         </div>
         <span className="text-muted-foreground text-xs">복제 중…</span>
       </div>
-      <div className="bg-background/50 absolute inset-0 flex items-center justify-center rounded-lg backdrop-blur-[1px]">
-        <Loader2 className="text-muted-foreground size-6 animate-spin" />
+      <div className="bg-background/60 absolute inset-0 flex items-center justify-center rounded-lg backdrop-blur-[1px]">
+        <Loader className="text-muted-foreground size-6 animate-spin" />
       </div>
     </div>
   )

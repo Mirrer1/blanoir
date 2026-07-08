@@ -10,13 +10,18 @@ import ExploreViewCount from './ExploreViewCount'
 import { buttonVariants } from '@/components/ui/button'
 import type { SharedDetail } from '@/lib/explore'
 import { cn } from '@/lib/utils'
+import type { CommentViewer, ExploreCommentThread } from '@/types/explore'
 
 const ExploreDetail = ({
   detail,
+  comments,
+  viewer,
   isLoggedIn,
   isOwner,
 }: {
   detail: SharedDetail
+  comments: ExploreCommentThread[]
+  viewer: CommentViewer | null
   isLoggedIn: boolean
   isOwner: boolean
 }) => {
@@ -78,7 +83,12 @@ const ExploreDetail = ({
         />
       )}
 
-      <ExploreComments isLoggedIn={isLoggedIn} />
+      <ExploreComments
+        pageId={post.pageId}
+        comments={comments}
+        viewer={viewer}
+        isLoggedIn={isLoggedIn}
+      />
 
       {others.length > 0 && (
         <section className="flex flex-col gap-4">

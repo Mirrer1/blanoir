@@ -1,47 +1,23 @@
-import { DUMMY_COMMENTS } from '../_data/dummyDetail'
-import ExploreAvatar from './ExploreAvatar'
-import ExploreCommentForm from './ExploreCommentForm'
+import ExploreCommentList from './ExploreCommentList'
+import type { CommentThreadView, CommentViewer, ExploreCommentThread } from '@/types/explore'
+import { relativeTime } from '@/utils/relativeTime'
 
-const ExploreComments = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
-  const total = DUMMY_COMMENTS.reduce((sum, comment) => sum + 1 + comment.replies.length, 0)
+interface ExploreCommentsProps {
+  pageId: string
+  comments: ExploreCommentThread[]
+  isLoggedIn: boolean
+  viewer: CommentViewer | null
+}
+
+const ExploreComments = ({ pageId, comments, isLoggedIn, viewer }: ExploreCommentsProps) => {
+  const threads: CommentThreadView[] = comments.map((c) => ({
+    ...c,
+    createdLabel: relativeTime(c.createdAt),
+    replies: c.replies.map((r) => ({ ...r, createdLabel: relativeTime(r.createdAt) })),
+  }))
 
   return (
-    <section className="flex flex-col gap-6">
-      <h2 className="font-heading text-lg font-semibold tracking-tight">댓글 {total}</h2>
-      <ExploreCommentForm isLoggedIn={isLoggedIn} />
-      <ul className="flex flex-col gap-6">
-        {DUMMY_COMMENTS.map((comment) => (
-          <li key={comment.id} className="flex flex-col gap-4">
-            <div className="flex gap-3">
-              <ExploreAvatar src={comment.authorImage} className="size-9" />
-              <div className="flex flex-col gap-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-medium">{comment.authorName}</span>
-                  <span className="text-muted-foreground text-xs">{comment.createdAt}</span>
-                </div>
-                <p className="text-sm leading-relaxed">{comment.text}</p>
-              </div>
-            </div>
-            {comment.replies.length > 0 && (
-              <ul className="flex flex-col gap-4 pl-12">
-                {comment.replies.map((reply) => (
-                  <li key={reply.id} className="flex gap-3">
-                    <ExploreAvatar src={reply.authorImage} className="size-8" />
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-sm font-medium">{reply.authorName}</span>
-                        <span className="text-muted-foreground text-xs">{reply.createdAt}</span>
-                      </div>
-                      <p className="text-sm leading-relaxed">{reply.text}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </section>
+    <ExploreCommentList pageId={pageId} threads={threads} isLoggedIn={isLoggedIn} viewer={viewer} />
   )
 }
 

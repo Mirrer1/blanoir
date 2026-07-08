@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
-import ExploreLoginGate from './ExploreLoginGate'
 import { createComment } from '@/actions/comment'
 import { Button } from '@/components/ui/button'
-import type { AddOptimisticComment, CommentThreadView, CommentViewer } from '@/types/explore'
+import { useAutoResizeTextarea } from '@/hooks/useAutoResizeTextarea'
+import type { AddOptimisticComment, CommentView, CommentViewer } from '@/types/explore'
 
 const MAX_LENGTH = 1000
 
@@ -20,64 +20,61 @@ const scrollToComment = (id: string) =>
     }),
   )
 
-interface ExploreCommentFormProps {
+interface ExploreReplyFormProps {
   pageId: string
-  isLoggedIn: boolean
-  viewer: CommentViewer | null
+  parentId: string
+  viewer: CommentViewer
   addOptimistic: AddOptimisticComment
+  onClose: () => void
 }
 
-const ExploreCommentForm = ({
+// 로그인 확인은 리스트에서 처리
+const ExploreReplyForm = ({
   pageId,
-  isLoggedIn,
+  parentId,
   viewer,
   addOptimistic,
-}: ExploreCommentFormProps) => {
+  onClose,
+}: ExploreReplyFormProps) => {
   const router = useRouter()
-  const [text, setText] = useState('')
-  const [gateOpen, setGateOpen] = useState(false)
+  const [value, setValue] = useState('')
   const [pending, startTransition] = useTransition()
+  const textareaRef = useAutoResizeTextarea()
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const next = e.target.value
     if (next.length >= MAX_LENGTH) {
       toast.warning('최대 1000자까지 쓸 수 있어요')
     }
-    setText(next)
+    setValue(next)
   }
 
   const handleSubmit = () => {
-    if (!isLoggedIn || !viewer) {
-      setGateOpen(true)
+    const text = value.trim()
+    if (!text) {
+      toast.warning('답글을 입력해 주세요')
       return
     }
-    const value = text.trim()
-    if (!value) {
-      toast.warning('댓글을 입력해 주세요')
-      return
-    }
-    setText('')
+    onClose()
 
     startTransition(async () => {
-      const optimistic: CommentThreadView = {
+      const optimistic: CommentView = {
         id: crypto.randomUUID(),
         authorName: viewer.name,
         authorImage: viewer.image,
-        text: value,
+        text,
         createdAt: '',
         createdLabel: '방금',
         isAuthor: viewer.isPageAuthor,
         isMine: true,
         deleted: false,
-        replies: [],
       }
-      addOptimistic({ type: 'add', thread: optimistic })
+      addOptimistic({ type: 'addReply', parentId, reply: optimistic })
       scrollToComment(optimistic.id)
 
-      const result = await createComment({ pageId, text: value })
+      const result = await createComment({ pageId, text, parentId })
       if (!result.ok) {
         toast.error(result.message)
-        setText(value)
         return
       }
       router.refresh()
@@ -87,25 +84,25 @@ const ExploreCommentForm = ({
   return (
     <div className="flex flex-col gap-2">
       <textarea
-        value={text}
+        ref={textareaRef}
+        value={value}
         onChange={handleChange}
-        placeholder="댓글을 남겨보세요"
-        rows={3}
+        placeholder="답글을 남겨보세요"
+        rows={1}
         maxLength={MAX_LENGTH}
-        className="border-input focus-visible:border-ring focus-visible:ring-ring/20 w-full resize-none rounded-lg border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-1"
+        autoFocus
+        className="border-input focus-visible:border-ring focus-visible:ring-ring/20 w-full resize-none overflow-hidden rounded-lg border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-1"
       />
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" size="sm" onClick={onClose}>
+          취소
+        </Button>
         <Button size="sm" onClick={handleSubmit} loading={pending}>
           등록
         </Button>
       </div>
-      <ExploreLoginGate
-        open={gateOpen}
-        onOpenChange={setGateOpen}
-        message="로그인하고 댓글을 남겨보세요"
-      />
     </div>
   )
 }
 
-export default ExploreCommentForm
+export default ExploreReplyForm

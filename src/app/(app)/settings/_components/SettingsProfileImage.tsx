@@ -36,7 +36,7 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
 
     const saved = await updateProfileImage(uploaded.url)
     if (!saved.ok) {
-      // 저장 실패 시 방금 올린 이미지는 orphan이 되므로 정리
+      // 저장 실패 시 orphan 이미지 정리
       void deleteImage(uploaded.url)
       toast.error(saved.message)
       setIsUploading(false)
@@ -76,27 +76,27 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
           </div>
         ) : null}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col items-center gap-2">
         <Button
           type="button"
           variant="outline"
           size="sm"
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
-          className="leading-none"
+          className="w-32 leading-none"
         >
           <Camera />
-          {image ? '사진 변경' : '사진 추가'}
+          <span className="translate-y-px">{image ? '사진 변경' : '사진 추가'}</span>
         </Button>
         {image ? (
           <button
             type="button"
             onClick={handleRemove}
             disabled={isUploading}
-            className="border-destructive/50 text-destructive hover:bg-destructive/10 inline-flex h-7 cursor-pointer items-center gap-1 rounded-md border px-2.5 text-[0.8rem] leading-none font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
+            className="border-destructive/50 text-destructive hover:bg-destructive/10 inline-flex h-7 w-32 cursor-pointer items-center justify-center gap-1 rounded-md border px-2.5 text-[0.8rem] leading-none font-medium transition-colors disabled:pointer-events-none disabled:opacity-50"
           >
             <Trash2 className="size-3.5" />
-            제거
+            <span className="translate-y-px">제거</span>
           </button>
         ) : null}
       </div>

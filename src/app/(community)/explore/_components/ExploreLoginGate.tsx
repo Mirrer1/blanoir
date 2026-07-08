@@ -1,7 +1,7 @@
 'use client'
 
 import { LogIn } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
@@ -14,11 +14,11 @@ interface ExploreLoginGateProps {
 }
 
 // 비로그인 사용자가 로그인 필요한 동작을 눌렀을 때 뜨는 공용 안내 모달
-// 미리보기 위에도 겹치도록 base-ui 중첩 대신 포털 오버레이로 띄움
 const ExploreLoginGate = ({ open, onOpenChange, message }: ExploreLoginGateProps) => {
   const router = useRouter()
+  const pathname = usePathname()
+  const goLogin = () => router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`)
 
-  // Esc로 닫기
   useEffect(() => {
     if (!open) {
       return
@@ -36,7 +36,7 @@ const ExploreLoginGate = ({ open, onOpenChange, message }: ExploreLoginGateProps
     return null
   }
 
-  // 백드롭 클릭은 닫고 팝업 내부 클릭은 전파를 막아 유지
+  // 팝업 내부 클릭은 전파 차단으로 백드롭 클릭과 구분
   return createPortal(
     <div
       role="presentation"
@@ -59,7 +59,7 @@ const ExploreLoginGate = ({ open, onOpenChange, message }: ExploreLoginGateProps
           <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
             취소
           </Button>
-          <Button size="sm" onClick={() => router.push('/login')}>
+          <Button size="sm" onClick={goLogin}>
             로그인
           </Button>
         </div>

@@ -29,7 +29,7 @@ const PROVIDERS = [
   },
 ]
 
-const SocialButtons = () => {
+const SocialButtons = ({ callbackUrl = '/dashboard' }: { callbackUrl?: string }) => {
   return (
     <div className="flex flex-col gap-2">
       {PROVIDERS.map(({ id, label, icon, className }) => (
@@ -37,7 +37,7 @@ const SocialButtons = () => {
           key={id}
           variant="ghost"
           className={`h-9 w-full justify-center gap-2 text-sm font-medium ${className}`}
-          onClick={() => signIn(id, { callbackUrl: '/dashboard' })}
+          onClick={() => signIn(id, { callbackUrl })}
         >
           <span className="flex w-5 shrink-0 justify-center">{icon}</span>
           <span className="w-28 text-left">{label}</span>

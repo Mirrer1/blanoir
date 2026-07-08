@@ -25,7 +25,7 @@ const SAVED_EMAIL_KEY = 'blanoir-saved-email'
 
 const noopSubscribe = () => () => {}
 
-const LoginForm = () => {
+const LoginForm = ({ callbackUrl }: { callbackUrl: string }) => {
   const router = useRouter()
   const {
     register,
@@ -42,7 +42,6 @@ const LoginForm = () => {
   )
   const remember = override ?? savedExists
 
-  // 저장된 이메일이 있으면 입력란에 채움
   useEffect(() => {
     const saved = localStorage.getItem(SAVED_EMAIL_KEY)
     if (saved) {
@@ -64,7 +63,7 @@ const LoginForm = () => {
         return
       }
 
-      router.push('/dashboard')
+      router.push(callbackUrl)
     } catch {
       toast.error('잠시 후 다시 시도해 주세요')
     }

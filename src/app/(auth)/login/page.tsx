@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-// 로그인 실패 코드를 안내 메시지로 매핑
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   OAuthAccountNotLinked: '이미 다른 방법으로 가입된 이메일이에요',
   AccessDenied: '로그인이 거부됐어요',
@@ -23,9 +22,19 @@ const OAUTH_ERROR_FALLBACK = '소셜 로그인에 실패했어요. 다시 시도
 
 export const metadata: Metadata = { title: '로그인' }
 
-const LoginPage = async ({ searchParams }: { searchParams: Promise<{ error?: string }> }) => {
-  const { error } = await searchParams
+const LoginPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; callbackUrl?: string }>
+}) => {
+  const { error, callbackUrl } = await searchParams
   const errorMessage = error ? (OAUTH_ERROR_MESSAGES[error] ?? OAUTH_ERROR_FALLBACK) : undefined
+
+  // 내부 경로만 허용하여 오픈 리다이렉트 방지
+  const returnTo =
+    callbackUrl && callbackUrl.startsWith('/') && !callbackUrl.startsWith('//')
+      ? callbackUrl
+      : '/dashboard'
 
   return (
     <Card className="w-full max-w-sm">
@@ -35,9 +44,9 @@ const LoginPage = async ({ searchParams }: { searchParams: Promise<{ error?: str
         <CardDescription>다시 만나서 반가워요</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
-        <SocialButtons />
+        <SocialButtons callbackUrl={returnTo} />
         <OrDivider />
-        <LoginForm />
+        <LoginForm callbackUrl={returnTo} />
       </CardContent>
       <CardFooter className="text-muted-foreground justify-center text-sm">
         아직 계정이 없으신가요?

@@ -12,7 +12,6 @@ export const CATEGORY_KEYS = [
 
 export type ExploreCategory = (typeof CATEGORY_KEYS)[number]
 
-// 둘러보기 목록 카드에 쓰는 뷰 모델
 export interface ExplorePost {
   pageId: string
   title: string
@@ -23,6 +22,7 @@ export interface ExplorePost {
   thumbnail: string
   viewCount: number
   useCount: number
+  commentCount?: number
   allowRemix: boolean
 }
 
@@ -34,8 +34,62 @@ export const shareSchema = z.object({
     z.enum(CATEGORY_KEYS).optional(),
   ),
   allowRemix: z.boolean(),
-  communityImage: z.string(), // 대표 이미지 URL
-  communityPost: z.string(), // 소개 게시글 HTML
+  communityImage: z.string(),
+  communityPost: z.string(), // HTML
 })
 
 export type ShareInput = z.input<typeof shareSchema>
+
+export interface ExploreCommentView {
+  id: string
+  authorName: string
+  authorImage: string
+  text: string
+  createdAt: string
+  isAuthor: boolean
+  isMine: boolean
+  deleted: boolean
+}
+
+export interface ExploreCommentThread extends ExploreCommentView {
+  replies: ExploreCommentView[]
+}
+
+export interface CommentView extends ExploreCommentView {
+  createdLabel: string
+}
+
+export interface CommentThreadView extends CommentView {
+  replies: CommentView[]
+}
+
+export interface CommentViewer {
+  name: string
+  image: string
+  isPageAuthor: boolean
+}
+
+export type CommentOptimisticAction =
+  | { type: 'add'; thread: CommentThreadView }
+  | { type: 'addReply'; parentId: string; reply: CommentView }
+  | { type: 'edit'; id: string; text: string }
+  | { type: 'delete'; id: string }
+  | { type: 'tombstone'; id: string }
+  | { type: 'deleteReply'; parentId: string; replyId: string }
+
+export type AddOptimisticComment = (action: CommentOptimisticAction) => void
+
+export const commentSchema = z.object({
+  pageId: z.string().min(1),
+  text: z.string().trim().min(1).max(1000),
+  parentId: z.string().optional(), // 대댓글이면 최상위 댓글 id
+})
+
+export type CommentInput = z.input<typeof commentSchema>
+
+export const commentEditSchema = z.object({
+  commentId: z.string().min(1),
+  text: z.string().trim().min(1).max(1000),
+})
+
+export type CommentEditInput = z.input<typeof commentEditSchema>

@@ -8,7 +8,7 @@ const sectionSchema = new Schema(
     type: { type: String, required: true }, // title | paragraph | image | button | divider | gallery | card
     content: { type: Schema.Types.Mixed, default: {} }, // 타입별 콘텐츠
     style: { type: Schema.Types.Mixed, default: {} }, // 타입별 스타일
-    container: { type: Schema.Types.Mixed }, // 박스(배경색 | 배경이미지 |높이)
+    container: { type: Schema.Types.Mixed }, // 박스 배경색, 배경이미지, 높이
   },
   { _id: false },
 )
@@ -27,6 +27,7 @@ const pageSchema = new Schema(
     communityImage: { type: String, default: '' }, // 대표 이미지 URL
     useCount: { type: Number, default: 0 }, // 템플릿 사용 수
     viewCount: { type: Number, default: 0 }, // 조회 수
+    commentCount: { type: Number, default: 0 }, // 댓글 수
     sharedAt: { type: Date }, // 둘러보기 공유 시각
     remixedFrom: { type: String }, // 템플릿으로 가져온 원본 pageId
   },

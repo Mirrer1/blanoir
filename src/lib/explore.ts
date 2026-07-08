@@ -2,12 +2,18 @@ import { Types } from 'mongoose'
 import { cache } from 'react'
 
 import { connectDB } from '@/lib/mongoDB'
+import Comment from '@/models/Comment'
 import Page from '@/models/Page'
-import type { ExploreCategory, ExplorePost } from '@/types/explore'
+import User from '@/models/User'
+import type {
+  ExploreCategory,
+  ExploreCommentThread,
+  ExploreCommentView,
+  ExplorePost,
+} from '@/types/explore'
 import type { Section } from '@/types/section'
 import { firstImageUrl } from '@/utils/pageMeta'
 
-// 작성자를 채운 공유 페이지 조회 결과
 type SharedLean = {
   pageId: string
   title: string
@@ -17,6 +23,7 @@ type SharedLean = {
   sections: Section[]
   viewCount?: number
   useCount: number
+  commentCount?: number
   allowRemix: boolean
   userId: { _id: Types.ObjectId; name: string; handle: string; profileImage: string } | null
 }
@@ -24,7 +31,7 @@ type SharedLean = {
 const AUTHOR_FIELDS = 'name handle profileImage'
 const POPULAR_LIMIT = 30
 
-// 작성자가 있는 페이지만 카드 뷰 모델로 변환
+// 탈퇴 등으로 작성자 없는 페이지는 제외
 const toPost = (page: SharedLean): ExplorePost | null => {
   if (!page.userId) {
     return null
@@ -39,11 +46,11 @@ const toPost = (page: SharedLean): ExplorePost | null => {
     thumbnail: page.communityImage || firstImageUrl(page.sections),
     viewCount: page.viewCount ?? 0,
     useCount: page.useCount,
+    commentCount: page.commentCount ?? 0,
     allowRemix: page.allowRemix,
   }
 }
 
-// 목록에 쓰는 공유 페이지 전체
 export async function getSharedPosts(): Promise<ExplorePost[]> {
   await connectDB()
   const pages = await Page.find({ sharedToCommunity: true })
@@ -62,7 +69,6 @@ export interface SharedDetail {
   popular: ExplorePost[]
 }
 
-// 상세에 사용되는 컨텐츠 전체
 export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetail | null> => {
   await connectDB()
   const page = await Page.findOne({ pageId, sharedToCommunity: true })
@@ -97,3 +103,76 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
     popular: filterPosts(popularDocs),
   }
 })
+
+type CommentLean = {
+  _id: Types.ObjectId
+  parentId: Types.ObjectId | null
+  text: string
+  deleted: boolean
+  createdAt: Date
+  userId: { _id: Types.ObjectId; name: string; profileImage: string } | null
+}
+
+export async function getComments(
+  pageId: string,
+  authorId: string,
+  viewerId?: string,
+): Promise<ExploreCommentThread[]> {
+  await connectDB()
+  const docs = await Comment.find({ pageId })
+    .sort({ createdAt: 1 })
+    .populate('userId', 'name profileImage')
+    .lean<CommentLean[]>()
+
+  // tombstone은 본문과 작성자를 감추고 삭제 표시만 표시
+  const toView = (doc: CommentLean): ExploreCommentView => {
+    if (doc.deleted) {
+      return {
+        id: String(doc._id),
+        authorName: '',
+        authorImage: '',
+        text: '',
+        createdAt: doc.createdAt.toISOString(),
+        isAuthor: false,
+        isMine: false,
+        deleted: true,
+      }
+    }
+    return {
+      id: String(doc._id),
+      authorName: doc.userId?.name ?? '',
+      authorImage: doc.userId?.profileImage ?? '',
+      text: doc.text,
+      createdAt: doc.createdAt.toISOString(),
+      isAuthor: doc.userId ? String(doc.userId._id) === authorId : false,
+      isMine: doc.userId ? String(doc.userId._id) === viewerId : false,
+      deleted: false,
+    }
+  }
+
+  // 대댓글을 부모별로 묶음
+  const replies = new Map<string, ExploreCommentView[]>()
+  for (const doc of docs) {
+    if (doc.parentId) {
+      const key = String(doc.parentId)
+      const list = replies.get(key) ?? []
+      list.push(toView(doc))
+      replies.set(key, list)
+    }
+  }
+  return docs
+    .filter((doc) => !doc.parentId)
+    .map((doc) => ({ ...toView(doc), replies: replies.get(String(doc._id)) ?? [] }))
+    .filter((thread) => !thread.deleted || thread.replies.length > 0)
+}
+
+// 낙관적 렌더용 유저 이름과 이미지 조회
+export async function getCommentViewer(
+  userId: string,
+): Promise<{ name: string; image: string } | null> {
+  await connectDB()
+  const user = await User.findById(userId)
+    .select('name profileImage')
+    .lean<{ name: string; profileImage: string } | null>()
+  return user ? { name: user.name, image: user.profileImage } : null
+}

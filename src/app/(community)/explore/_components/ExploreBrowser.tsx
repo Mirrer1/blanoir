@@ -25,7 +25,8 @@ const CATEGORY_TABS: { key: ExploreCategoryKey; label: string }[] = [
 
 const CATEGORY_KEYS = new Set<string>(CATEGORY_TABS.map((tab) => tab.key))
 const isSort = (value: string | null): value is SortKey => value === 'recent' || value === 'popular'
-const popularScore = (post: ExplorePost) => post.viewCount + post.useCount
+const popularScore = (post: ExplorePost) =>
+  post.viewCount + post.useCount + (post.commentCount ?? 0)
 
 const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
   const searchParams = useSearchParams()

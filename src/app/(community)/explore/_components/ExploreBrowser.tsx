@@ -3,9 +3,9 @@
 import { Loader2, Search } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 
-import ExploreCard from './ExploreCard'
 import ExploreCategoryBar from './ExploreCategoryBar'
 import ExploreCategoryDropdown from './ExploreCategoryDropdown'
+import ExploreMasonry from './ExploreMasonry'
 import { fetchSharedPosts } from '@/actions/explore'
 import { Input } from '@/components/ui/input'
 import useInfinitePosts from '@/hooks/useInfinitePosts'
@@ -129,11 +129,7 @@ const ExploreBrowser = ({ initial, initialQuery, initialCategory, initialSort }:
         <p className="text-muted-foreground py-20 text-center text-sm">검색 결과가 없어요</p>
       ) : (
         <>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <ExploreCard key={post.pageId} post={post} />
-            ))}
-          </div>
+          <ExploreMasonry posts={posts} />
           {hasMore && (
             <div ref={sentinelRef} className="flex justify-center py-6">
               {loading && <Loader2 className="text-muted-foreground size-5 animate-spin" />}

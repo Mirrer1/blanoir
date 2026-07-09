@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import ExploreCard from './ExploreCard'
+import ExploreFeedCard from './ExploreFeedCard'
 import type { ExplorePost } from '@/types/explore'
 
 const ExploreCardCarousel = ({ posts }: { posts: ExplorePost[] }) => {
@@ -52,7 +52,7 @@ const ExploreCardCarousel = ({ posts }: { posts: ExplorePost[] }) => {
       >
         {posts.map((post) => (
           <div key={post.pageId} className="w-64 shrink-0 sm:w-72">
-            <ExploreCard post={post} />
+            <ExploreFeedCard post={post} />
           </div>
         ))}
       </div>

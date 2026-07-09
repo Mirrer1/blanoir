@@ -26,7 +26,7 @@ const ExploreMasonry = ({ posts }: { posts: ExplorePost[] }) => {
   }, [])
 
   const readyCount = Object.keys(ratios).length + posts.filter((post) => !post.thumbnail).length
-  const revealed = timedOut || readyCount >= initialCount
+  const revealed = columnCount === 1 || timedOut || readyCount >= initialCount
 
   // 가장 짧은 컬럼에 순서대로 배치하고 append 시 기존 배치 유지
   const columns: ExplorePost[][] = Array.from({ length: columnCount }, () => [])
@@ -48,7 +48,12 @@ const ExploreMasonry = ({ posts }: { posts: ExplorePost[] }) => {
         {columns.map((column, index) => (
           <div key={index} className="flex min-w-0 flex-1 flex-col gap-5">
             {column.map((post) => (
-              <ExploreGalleryCard key={post.pageId} post={post} onRatio={setRatio} />
+              <ExploreGalleryCard
+                key={post.pageId}
+                post={post}
+                onRatio={setRatio}
+                uniform={columnCount === 1}
+              />
             ))}
           </div>
         ))}

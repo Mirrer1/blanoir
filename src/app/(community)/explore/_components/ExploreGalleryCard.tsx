@@ -10,14 +10,14 @@ const PLACEHOLDER_RATIO = 0.75
 interface Props {
   post: ExplorePost
   onRatio: (pageId: string, ratio: number) => void
+  uniform?: boolean
 }
 
-const ExploreGalleryCard = ({ post, onRatio }: Props) => {
+const ExploreGalleryCard = ({ post, onRatio, uniform = false }: Props) => {
   const [ratio, setRatio] = useState<number | null>(null)
 
-  // aspect-ratio로 자리 확보에 쓰고 상위엔 컬럼 배치용으로 전달
   const report = (img: HTMLImageElement) => {
-    if (!img.naturalWidth) {
+    if (uniform || !img.naturalWidth) {
       return
     }
     const next = img.naturalHeight / img.naturalWidth
@@ -44,7 +44,9 @@ const ExploreGalleryCard = ({ post, onRatio }: Props) => {
           src={post.thumbnail}
           alt=""
           onLoad={(e) => report(e.currentTarget)}
-          style={{ aspectRatio: `1 / ${ratio ?? PLACEHOLDER_RATIO}` }}
+          style={{
+            aspectRatio: uniform ? `1 / ${PLACEHOLDER_RATIO}` : `1 / ${ratio ?? PLACEHOLDER_RATIO}`,
+          }}
           className="bg-muted/40 block w-full object-cover"
         />
       ) : (

@@ -9,7 +9,7 @@ import type { ExploreCategory } from '@/types/explore'
 import type { Section } from '@/types/section'
 import { firstImageUrl, firstTextContent } from '@/utils/pageMeta'
 
-export const metadata: Metadata = { title: '템플릿 추가' }
+export const metadata: Metadata = { title: '템플릿 추가', robots: { index: false, follow: false } }
 
 interface ExploreSharePageProps {
   searchParams: Promise<{ pageId?: string; from?: string }>

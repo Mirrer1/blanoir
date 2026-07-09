@@ -6,7 +6,16 @@ const robots = (): MetadataRoute.Robots => ({
   rules: {
     userAgent: '*',
     allow: '/',
-    disallow: ['/dashboard', '/edit', '/settings', '/login', '/signup', '/forgot-password', '/api'],
+    disallow: [
+      '/dashboard',
+      '/edit',
+      '/settings',
+      '/login',
+      '/signup',
+      '/forgot-password',
+      '/explore/share',
+      '/api',
+    ],
   },
   sitemap: `${SITE_URL}/sitemap.xml`,
 })

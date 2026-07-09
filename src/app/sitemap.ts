@@ -35,7 +35,22 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
       : []
   })
 
-  return [{ url: `${SITE_URL}/`, changeFrequency: 'weekly', priority: 1 }, ...pageRoutes]
+  const shared = await Page.find({ sharedToCommunity: true })
+    .select('pageId updatedAt')
+    .lean<{ pageId: string; updatedAt: Date }[]>()
+  const exploreRoutes = shared.map((p) => ({
+    url: `${SITE_URL}/explore/${p.pageId}`,
+    lastModified: p.updatedAt,
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }))
+
+  return [
+    { url: `${SITE_URL}/`, changeFrequency: 'weekly', priority: 1 },
+    { url: `${SITE_URL}/explore`, changeFrequency: 'daily', priority: 0.8 },
+    ...pageRoutes,
+    ...exploreRoutes,
+  ]
 }
 
 export default sitemap

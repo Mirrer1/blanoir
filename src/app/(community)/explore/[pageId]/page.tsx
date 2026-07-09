@@ -4,7 +4,9 @@ import { notFound } from 'next/navigation'
 import ExploreDetail from '../_components/ExploreDetail'
 import { auth } from '@/lib/auth'
 import { getCommentViewer, getComments, getSharedDetail } from '@/lib/explore'
+import { SITE_NAME } from '@/lib/site'
 import type { CommentViewer } from '@/types/explore'
+import { firstParagraphText, textFromHtml } from '@/utils/pageMeta'
 
 interface ExploreDetailPageProps {
   params: Promise<{ pageId: string }>
@@ -13,7 +15,29 @@ interface ExploreDetailPageProps {
 export async function generateMetadata({ params }: ExploreDetailPageProps): Promise<Metadata> {
   const { pageId } = await params
   const detail = await getSharedDetail(pageId)
-  return { title: detail?.post.title ?? '템플릿' }
+  if (!detail) {
+    return { title: '템플릿', robots: { index: false } }
+  }
+
+  const title = detail.post.title || '템플릿'
+  const description =
+    textFromHtml(detail.communityPost) || firstParagraphText(detail.sections) || undefined
+  const image = detail.post.thumbnail
+  const url = `/explore/${pageId}`
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      siteName: SITE_NAME,
+      url,
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  }
 }
 
 const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {

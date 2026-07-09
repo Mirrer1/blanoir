@@ -6,6 +6,20 @@ export const firstParagraphText = (sections: Section[]) => {
   return para?.type === 'paragraph' ? para.content.text.trim().slice(0, 150) : ''
 }
 
+// 소개글 HTML에서 메타 description 추출
+export const textFromHtml = (html: string) =>
+  html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 150)
+
 // 이미지 없을 때 썸네일 대체용 첫 텍스트
 export const firstTextContent = (sections: Section[]) => {
   const text = sections.find(

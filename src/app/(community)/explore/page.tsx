@@ -5,11 +5,22 @@ import ExploreBrowser from './_components/ExploreBrowser'
 import ExploreShareButton from './_components/ExploreShareButton'
 import { auth } from '@/lib/auth'
 import { EXPLORE_PAGE_SIZE, type ExploreSort, getSharedPage } from '@/lib/explore'
+import { SITE_NAME } from '@/lib/site'
 import { CATEGORY_KEYS, type ExploreCategoryKey } from '@/types/explore'
+
+const EXPLORE_DESCRIPTION = '다른 사람들이 만든 페이지를 구경하고 템플릿으로 시작하세요'
 
 export const metadata: Metadata = {
   title: '템플릿',
-  description: '다른 사람들이 만든 페이지를 구경하고 템플릿으로 시작하세요',
+  description: EXPLORE_DESCRIPTION,
+  alternates: { canonical: '/explore' },
+  openGraph: {
+    type: 'website',
+    siteName: SITE_NAME,
+    url: '/explore',
+    title: '템플릿',
+    description: EXPLORE_DESCRIPTION,
+  },
 }
 
 const KEY_SET = new Set<string>(CATEGORY_KEYS)

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-import { CATEGORIES, type ExploreCategory } from '../_data/categories'
 import ExplorePostComposer from './ExplorePostComposer'
 import ExploreSharePageSelect from './ExploreSharePageSelect'
 import ExploreShareRepImage from './ExploreShareRepImage'
@@ -14,6 +13,7 @@ import { deleteImage } from '@/actions/upload'
 import { Button } from '@/components/ui/button'
 import type { UploadedImage } from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'
+import { CATEGORIES, type ExploreCategory } from '@/types/explore'
 
 // 입력 여부 판단
 const hasPostContent = (html: string) =>

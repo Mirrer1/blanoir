@@ -4,12 +4,12 @@ import { Search } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 
-import { CATEGORIES, type ExploreCategoryKey, type ExplorePost } from '../_data/dummyPosts'
 import ExploreCard from './ExploreCard'
 import ExploreCategoryBar from './ExploreCategoryBar'
 import ExploreCategoryDropdown from './ExploreCategoryDropdown'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { CATEGORIES, type ExploreCategoryKey, type ExplorePost } from '@/types/explore'
 
 type SortKey = 'recent' | 'popular'
 

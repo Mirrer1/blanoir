@@ -3,8 +3,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { ExploreCategoryKey } from '../_data/dummyPosts'
 import { cn } from '@/lib/utils'
+import type { ExploreCategoryKey } from '@/types/explore'
 
 interface ExploreCategoryBarProps {
   tabs: { key: ExploreCategoryKey; label: string }[]

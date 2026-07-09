@@ -3,9 +3,9 @@
 import { Menu } from '@base-ui/react/menu'
 import { Check, ChevronDown } from 'lucide-react'
 
-import type { ExploreCategoryKey } from '../_data/dummyPosts'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { ExploreCategoryKey } from '@/types/explore'
 
 interface ExploreCategoryDropdownProps {
   tabs: { key: ExploreCategoryKey; label: string }[]

@@ -11,6 +11,16 @@ export const CATEGORY_KEYS = [
 ] as const
 
 export type ExploreCategory = (typeof CATEGORY_KEYS)[number]
+export type ExploreCategoryKey = ExploreCategory | 'all'
+
+export const CATEGORIES: { key: ExploreCategory; label: string }[] = [
+  { key: 'profile', label: '프로필' },
+  { key: 'portfolio', label: '포트폴리오' },
+  { key: 'store', label: '매장' },
+  { key: 'wedding', label: '청첩장' },
+  { key: 'resume', label: '이력서' },
+  { key: 'event', label: '이벤트' },
+]
 
 export interface ExplorePost {
   pageId: string

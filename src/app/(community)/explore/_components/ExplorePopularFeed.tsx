@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
-import type { ExplorePost } from '../_data/dummyPosts'
 import ExploreCard from './ExploreCard'
+import type { ExplorePost } from '@/types/explore'
 
 const PAGE_SIZE = 6
 

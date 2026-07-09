@@ -1,8 +1,8 @@
 import { Eye, ImageIcon, Repeat2 } from 'lucide-react'
 import Link from 'next/link'
 
-import type { ExplorePost } from '../_data/dummyPosts'
 import ExploreAvatar from './ExploreAvatar'
+import type { ExplorePost } from '@/types/explore'
 
 const ExploreCard = ({ post }: { post: ExplorePost }) => {
   const title = post.title || '제목 없는 페이지'

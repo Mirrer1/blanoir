@@ -3,8 +3,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import type { ExplorePost } from '../_data/dummyPosts'
 import ExploreCard from './ExploreCard'
+import type { ExplorePost } from '@/types/explore'
 
 const ExploreCardCarousel = ({ posts }: { posts: ExplorePost[] }) => {
   const trackRef = useRef<HTMLDivElement>(null)

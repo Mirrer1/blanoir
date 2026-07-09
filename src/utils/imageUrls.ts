@@ -26,3 +26,20 @@ export const sectionImageUrls = (section: Section): string[] => {
   }
   return urls
 }
+
+// 둘러보기 대표 이미지와 게시글 이미지 URL 수집
+export const communityImageUrls = (page: {
+  communityImage?: string
+  communityPost?: string
+}): string[] => {
+  const urls: string[] = []
+  if (page.communityImage) {
+    urls.push(page.communityImage)
+  }
+  if (page.communityPost) {
+    for (const match of page.communityPost.matchAll(/<img[^>]*\ssrc="([^"]+)"/g)) {
+      urls.push(match[1])
+    }
+  }
+  return urls
+}

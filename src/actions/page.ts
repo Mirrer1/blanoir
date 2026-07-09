@@ -9,31 +9,11 @@ import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
 import type { Section } from '@/types/section'
 import { makeCopyTitle } from '@/utils/copyTitle'
-import { sectionImageUrls } from '@/utils/imageUrls'
+import { communityImageUrls, sectionImageUrls } from '@/utils/imageUrls'
 import { cloneSections, remapImageUrls } from '@/utils/sectionClone'
 
 // 서버 에러 공통 메시지
 const UNEXPECTED_ERROR = '잠시 후 다시 시도해 주세요'
-
-// 페이지에 쓰인 이미지 URL 수집
-const collectImageUrls = (sections: Section[]): string[] => {
-  const urls: string[] = []
-  for (const section of sections) {
-    if (section.container?.backgroundImage) {
-      urls.push(section.container.backgroundImage)
-    }
-    if (section.type === 'image' && section.content.src) {
-      urls.push(section.content.src)
-    }
-    if (section.type === 'gallery') {
-      section.content.images.forEach((image) => image.url && urls.push(image.url))
-    }
-    if (section.type === 'card') {
-      section.content.cards.forEach((card) => card.image && urls.push(card.image))
-    }
-  }
-  return urls
-}
 
 type DuplicateResult = { ok: true; pageId: string } | { ok: false; message: string }
 
@@ -158,13 +138,16 @@ export async function deletePage(pageId: string): Promise<DeleteResult> {
     // 소유권을 필터에 넣어 본인 페이지만 삭제
     const page = await Page.findOneAndDelete({ pageId, userId: session.user.id }).lean<{
       sections: Section[]
+      communityImage?: string
+      communityPost?: string
     } | null>()
     if (!page) {
       return { ok: false, message: '권한이 없어요' }
     }
 
-    // 페이지에 쓰인 이미지 정리
-    await Promise.all(collectImageUrls(page.sections).map((url) => deleteImage(url)))
+    // 페이지에 쓰인 섹션과 둘러보기 이미지 정리
+    const urls = new Set([...page.sections.flatMap(sectionImageUrls), ...communityImageUrls(page)])
+    await Promise.all([...urls].map((url) => deleteImage(url)))
 
     revalidatePath('/dashboard')
 

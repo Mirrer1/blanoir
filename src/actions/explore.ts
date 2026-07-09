@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import sanitizeHtml from 'sanitize-html'
 
+import { deleteImage } from '@/actions/upload'
 import { auth } from '@/lib/auth'
 import cloudinary from '@/lib/cloudinary'
 import { connectDB } from '@/lib/mongoDB'
@@ -12,7 +13,7 @@ import Page from '@/models/Page'
 import { type ShareInput, shareSchema } from '@/types/explore'
 import type { Section } from '@/types/section'
 import { makeCopyTitle } from '@/utils/copyTitle'
-import { sectionImageUrls } from '@/utils/imageUrls'
+import { communityImageUrls, sectionImageUrls } from '@/utils/imageUrls'
 import { cloneSections, remapImageUrls } from '@/utils/sectionClone'
 
 // 서버 에러 공통 메시지
@@ -73,6 +74,9 @@ export async function shareToCommunity(input: ShareInput): Promise<ShareResult> 
       return { ok: false, message: '가져온 템플릿은 공유할 수 없어요' }
     }
 
+    // 재공유 교체 이미지 판별
+    const previousUrls = communityImageUrls(page)
+
     page.sharedToCommunity = true
     page.allowRemix = allowRemix
     page.category = category
@@ -80,6 +84,12 @@ export async function shareToCommunity(input: ShareInput): Promise<ShareResult> 
     page.communityPost = sanitizeHtml(communityPost, SANITIZE_OPTIONS)
     page.sharedAt = new Date()
     await page.save()
+
+    // 페이지 본문 사용 이미지는 보존
+    const sectionUrls = new Set((page.sections as Section[]).flatMap(sectionImageUrls))
+    const nextUrls = new Set(communityImageUrls(page))
+    const staleUrls = previousUrls.filter((url) => !nextUrls.has(url) && !sectionUrls.has(url))
+    await Promise.all(staleUrls.map((url) => deleteImage(url)))
 
     revalidatePath('/explore')
 
@@ -101,14 +111,31 @@ export async function unshareFromCommunity(pageId: string): Promise<UnshareResul
 
     await connectDB()
 
-    // 소유권을 필터에 추가해 본인 페이지만 공유 해제
-    const result = await Page.updateOne(
-      { pageId, userId: session.user.id },
-      { $set: { sharedToCommunity: false } },
-    )
-    if (result.matchedCount === 0) {
+    // 소유권을 필터에 추가해 본인 페이지만 조회
+    const page = await Page.findOne({ pageId, userId: session.user.id })
+      .select('communityImage communityPost sections')
+      .lean<{ communityImage?: string; communityPost?: string; sections: Section[] } | null>()
+    if (!page) {
       return { ok: false, message: '권한이 없어요' }
     }
+
+    // 페이지 본문에서 여전히 쓰는 이미지는 보존
+    const sectionUrls = new Set(page.sections.flatMap(sectionImageUrls))
+    const deletableUrls = communityImageUrls(page).filter((url) => !sectionUrls.has(url))
+    await Promise.all(deletableUrls.map((url) => deleteImage(url)))
+
+    await Page.updateOne(
+      { pageId, userId: session.user.id },
+      {
+        $set: {
+          sharedToCommunity: false,
+          communityImage: '',
+          communityPost: '',
+          allowRemix: false,
+        },
+        $unset: { category: '', sharedAt: '' },
+      },
+    )
 
     revalidatePath('/explore')
     revalidatePath('/dashboard')

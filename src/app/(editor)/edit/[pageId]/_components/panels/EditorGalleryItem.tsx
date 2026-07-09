@@ -8,6 +8,7 @@ import { SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorTooltip from '../shell/EditorTooltip'
 import EditorLinkField from './EditorLinkField'
 import { cn } from '@/lib/utils'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface EditorGalleryItemProps {
   url: string
@@ -49,7 +50,7 @@ const EditorGalleryItem = ({
             <GripVertical className="size-4" />
           </button>
         </EditorTooltip>
-        <img src={url} alt="" className="size-9 shrink-0 rounded object-cover" />
+        <img src={optimizedImageUrl(url)} alt="" className="size-9 shrink-0 rounded object-cover" />
         <EditorTooltip label="이미지 교체">
           <button
             aria-label="이미지 교체"

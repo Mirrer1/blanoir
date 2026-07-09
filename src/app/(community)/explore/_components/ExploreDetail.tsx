@@ -12,6 +12,7 @@ import { buttonVariants } from '@/components/ui/button'
 import type { SharedDetail } from '@/lib/explore'
 import { cn } from '@/lib/utils'
 import type { CommentViewer, ExploreCommentThread } from '@/types/explore'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 const ExploreDetail = ({
   detail,
@@ -65,7 +66,7 @@ const ExploreDetail = ({
 
       {post.thumbnail && (
         <img
-          src={post.thumbnail}
+          src={optimizedImageUrl(post.thumbnail)}
           alt=""
           className="bg-muted aspect-video w-full rounded-xl border object-cover"
         />

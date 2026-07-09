@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { CardSection } from '@/types/section'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 const ALIGN_CLASS = { left: 'text-left', center: 'text-center', right: 'text-right' } as const
 // 카드 수가 정하는 한 줄 최대 칸 수로 넘으면 다음 줄로 줄바꿈
@@ -98,7 +99,7 @@ const SectionCardView = ({
       <>
         {card.image && (
           <img
-            src={card.image}
+            src={optimizedImageUrl(card.image)}
             alt={card.alt}
             className={cn(
               'object-cover',
@@ -168,7 +169,7 @@ const SectionCardView = ({
               isHorizontal ? 'aspect-square w-2/5 shrink-0' : 'aspect-video w-full',
             )}
           >
-            <img src={url} alt="" className="h-full w-full object-cover" />
+            <img src={optimizedImageUrl(url)} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <Loader2 className="size-5 animate-spin text-white" />
             </div>

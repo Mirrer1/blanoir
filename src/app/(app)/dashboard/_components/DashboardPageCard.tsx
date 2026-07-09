@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import DashboardDeleteButton from './DashboardDeleteButton'
 import DashboardDuplicateButton from './DashboardDuplicateButton'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface DashboardPageCardProps {
   page: {
@@ -33,7 +34,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
       >
         {page.thumbnail ? (
           <img
-            src={page.thumbnail}
+            src={optimizedImageUrl(page.thumbnail)}
             alt=""
             className="bg-muted/40 aspect-video w-full rounded object-cover"
           />

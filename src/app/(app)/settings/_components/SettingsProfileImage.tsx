@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { deleteImage, uploadImage } from '@/actions/upload'
 import { updateProfileImage } from '@/actions/user'
 import { Button } from '@/components/ui/button'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface SettingsProfileImageProps {
   initialImage: string
@@ -66,7 +67,7 @@ const SettingsProfileImage = ({ initialImage }: SettingsProfileImageProps) => {
     <div className="flex shrink-0 flex-col items-center gap-4">
       <div className="bg-muted text-muted-foreground relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-full">
         {image ? (
-          <img src={image} alt="" className="size-full object-cover" />
+          <img src={optimizedImageUrl(image)} alt="" className="size-full object-cover" />
         ) : (
           <UserRound className="size-12" />
         )}

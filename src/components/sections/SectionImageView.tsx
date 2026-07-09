@@ -2,6 +2,7 @@ import type { PointerEventHandler, ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { ImageSection, ImageStyle } from '@/types/section'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 // 콘텐츠 가로폭 대비 비율이며 크게는 전체폭
 const SIZE_CLASS = { small: 'w-1/3', medium: 'w-2/3', large: 'w-full' } as const
@@ -61,7 +62,7 @@ const SectionImageView = ({
     <>
       {cropped ? (
         <img
-          src={displaySrc}
+          src={optimizedImageUrl(displaySrc)}
           alt={alt}
           draggable={false}
           style={{
@@ -73,7 +74,7 @@ const SectionImageView = ({
         />
       ) : (
         <img
-          src={displaySrc}
+          src={optimizedImageUrl(displaySrc)}
           alt={alt}
           draggable={false}
           style={{ transform: `scale(${zoom})`, transformOrigin: `${focusX}% ${focusY}%` }}

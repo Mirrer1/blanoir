@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import ExploreCardOverlay from './ExploreCardOverlay'
 import type { ExplorePost } from '@/types/explore'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 const ExploreFeedCard = ({ post }: { post: ExplorePost }) => {
   return (
@@ -12,7 +13,7 @@ const ExploreFeedCard = ({ post }: { post: ExplorePost }) => {
     >
       {post.thumbnail ? (
         <img
-          src={post.thumbnail}
+          src={optimizedImageUrl(post.thumbnail)}
           alt=""
           className="bg-muted/40 block aspect-[4/3] w-full object-cover"
         />

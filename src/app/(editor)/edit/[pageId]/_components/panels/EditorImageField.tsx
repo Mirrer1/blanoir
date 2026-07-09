@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import EditorTooltip from '../shell/EditorTooltip'
 import EditorStyleField from './EditorStyleField'
 import useImageUpload, { type UploadedImage } from '@/hooks/useImageUpload'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface EditorImageFieldProps {
   label: string
@@ -54,7 +55,11 @@ const EditorImageField = ({
       {url ? (
         <>
           <div className="bg-muted relative overflow-hidden rounded-lg border">
-            <img src={url} alt={alt} className="aspect-video w-full object-cover" />
+            <img
+              src={optimizedImageUrl(url)}
+              alt={alt}
+              className="aspect-video w-full object-cover"
+            />
             {isUploading && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                 <Loader2 className="size-5 animate-spin text-white" />

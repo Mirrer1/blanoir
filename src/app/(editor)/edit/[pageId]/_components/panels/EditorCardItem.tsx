@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import type { CardItem } from '@/types/section'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface EditorCardItemProps {
   card: CardItem
@@ -69,7 +70,11 @@ const EditorCardItem = ({
 
       {card.image ? (
         <div className="bg-muted relative overflow-hidden rounded-md border">
-          <img src={card.image} alt={card.alt} className="aspect-video w-full object-cover" />
+          <img
+            src={optimizedImageUrl(card.image)}
+            alt={card.alt}
+            className="aspect-video w-full object-cover"
+          />
           <div className="absolute top-1 right-1 flex gap-1">
             <EditorTooltip label="이미지 교체">
               <button

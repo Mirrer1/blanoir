@@ -6,6 +6,7 @@ import { useRef, useState } from 'react'
 import { deleteImage } from '@/actions/upload'
 import { type UploadedImage, uploadImageFile } from '@/hooks/useImageUpload'
 import { cn } from '@/lib/utils'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 interface ExploreShareRepImageProps {
   defaultImage: string // 선택한 페이지의 기본 대표이미지
@@ -57,7 +58,7 @@ const ExploreShareRepImage = ({
       <input ref={inputRef} type="file" accept="image/*" hidden onChange={handleFile} />
       <div className="bg-muted/40 relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border">
         {shown ? (
-          <img src={shown} alt="" className="h-full w-full object-cover" />
+          <img src={optimizedImageUrl(shown)} alt="" className="h-full w-full object-cover" />
         ) : (
           <ImageIcon className="text-muted-foreground/40 size-8" strokeWidth={1.5} />
         )}

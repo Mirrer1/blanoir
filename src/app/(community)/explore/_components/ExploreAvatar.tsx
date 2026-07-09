@@ -1,11 +1,12 @@
 import { UserRound } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 const ExploreAvatar = ({ src, className }: { src: string; className?: string }) =>
   src ? (
     <img
-      src={src}
+      src={optimizedImageUrl(src)}
       alt=""
       className={cn('bg-muted shrink-0 rounded-full object-cover', className)}
     />

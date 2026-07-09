@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 import type { GallerySection } from '@/types/section'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 // 한 줄에 보일 최대 칸 수로 이미지가 더 많으면 가로 스크롤
 const MAX_COLUMNS = 3
@@ -85,7 +86,13 @@ const SectionGalleryView = ({
   // 링크 있으면 공개와 미리보기에서 이미지를 감쌈
   const imageNodes = images.map((image) => {
     const linked = !!live && !!image.link
-    const img = <img src={image.url} alt={image.alt} className="h-full w-full object-cover" />
+    const img = (
+      <img
+        src={optimizedImageUrl(image.url)}
+        alt={image.alt}
+        className="h-full w-full object-cover"
+      />
+    )
     return (
       <div key={image.url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
         {linked ? (
@@ -115,7 +122,7 @@ const SectionGalleryView = ({
         {imageNodes}
         {pendingUrls.map((url) => (
           <div key={url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
-            <img src={url} alt="" className="h-full w-full object-cover" />
+            <img src={optimizedImageUrl(url)} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <Loader2 className="size-5 animate-spin text-white" />
             </div>

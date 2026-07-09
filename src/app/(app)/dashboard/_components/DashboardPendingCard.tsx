@@ -1,5 +1,7 @@
 import { Loader } from 'lucide-react'
 
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
+
 interface DashboardPendingCardProps {
   item: {
     title: string
@@ -16,7 +18,7 @@ const DashboardPendingCard = ({ item }: DashboardPendingCardProps) => {
       <div className="flex flex-col gap-3 rounded-lg border p-4 opacity-80">
         {item.thumbnail ? (
           <img
-            src={item.thumbnail}
+            src={optimizedImageUrl(item.thumbnail)}
             alt=""
             className="bg-muted/40 aspect-video w-full rounded object-cover"
           />

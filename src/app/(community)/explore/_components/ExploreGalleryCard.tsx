@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import ExploreCardOverlay from './ExploreCardOverlay'
 import type { ExplorePost } from '@/types/explore'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 const PLACEHOLDER_RATIO = 0.75
 
@@ -41,7 +42,7 @@ const ExploreGalleryCard = ({ post, onRatio, uniform = false }: Props) => {
       {post.thumbnail ? (
         <img
           ref={measure}
-          src={post.thumbnail}
+          src={optimizedImageUrl(post.thumbnail)}
           alt=""
           onLoad={(e) => report(e.currentTarget)}
           style={{

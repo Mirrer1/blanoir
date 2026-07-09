@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 
 import type { Section } from '@/types/section'
+import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 // 그레디언트 값은 CSS gradient 문자열로 저장
 export const isGradient = (value: string) => value.includes('gradient')
@@ -53,7 +54,7 @@ export const containerBackground = (section: Section): CSSProperties => {
   if (url) {
     return {
       backgroundColor: color && !isGradient(color) ? color : undefined,
-      backgroundImage: `url(${url})`,
+      backgroundImage: `url(${optimizedImageUrl(url)})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }

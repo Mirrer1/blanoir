@@ -29,7 +29,7 @@ const ExploreShareButton = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <ExploreLoginGate
         open={gateOpen}
         onOpenChange={setGateOpen}
-        message="로그인하고 내 페이지를 템플릿으로 추가해보세요"
+        message="로그인하고 템플릿을 추가해보세요"
       />
     </>
   )

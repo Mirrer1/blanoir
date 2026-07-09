@@ -157,7 +157,7 @@ const ExploreCommentList = ({ pageId, threads, isLoggedIn, viewer }: ExploreComm
       <ExploreLoginGate
         open={gateOpen}
         onOpenChange={setGateOpen}
-        message="로그인하고 답글을 남겨보세요"
+        message="로그인하고 댓글을 남겨보세요"
       />
     </section>
   )

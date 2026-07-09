@@ -36,7 +36,7 @@ const ExploreTemplateButton = ({ pageId, isLoggedIn }: { pageId: string; isLogge
       <ExploreLoginGate
         open={gateOpen}
         onOpenChange={setGateOpen}
-        message="로그인하고 이 템플릿으로 시작해보세요"
+        message="로그인하고 템플릿을 사용해보세요"
       />
     </>
   )

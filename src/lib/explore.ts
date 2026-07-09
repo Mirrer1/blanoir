@@ -7,6 +7,7 @@ import Page from '@/models/Page'
 import User from '@/models/User'
 import type {
   ExploreCategory,
+  ExploreCategoryKey,
   ExploreCommentThread,
   ExploreCommentView,
   ExplorePost,
@@ -28,11 +29,31 @@ type SharedLean = {
   userId: { _id: Types.ObjectId; name: string; handle: string; profileImage: string } | null
 }
 
+// 목록 카드용 타입으로 소개글 본문 communityPost는 제외
+type SharedCardLean = Omit<SharedLean, 'communityPost'>
+
 const AUTHOR_FIELDS = 'name handle profileImage'
 const POPULAR_LIMIT = 30
 
+export const EXPLORE_PAGE_SIZE = 12
+
+export type ExploreSort = 'popular' | 'recent'
+
+export interface SharedQuery {
+  skip?: number
+  limit?: number
+  category?: ExploreCategoryKey
+  sort?: ExploreSort
+  q?: string
+}
+
+export interface SharedPage {
+  posts: ExplorePost[]
+  hasMore: boolean
+}
+
 // 탈퇴 등으로 작성자 없는 페이지는 제외
-const toPost = (page: SharedLean): ExplorePost | null => {
+const toPost = (page: SharedCardLean): ExplorePost | null => {
   if (!page.userId) {
     return null
   }
@@ -51,13 +72,75 @@ const toPost = (page: SharedLean): ExplorePost | null => {
   }
 }
 
-export async function getSharedPosts(): Promise<ExplorePost[]> {
+// 정규식 특수문자 이스케이프
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// 필터와 정렬을 서버에서 적용해 한 페이지씩 조회
+export async function getSharedPage(query: SharedQuery = {}): Promise<SharedPage> {
   await connectDB()
-  const pages = await Page.find({ sharedToCommunity: true })
-    .sort({ sharedAt: -1 })
-    .populate('userId', AUTHOR_FIELDS)
-    .lean<SharedLean[]>()
-  return pages.map(toPost).filter((post): post is ExplorePost => post !== null)
+  const skip = Math.max(0, Math.floor(query.skip ?? 0))
+  const limit = Math.max(1, Math.floor(query.limit ?? EXPLORE_PAGE_SIZE))
+  const sort: ExploreSort = query.sort === 'recent' ? 'recent' : 'popular'
+  const keyword = (query.q ?? '').trim()
+
+  const match: Record<string, unknown> = { sharedToCommunity: true }
+  if (query.category && query.category !== 'all') {
+    match.category = query.category
+  }
+  if (keyword) {
+    match.title = { $regex: escapeRegex(keyword), $options: 'i' }
+  }
+
+  // 인기순은 활동 합산 점수로 정렬하고 _id로 순서 고정
+  const sortStage: Record<string, 1 | -1> =
+    sort === 'popular' ? { score: -1, sharedAt: -1, _id: -1 } : { sharedAt: -1, _id: -1 }
+
+  const docs = await Page.aggregate<SharedCardLean>([
+    { $match: match },
+    { $lookup: { from: 'users', localField: 'userId', foreignField: '_id', as: 'author' } },
+    { $unwind: '$author' }, // 탈퇴한 작성자 페이지 제외
+    {
+      $addFields: {
+        score: {
+          $add: [
+            { $ifNull: ['$viewCount', 0] },
+            { $ifNull: ['$useCount', 0] },
+            { $ifNull: ['$commentCount', 0] },
+          ],
+        },
+      },
+    },
+    { $sort: sortStage },
+    { $skip: skip },
+    { $limit: limit + 1 }, // 다음 페이지 존재 판별용 여분 하나
+    {
+      $project: {
+        _id: 0,
+        pageId: 1,
+        title: 1,
+        category: 1,
+        communityImage: 1,
+        sections: 1,
+        viewCount: 1,
+        useCount: 1,
+        commentCount: 1,
+        allowRemix: 1,
+        userId: {
+          _id: '$author._id',
+          name: '$author.name',
+          handle: '$author.handle',
+          profileImage: '$author.profileImage',
+        },
+      },
+    },
+  ])
+
+  const hasMore = docs.length > limit
+  const posts = docs
+    .slice(0, limit)
+    .map(toPost)
+    .filter((post): post is ExplorePost => post !== null)
+  return { posts, hasMore }
 }
 
 export interface SharedDetail {
@@ -150,7 +233,7 @@ export async function getComments(
     }
   }
 
-  // 대댓글을 부모별로 묶음
+  // 대댓글을 부모 댓글별로 묶기
   const replies = new Map<string, ExploreCommentView[]>()
   for (const doc of docs) {
     if (doc.parentId) {

@@ -8,9 +8,10 @@ import sanitizeHtml from 'sanitize-html'
 import { deleteImage } from '@/actions/upload'
 import { auth } from '@/lib/auth'
 import cloudinary from '@/lib/cloudinary'
+import { EXPLORE_PAGE_SIZE, type ExploreSort, type SharedPage, getSharedPage } from '@/lib/explore'
 import { connectDB } from '@/lib/mongoDB'
 import Page from '@/models/Page'
-import { type ShareInput, shareSchema } from '@/types/explore'
+import { type ExploreCategoryKey, type ShareInput, shareSchema } from '@/types/explore'
 import type { Section } from '@/types/section'
 import { makeCopyTitle } from '@/utils/copyTitle'
 import { communityImageUrls, sectionImageUrls } from '@/utils/imageUrls'
@@ -43,6 +44,24 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   allowedAttributes: { '*': ['style'], img: ['src', 'alt'] },
   allowedStyles: { '*': { 'text-align': [/^(left|right|center|justify)$/] } },
   allowedSchemesByTag: { img: ['https'] },
+}
+
+export interface FetchSharedInput {
+  skip: number
+  category: ExploreCategoryKey
+  sort: ExploreSort
+  q: string
+}
+
+// 목록 무한 스크롤용 다음 페이지 조회
+export async function fetchSharedPosts(input: FetchSharedInput): Promise<SharedPage> {
+  return getSharedPage({
+    skip: input.skip,
+    limit: EXPLORE_PAGE_SIZE,
+    category: input.category,
+    sort: input.sort,
+    q: input.q,
+  })
 }
 
 type ShareResult = { ok: true } | { ok: false; message: string }

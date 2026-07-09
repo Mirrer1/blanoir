@@ -1,19 +1,21 @@
 'use client'
 
-import { Search } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { Loader2, Search } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 
 import ExploreCard from './ExploreCard'
 import ExploreCategoryBar from './ExploreCategoryBar'
 import ExploreCategoryDropdown from './ExploreCategoryDropdown'
+import { fetchSharedPosts } from '@/actions/explore'
 import { Input } from '@/components/ui/input'
+import useInfinitePosts from '@/hooks/useInfinitePosts'
+import type { ExploreSort, SharedPage } from '@/lib/explore'
 import { cn } from '@/lib/utils'
-import { CATEGORIES, type ExploreCategoryKey, type ExplorePost } from '@/types/explore'
+import { CATEGORIES, type ExploreCategoryKey } from '@/types/explore'
 
-type SortKey = 'recent' | 'popular'
+const SEARCH_DEBOUNCE_MS = 300
 
-const SORTS: { key: SortKey; label: string }[] = [
+const SORTS: { key: ExploreSort; label: string }[] = [
   { key: 'popular', label: '인기' },
   { key: 'recent', label: '최신' },
 ]
@@ -23,25 +25,34 @@ const CATEGORY_TABS: { key: ExploreCategoryKey; label: string }[] = [
   ...CATEGORIES,
 ]
 
-const CATEGORY_KEYS = new Set<string>(CATEGORY_TABS.map((tab) => tab.key))
-const isSort = (value: string | null): value is SortKey => value === 'recent' || value === 'popular'
-const popularScore = (post: ExplorePost) =>
-  post.viewCount + post.useCount + (post.commentCount ?? 0)
+interface Props {
+  initial: SharedPage
+  initialQuery: string
+  initialCategory: ExploreCategoryKey
+  initialSort: ExploreSort
+}
 
-const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
-  const searchParams = useSearchParams()
-  const [query, setQuery] = useState(() => searchParams.get('q') ?? '')
-  const [category, setCategory] = useState<ExploreCategoryKey>(() => {
-    const value = searchParams.get('category')
-    return value && CATEGORY_KEYS.has(value) ? (value as ExploreCategoryKey) : 'all'
-  })
-  const [sort, setSort] = useState<SortKey>(() => {
-    const value = searchParams.get('sort')
-    return isSort(value) ? value : 'popular'
-  })
+const ExploreBrowser = ({ initial, initialQuery, initialCategory, initialSort }: Props) => {
+  const [query, setQuery] = useState(initialQuery) // 입력값
+  const [search, setSearch] = useState(initialQuery) // 디바운스된 검색어
+  const [category, setCategory] = useState<ExploreCategoryKey>(initialCategory)
+  const [sort, setSort] = useState<ExploreSort>(initialSort)
 
-  // 필터 URL 히스토리에 반영해 복원
-  const syncUrl = (next: { q: string; category: ExploreCategoryKey; sort: SortKey }) => {
+  // 입력이 멈추면 검색어를 반영해 조회
+  useEffect(() => {
+    const id = setTimeout(() => setSearch(query), SEARCH_DEBOUNCE_MS)
+    return () => clearTimeout(id)
+  }, [query])
+
+  // 필터가 바뀌면 새 loadPage로 첫 페이지부터 재조회
+  const loadPage = useCallback(
+    (skip: number) => fetchSharedPosts({ skip, category, sort, q: search }),
+    [category, sort, search],
+  )
+  const { posts, hasMore, loading, sentinelRef } = useInfinitePosts({ initial, loadPage })
+
+  // 필터를 URL 히스토리에 반영해 복원
+  const syncUrl = (next: { q: string; category: ExploreCategoryKey; sort: ExploreSort }) => {
     const params = new URLSearchParams()
     if (next.q) {
       params.set('q', next.q)
@@ -52,8 +63,8 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
     if (next.sort !== 'popular') {
       params.set('sort', next.sort)
     }
-    const search = params.toString()
-    window.history.replaceState(null, '', search ? `?${search}` : window.location.pathname)
+    const value = params.toString()
+    window.history.replaceState(null, '', value ? `?${value}` : window.location.pathname)
   }
 
   const applyQuery = (value: string) => {
@@ -64,19 +75,10 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
     setCategory(value)
     syncUrl({ q: query, category: value, sort })
   }
-  const applySort = (value: SortKey) => {
+  const applySort = (value: ExploreSort) => {
     setSort(value)
     syncUrl({ q: query, category, sort: value })
   }
-
-  const keyword = query.trim().toLowerCase()
-  const filtered = posts.filter(
-    (post) =>
-      (category === 'all' || post.category === category) &&
-      post.title.toLowerCase().includes(keyword),
-  )
-  const visible =
-    sort === 'popular' ? [...filtered].sort((a, b) => popularScore(b) - popularScore(a)) : filtered
 
   return (
     <div className="flex flex-col gap-6">
@@ -123,14 +125,21 @@ const ExploreBrowser = ({ posts }: { posts: ExplorePost[] }) => {
         </div>
       </div>
 
-      {visible.length === 0 ? (
+      {posts.length === 0 && !loading ? (
         <p className="text-muted-foreground py-20 text-center text-sm">검색 결과가 없어요</p>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((post) => (
-            <ExploreCard key={post.pageId} post={post} />
-          ))}
-        </div>
+        <>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <ExploreCard key={post.pageId} post={post} />
+            ))}
+          </div>
+          {hasMore && (
+            <div ref={sentinelRef} className="flex justify-center py-6">
+              {loading && <Loader2 className="text-muted-foreground size-5 animate-spin" />}
+            </div>
+          )}
+        </>
       )}
     </div>
   )

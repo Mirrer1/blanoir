@@ -11,21 +11,23 @@ const USE_CASES = [
 
 const LandingUseCases = () => {
   return (
-    <section className="mx-auto max-w-5xl px-6 py-32">
-      <FadeIn>
-        <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
-          무엇이든 만들 수 있어요
-        </h2>
-      </FadeIn>
-      <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {USE_CASES.map(({ title, description }, index) => (
-          <FadeIn key={title} delay={index * 0.08}>
-            <div className="hover:border-foreground/30 flex flex-col gap-2 rounded-lg border p-8 transition-colors">
-              <h3 className="font-heading text-lg font-bold">{title}</h3>
-              <p className="text-muted-foreground">{description}</p>
-            </div>
-          </FadeIn>
-        ))}
+    <section className="bg-muted/30 border-y">
+      <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
+        <FadeIn>
+          <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
+            무엇이든 만들 수 있어요
+          </h2>
+        </FadeIn>
+        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {USE_CASES.map(({ title, description }, index) => (
+            <FadeIn key={title} delay={index * 0.08}>
+              <div className="bg-background hover:border-foreground/30 flex flex-col gap-2 rounded-lg border p-8 transition-colors">
+                <h3 className="font-heading text-lg font-bold">{title}</h3>
+                <p className="text-muted-foreground">{description}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
       </div>
     </section>
   )

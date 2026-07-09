@@ -16,11 +16,13 @@ const LandingHeader = () => {
           <ThemeToggle />
           <Link
             href="/login"
-            className={cn(buttonVariants({ variant: 'ghost' }), 'border-foreground/30')}
+            className={cn(buttonVariants({ variant: 'ghost' }), 'border-foreground/30 min-w-20')}
           >
             로그인
           </Link>
-          <LandingBrowseButton className={buttonVariants()}>구경하기</LandingBrowseButton>
+          <LandingBrowseButton className={cn(buttonVariants(), 'min-w-20')}>
+            구경하기
+          </LandingBrowseButton>
         </nav>
       </div>
     </header>

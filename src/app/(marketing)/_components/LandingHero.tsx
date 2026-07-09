@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 
 const LandingHero = () => {
   return (
-    <section className="mx-auto flex max-w-5xl flex-col items-center px-6 py-32 text-center">
+    <section className="mx-auto flex max-w-5xl flex-col items-center px-6 py-24 text-center sm:py-32">
       <FadeIn>
         <span className="text-muted-foreground mb-6 inline-block rounded-full border px-4 py-1.5 text-sm">
           코딩 없이 만드는 내 홈페이지
@@ -29,20 +29,20 @@ const LandingHero = () => {
       </FadeIn>
       <FadeIn delay={0.3}>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <LandingBrowseButton
-            className={buttonVariants({ size: 'lg', className: 'h-12 px-8 text-base' })}
-          >
-            구경하러 가기
-          </LandingBrowseButton>
           <Link
             href="/login"
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'lg' }),
-              'border-foreground/30 h-12 px-8 text-base',
+              'border-foreground/30 h-12 min-w-36 px-8 text-base',
             )}
           >
             로그인
           </Link>
+          <LandingBrowseButton
+            className={buttonVariants({ size: 'lg', className: 'h-12 min-w-36 px-8 text-base' })}
+          >
+            구경하러 가기
+          </LandingBrowseButton>
         </div>
       </FadeIn>
       <FadeIn delay={0.4} className="w-full">

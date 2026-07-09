@@ -22,19 +22,21 @@ const FEATURES = [
 
 const LandingFeatures = () => {
   return (
-    <section className="mx-auto max-w-5xl px-6 py-32">
-      <div className="grid gap-12 sm:grid-cols-3">
-        {FEATURES.map(({ icon: Icon, title, description }, index) => (
-          <FadeIn key={title} delay={index * 0.1}>
-            <div className="flex flex-col items-start gap-4">
-              <div className="flex size-12 items-center justify-center rounded-lg border">
-                <Icon className="size-6" />
+    <section className="bg-muted/30 border-y">
+      <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
+        <div className="grid gap-12 sm:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, description }, index) => (
+            <FadeIn key={title} delay={index * 0.1}>
+              <div className="flex flex-col items-start gap-4">
+                <div className="bg-background flex size-12 items-center justify-center rounded-lg border">
+                  <Icon className="size-6" />
+                </div>
+                <h3 className="font-heading text-xl font-bold">{title}</h3>
+                <p className="text-muted-foreground leading-7">{description}</p>
               </div>
-              <h3 className="font-heading text-xl font-bold">{title}</h3>
-              <p className="text-muted-foreground leading-7">{description}</p>
-            </div>
-          </FadeIn>
-        ))}
+            </FadeIn>
+          ))}
+        </div>
       </div>
     </section>
   )

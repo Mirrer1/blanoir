@@ -1,9 +1,6 @@
 import Link from 'next/link'
 
-import LandingBrowseButton from './LandingBrowseButton'
 import ThemeToggle from '@/components/common/ThemeToggle'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 const LandingHeader = () => {
   return (
@@ -14,18 +11,6 @@ const LandingHeader = () => {
         </Link>
         <nav className="flex items-center gap-3">
           <ThemeToggle />
-          <Link
-            href="/login"
-            className={cn(
-              buttonVariants({ variant: 'ghost' }),
-              'border-foreground/30 hidden min-w-20 sm:inline-flex',
-            )}
-          >
-            로그인
-          </Link>
-          <LandingBrowseButton className={cn(buttonVariants(), 'hidden min-w-20 sm:inline-flex')}>
-            구경하기
-          </LandingBrowseButton>
         </nav>
       </div>
     </header>

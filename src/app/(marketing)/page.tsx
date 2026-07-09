@@ -6,6 +6,7 @@ import LandingFinalCTA from './_components/LandingFinalCTA'
 import LandingHero from './_components/LandingHero'
 import LandingHowItWorks from './_components/LandingHowItWorks'
 import LandingUseCases from './_components/LandingUseCases'
+import ScrollToTopButton from '@/components/common/ScrollToTopButton'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ const LandingPage = () => {
       <LandingUseCases />
       <LandingFAQ />
       <LandingFinalCTA />
+      <ScrollToTopButton />
     </>
   )
 }

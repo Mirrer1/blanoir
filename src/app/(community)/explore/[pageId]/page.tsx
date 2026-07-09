@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import ExploreDetail from '../_components/ExploreDetail'
+import ScrollToTopButton from '@/components/common/ScrollToTopButton'
 import { auth } from '@/lib/auth'
 import { getCommentViewer, getComments, getSharedDetail } from '@/lib/explore'
 import { SITE_NAME } from '@/lib/site'
@@ -64,6 +65,7 @@ const ExploreDetailPage = async ({ params }: ExploreDetailPageProps) => {
         isLoggedIn={isLoggedIn}
         isOwner={isOwner}
       />
+      <ScrollToTopButton />
     </div>
   )
 }

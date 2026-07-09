@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 
 import ExploreBrowser from './_components/ExploreBrowser'
 import ExploreShareButton from './_components/ExploreShareButton'
+import ScrollToTopButton from '@/components/common/ScrollToTopButton'
 import { auth } from '@/lib/auth'
 import { EXPLORE_PAGE_SIZE, type ExploreSort, getSharedPage } from '@/lib/explore'
 import { SITE_NAME } from '@/lib/site'
@@ -50,6 +51,7 @@ const ExplorePage = async ({ searchParams }: { searchParams: Promise<SearchParam
           <ExploreBrowser initial={initial} />
         </Suspense>
       </div>
+      <ScrollToTopButton />
     </div>
   )
 }

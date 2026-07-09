@@ -2,6 +2,7 @@
 
 import { auth } from '@/lib/auth'
 import cloudinary from '@/lib/cloudinary'
+import { publicIdFromUrl } from '@/utils/cloudinaryPublicId'
 
 const MAX_BYTES = 5 * 1024 * 1024
 
@@ -40,12 +41,6 @@ export async function uploadImage(formData: FormData): Promise<UploadResult> {
     console.error('uploadImage failed', error)
     return { ok: false, message: '잠시 후 다시 시도해 주세요' }
   }
-}
-
-// Cloudinary URL에서 public_id 추출
-const publicIdFromUrl = (url: string): string | null => {
-  const match = url.match(/\/upload\/(?:v\d+\/)?(.+)\.[a-z0-9]+$/i)
-  return match ? match[1] : null
 }
 
 // 사용하지 않는 이미지 제거

@@ -4,25 +4,21 @@
 
 ## 현재 상태
 
-Phase 3(에디터 코어) 완료. `(editor)` 그룹 + 자체 헤더 레이아웃, Zustand 스토어, 제목·문단 섹션 인라인 편집, 스타일 패널(크기/정렬/강조/색상+사용자지정), 섹션 추가 메뉴·삭제·순서변경(dnd-kit), 5초 디바운스 자동저장(+변경 감지·수동 저장 버튼), 미저장 이탈 보호(확인 모달 + `beforeunload`)까지 동작.
+라이브 배포까지 마친 상태(`blanoir.vercel.app`). 현재 랜딩, 인증(로컬 + 소셜 3종 + 이메일 인증 + 비번 재설정), 대시보드, 계정 설정, 섹션 9종(제목·문단·구분선·공백·버튼·이미지·갤러리·카드·열) 에디터(인라인 편집·스타일 패널·컨테이너 배경·등장 애니메이션·시작 템플릿·자동저장·이탈 가드·섹션/페이지 복제), 공개 페이지 SSR + SEO, 둘러보기(커뮤니티: 템플릿 공유·리믹스·댓글·조회수·서버 페이지네이션 무한 스크롤·메이슨리 카드·뒤로가기 복원)까지 동작한다. 아래는 만든 순서대로의 작업 이력이며 최신 항목이 뒤에 쌓인다.
 
-Phase 3 곁가지도 정리됨: 폰트 컨트롤(스타일 패널 + 한글 폰트 자체 호스팅), 섹션 사이 호버 추가(`SectionInsert`), 저장 상태 표시 다듬기(처음 상태와 같으면 표시 없음 + 재진입 초기화). 에러 처리도 보강: 서버 액션 실패 시 토스트 일관 안내(공용 `ToastOnMount`), `error.tsx`·`not-found.tsx` 추가, 미사용 React Query 제거(데이터는 서버 컴포넌트 + Server Action).
-
-Phase 2(랜딩 + 인증)도 완료 상태(랜딩·로컬/소셜 로그인·회원가입·비밀번호 재설정·대시보드, 실제 DB·메일 연동 검증). 외부 셋업은 MongoDB Atlas·소셜 3종 OAuth·Gmail SMTP 연결됨(`.env.local`).
-
-Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께·색)·버튼(텍스트·링크 URL·크기·너비 자동/넓게/전체·정렬·모양·색(배경·글자 각각 지정), 라벨/URL은 패널에서 입력)·이미지 섹션 추가. 스타일 패널을 섹션 타입별로 분리(`EditorTextStylePanel`/`EditorDividerStylePanel`/`EditorButtonStylePanel`/`EditorImageStylePanel` + 공용 `EditorColorField`·`EditorAlignField`·`controlStyles`), 패널을 우측 도킹 드로어(폭 `w-80`, 폭 애니메이션)로 띄워 섹션 선택 시 작업영역이 패널만큼 줄어듦(위에 떠 가리는 오버레이가 아니라 자리를 차지해 콘텐츠 폭이 넓어져도 안 겹침). 텍스트 섹션은 보이지 않는 미러로 표시/편집 박스 높이 일치.
+구분선(모양 실선/파선/점선·두께·색)·버튼(텍스트·링크 URL·크기·너비 자동/넓게/전체·정렬·모양·색(배경·글자 각각 지정), 라벨/URL은 패널에서 입력)·이미지 섹션 추가. 스타일 패널을 섹션 타입별로 분리(`EditorTextStylePanel`/`EditorDividerStylePanel`/`EditorButtonStylePanel`/`EditorImageStylePanel` + 공용 `EditorColorField`·`EditorAlignField`·`controlStyles`), 패널을 우측 도킹 드로어(폭 `w-80`, 폭 애니메이션)로 띄워 섹션 선택 시 작업영역이 패널만큼 줄어듦(위에 떠 가리는 오버레이가 아니라 자리를 차지해 콘텐츠 폭이 넓어져도 안 겹침). 텍스트 섹션은 보이지 않는 미러로 표시/편집 박스 높이 일치.
 
 이미지 업로드는 Cloudinary 연동(`lib/cloudinary.ts` + `actions/upload.ts`의 `uploadImage`/`deleteImage`, 공용 훅 `hooks/useImageUpload.ts`의 `uploadOne`/`uploadMany`). 정책: **첫 업로드만 캔버스 드롭존**, 이후 변경·교체·삭제·추가는 **스타일 패널에서 일원화**(캔버스는 표시 전용). 업로드 중 드로어 잠금(`imageUploading`), 성공 시 자동저장(3초)에 반영. 스토리지는 **자동 삭제**(교체·제거·섹션삭제 시 `deleteImage`, 본인 `blanoir/{userId}` 폴더만). 파일명→`alt` 자동 생성(`utils/altFromFileName.ts`). `controlStyles.ts`는 라우트 세그먼트 레벨 상수.
 
 이미지 섹션: 비율(원본/정사각형/와이드) — 원본은 자연비율, 정사각형/와이드는 프레임에 `object-cover`로 꽉 채움. **확대 슬라이더(1~3배) + 캔버스에서 드래그로 초점(보일 부분) 이동**(`focusX`/`focusY`, 안내문은 항상 표시·드래그 동작은 잘리거나 확대됐을 때만 활성), 크기(박스 폭, 콘텐츠 가로폭 대비 비율 1/3 / 2/3 / 전체 — 갤러리 분수 모델과 같은 결, 크게는 풀폭)·모양·정렬.
 
-갤러리·카드·공백 추가로 **Phase 4 섹션 8종(제목·문단·구분선·공백·버튼·이미지·갤러리·카드) 완료**. 공백(spacer): 섹션 사이 여백 높이만 주는 섹션(작게24/보통48/크게96px), content 없음·style만(divider 패턴), 평소 투명·hover/선택 시에만 영역 표시. 갤러리: **한 줄 가로 캐러셀**(호버 좌우 화살표 — 끝단에선 해당 방향 화살표 숨김 + 스냅, 스크롤바 숨김), 모양·간격만 두고 칸 수 컨트롤은 없앰. 한 줄 최대 3개를 채우고(이미지가 적으면 폭에 맞춰 채움, 컨테이너가 좁으면 `ResizeObserver`로 2개) 넘으면 가로 스크롤, content는 `{url,alt}[]`. 카드: **멀티 카드**(한 섹션에 여러 카드)·레이아웃(세로형/가로형/그리드형)·정렬, content는 `{id,image,alt,title,description}[]`. 열 수 컨트롤도 없애고, 그리드는 한 줄 최대 3개를 카드 수에 맞춰 채우며(`effectiveColumns`) 넘으면 다음 줄로 줄바꿈, 컨테이너 실제 폭을 `ResizeObserver`로 재 좁으면(480px 미만) 한 줄 2개로 좁힘(모바일 미리보기 박스도 반영), 같은 행 카드끼리 제목·설명 영역 높이를 가장 긴 것에 맞춰 통일(`min-height` 측정). 제목·설명은 패널 입력, 빈 상태는 캔버스 스켈레톤 그리드(첫 업로드)→이후 추가/편집은 패널. 이미지/갤러리/카드 관리 버튼은 변경=업로드 아이콘·제거=X 아이콘으로 통일 + 툴팁(`EditorTooltip`). UX 보정: 하단 "섹션 추가" 시 캔버스 맨 아래로 부드럽게 스크롤, 에디터 마운트 동안 body 스크롤 잠금(전체화면 고정), 패널 너비 `w-80`. 편집 textarea는 폰트별 줄높이 차로 생기던 자체 스크롤바를 숨김.
+갤러리·카드·공백 추가로 **섹션 8종(제목·문단·구분선·공백·버튼·이미지·갤러리·카드) 완료**. 공백(spacer): 섹션 사이 여백 높이만 주는 섹션(작게24/보통48/크게96px), content 없음·style만(divider 패턴), 평소 투명·hover/선택 시에만 영역 표시. 갤러리: **한 줄 가로 캐러셀**(호버 좌우 화살표 — 끝단에선 해당 방향 화살표 숨김 + 스냅, 스크롤바 숨김), 모양·간격만 두고 칸 수 컨트롤은 없앰. 한 줄 최대 3개를 채우고(이미지가 적으면 폭에 맞춰 채움, 컨테이너가 좁으면 `ResizeObserver`로 2개) 넘으면 가로 스크롤, content는 `{url,alt}[]`. 카드: **멀티 카드**(한 섹션에 여러 카드)·레이아웃(세로형/가로형/그리드형)·정렬, content는 `{id,image,alt,title,description}[]`. 열 수 컨트롤도 없애고, 그리드는 한 줄 최대 3개를 카드 수에 맞춰 채우며(`effectiveColumns`) 넘으면 다음 줄로 줄바꿈, 컨테이너 실제 폭을 `ResizeObserver`로 재 좁으면(480px 미만) 한 줄 2개로 좁힘(모바일 미리보기 박스도 반영), 같은 행 카드끼리 제목·설명 영역 높이를 가장 긴 것에 맞춰 통일(`min-height` 측정). 제목·설명은 패널 입력, 빈 상태는 캔버스 스켈레톤 그리드(첫 업로드)→이후 추가/편집은 패널. 이미지/갤러리/카드 관리 버튼은 변경=업로드 아이콘·제거=X 아이콘으로 통일 + 툴팁(`EditorTooltip`). UX 보정: 하단 "섹션 추가" 시 캔버스 맨 아래로 부드럽게 스크롤, 에디터 마운트 동안 body 스크롤 잠금(전체화면 고정), 패널 너비 `w-80`. 편집 textarea는 폰트별 줄높이 차로 생기던 자체 스크롤바를 숨김.
 
 **카드 일원화 완료.** 카드 섹션도 이미지/갤러리와 동일 패턴으로 일원화(공용 `useImageUpload` 훅, 첫 업로드만 캔버스·이후 변경/제거/추가는 패널, 업로드/X 아이콘+툴팁, alt 파일명 자동) + 멀티 카드·레이아웃까지 확장 완료. 버튼 글자색도 배경/글자 분리.
 
-**Phase 4 마무리 완료.** 공백 섹션 추가로 섹션 8종, 이미지 패널 빈 상태 처리(패널에서 이미지 제거 시 깨진 빈 `img` 대신 "이미지 추가" 버튼 — 카드와 동일 패턴), 자동/수동 저장 상태 구분(디바운스 자동저장은 "자동 저장됨", 저장 버튼 클릭은 "저장됨" — `markSaved(snapshot, manual)` + `SaveStatus`에 `manualSaved`), 공개영역(랜딩/로그인/대시보드) 반응형 점검(대부분 양호, 랜딩 히어로 제목 모바일 크기만 `text-4xl`로 조정). 에디터 `_components`를 **`sections/`(EditorSection + Section\* 표시)·`panels/`(스타일 패널·필드·항목)·`shell/`(EditorShell/Header/Canvas 등 뼈대 + 공용)** 3그룹으로 정리(`controlStyles.ts`는 라우트 세그먼트 루트 유지).
+**이미지 패널 빈 상태·저장 상태 표시 정리.** 패널에서 이미지 제거 시 깨진 빈 `img` 대신 "이미지 추가" 버튼(카드와 동일 패턴), 자동/수동 저장 상태 구분(디바운스 자동저장은 "자동 저장됨", 저장 버튼 클릭은 "저장됨" — `markSaved(snapshot, manual)` + `SaveStatus`에 `manualSaved`), 공개영역(랜딩/로그인/대시보드) 반응형 점검(대부분 양호, 랜딩 히어로 제목 모바일 크기만 `text-4xl`로 조정). 에디터 `_components`를 **`sections/`(EditorSection + Section\* 표시)·`panels/`(스타일 패널·필드·항목)·`shell/`(EditorShell/Header/Canvas 등 뼈대 + 공용)** 3그룹으로 정리(`controlStyles.ts`는 라우트 세그먼트 루트 유지).
 
-**Phase 5(공개 페이지) 진행 중.** 섹션 표시 컴포넌트를 `src/components/sections/`로 공용화(에디터 `Section*`은 표시 뷰 `Section*View`를 감싸 편집만 얹음, 표시 마크업 단일 소스). 공개 페이지 `/user/[handle]/[pageId]` SSR 렌더(`PublicSection` 디스패처 + `PublicPageBody` + `utils/pageMeta.ts`, `generateMetadata`로 title/description/og:image 자동, 빈 섹션 숨김, 버튼은 `live`면 `<a>` 새탭). 공개/비공개 토글(`actions/page.ts`의 `togglePagePublic`, 비공개는 본인 포함 누구나 404). 에디터 헤더 미리보기(전체화면 오버레이, PC/모바일, live store 기준이라 미저장 변경도 반영). 스타일 패널을 오버레이→도킹으로 전환. 한글 폰트 고운바탕 추가(6종). 에디터 헤더 다크모드 토글 + 작업 결과물 영역(캔버스/미리보기/공개) 라이트 절연(`.canvas-light` 토큰 재루팅 + `color-scheme: light`)으로 앱 다크모드와 무관하게 항상 라이트. 콘텐츠 폭은 세 영역(캔버스/미리보기 PC/공개) 모두 `max-w-5xl`로 통일.
+**공개 페이지 SSR 렌더.** 섹션 표시 컴포넌트를 `src/components/sections/`로 공용화(에디터 `Section*`은 표시 뷰 `Section*View`를 감싸 편집만 얹음, 표시 마크업 단일 소스). 공개 페이지 `/user/[handle]/[pageId]` SSR 렌더(`PublicSection` 디스패처 + `PublicPageBody` + `utils/pageMeta.ts`, `generateMetadata`로 title/description/og:image 자동, 빈 섹션 숨김, 버튼은 `live`면 `<a>` 새탭). 공개/비공개 토글(`actions/page.ts`의 `togglePagePublic`, 비공개는 본인 포함 누구나 404). 에디터 헤더 미리보기(전체화면 오버레이, PC/모바일, live store 기준이라 미저장 변경도 반영). 스타일 패널을 오버레이→도킹으로 전환. 한글 폰트 고운바탕 추가(6종). 에디터 헤더 다크모드 토글 + 작업 결과물 영역(캔버스/미리보기/공개) 라이트 절연(`.canvas-light` 토큰 재루팅 + `color-scheme: light`)으로 앱 다크모드와 무관하게 항상 라이트. 콘텐츠 폭은 세 영역(캔버스/미리보기 PC/공개) 모두 `max-w-5xl`로 통일.
 
 **에디터 안정화·대시보드 보강.** 에디터 스토어를 전역 싱글톤에서 **페이지별 Context 스토어**로 전환(`providers/EditorProvider`가 `store/editor.ts`의 `createEditorStore`로 서버 데이터를 받아 생성, `page.tsx`에서 `pageId`로 키 부여). SSR 시 빈 상태·이전 페이지가 잠깐 보이던 깜빡임과 서버 요청 간 상태 leak 제거. 자동저장·이탈 가드 등 비React 영역은 `getEditorStore()` 모듈 접근자로 현재 스토어 참조. Provider는 `src/providers/`로 모음(전역 `Providers` + `EditorProvider`). 헤더 제목은 연필 아이콘 인라인 편집(`EditorTitle`, 스토어 `setTitle`→자동저장). 섹션 순서변경은 `DragOverlay`로 떠 있는 복제본 + 부드러운 자리내주기(`SORTABLE_TRANSITION`, 패널 항목도 공유), 드래그 중 hover 하이라이트는 끔, 공백은 드래그 시 `bg-muted` 영역으로 표시, `DndContext`에 고정 `id`로 SSR 하이드레이션 일치. 대시보드 카드에 첫 이미지 썸네일(없으면 첫 텍스트 미리보기 `pageMeta.firstTextContent`, 빈 페이지는 "내용 없음"), 페이지 삭제(`actions/page.ts`의 `deletePage` — 소유권 필터 + 페이지 내 Cloudinary 이미지 정리 + 확인 모달). 인증 폼 버튼 로딩은 스피너로 통일.
 
@@ -54,7 +50,23 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 **섹션·페이지 복제.** 섹션 컨트롤 복제 버튼 동작 연결 — `store/editor.ts`의 `cloneSection`(깊은 복제 후 새 id, 열 칸 자식까지)으로 복제본을 원본 다음에 삽입(`insertSection`은 선택 변경 없이 삽입). 이미지 있는 섹션은 `actions/upload.ts`의 `copyImages`로 **백그라운드 병렬 복사** 후 새 URL로 교체(`remapSectionImages`)해 원본과 독립, 복사 중엔 스피너 오버레이(`copyingSectionIds`)를 띄우고 완료되면 그 패널을 연다. 복제 후 복제본으로 부드럽게 스크롤(`data-section-id`). 삭제 정리(`EditorSection`)는 남은 섹션이 아직 쓰는 URL은 제외해 공유본 보호. 대시보드 페이지 복제도 추가 — `actions/page.ts`의 `duplicatePage`가 본인 페이지를 조회해 섹션·이미지를 전부 복제(이미지 한 번에 병렬 복사로 속도 최적화, 열 칸 이미지 포함), 복제본은 비공개로 시작. 제목은 `utils/copyTitle.ts`의 `makeCopyTitle`로 `제목 - 복사본`·같은 이름 있으면 `복사본(2)`처럼 번호 증가(이미 붙은 표기는 기준 제목 복원). 대시보드 목록을 클라이언트 그리드(`DashboardPageGrid`, `useOptimistic`)로 빼 복제 누르면 임시 카드(`DashboardPendingCard`, 스피너·복사 제목 미리 표시)가 즉시 떴다 완료 시 실제 카드로 교체, 여러 번 누르면 임시 카드도 여러 개. 복제 순수 로직은 단위 테스트(`copyTitle`·`cloneSection`·`insertSection`·`remapSectionImages`).
 
-**남은 작업:** 프로필 페이지 `/user/[handle]`(프로필 + 공개 페이지 목록 카드, 카드는 제목 중심 + 있으면 썸네일 `pageMeta.firstImageUrl` 재사용, 없는 handle 404, 우선순위 낮음), E2E 테스트(Playwright 1~2 시나리오). 공개 페이지 자체 다크 토글은 안 하기로.
+**둘러보기(커뮤니티) UI 착수(더미).** 공개 페이지를 구경하고 템플릿으로 가져가는 `/explore`를 `(community)` 라우트 그룹에 추가 — 현재 더미데이터(`_data/dummyPosts`·`dummyDetail`)로 UI만 잡음. 목록(`/explore`)은 카드 그리드(썸네일·제목·작성자·좋아요·사용수) + 툴바(제목 검색·카테고리·정렬), 카테고리는 lg 이상 스와이프 바(`ExploreCategoryBar`)·그 미만 드롭다운(`ExploreCategoryDropdown`)으로 갈리고 정렬 기본은 인기. 상세(`/explore/[pageId]`)는 위→아래로 제목·작성자·좋아요·미리보기, 대표이미지, 게시글, 댓글(대댓글 1뎁스), 작성자의 다른 페이지(가로 캐러셀), 인기 페이지(인피니티 스크롤). 미리보기는 에디터와 공유하는 `components/sections/PagePreview`(전체화면 PC/모바일 토글, 보고 나서 템플릿 사용). 진입은 랜딩 구경하기·대시보드 템플릿 사용 버튼. 좋아요·템플릿 사용·댓글 등록·공유하기는 placeholder(토스트)라 다음은 서버 연동. 곁가지: 인증/설정/대시보드/에디터/공개에 페이지별 탭 제목 지정, `NewPageButton` 공용화.
+
+**스크롤 영역 정리·이미지 업로드 섹션별 잠금.** 대시보드·둘러보기·랜딩·설정을 `h-[100dvh]` 셸 + 헤더 아래 `<main>` 내부 스크롤로 통일해 에디터처럼 스크롤바가 헤더 아래에서만 생기게 하고, 라우트 이동 시 상단 이동은 `Providers`의 전역 훅(`main`과 window `scrollTo`)으로 한 곳에서 처리(auth는 main이 없어 window, 에디터 캔버스는 `<main>`이 아니라 제외). 에디터는 `EditorShell` 마운트 동안 html·body 잠금으로 루트 스크롤바 거터 제거. 전역 커스텀 스크롤바(`globals.css`의 `*::-webkit-scrollbar` — 얇은 pill·투명 트랙·화살표 제거, `scrollbar-width`는 크롬이 무시해 세팅 제외)로 통일. 이미지 업로드 잠금을 전역 boolean `imageUploading`에서 `uploadingSectionIds` 배열로 바꿔 업로드 중인 섹션 패널만 잠김(`useImageUpload(sectionId)`·`setUploading`), 업로드를 try/finally로 감싸 실패 시에도 잠금 해제. 에디터·미리보기 헤더 좌우 여백 조정(`pl-0.5 pr-2`).
+
+**둘러보기 공유 작성 화면·로그인 가드.** 공유 작성 페이지 `/explore/share`(`ExploreShareForm`) 추가 — 내 페이지 드롭다운(`ExploreSharePageSelect`, 공개 우선·빈 페이지 제외·공개/비공개 뱃지), 카테고리(상수를 `_data/categories.ts`로 분리해 더미 의존 끊음, 같은 칩 다시 누르면 해제), 템플릿 허용 토글, 대표이미지(페이지 첫 이미지 기본 + 직접 올려 덮어쓰기·되돌리기 `ExploreShareRepImage`), 소개 작성(`ExplorePostComposer` — contentEditable 단일 에디터 + execCommand 툴바로 굵게·기울임·밑줄·취소선·제목·인용·목록·정렬·이미지 삽입). 공유 버튼은 페이지 선택 시 활성이고 저장은 아직 placeholder(`shareToCommunity` 액션은 다음). 이미지 업로드는 기존 `uploadImage` 재사용, 에디터 스토어 없이 쓰는 `uploadImageFile`을 훅에서 분리. 취소/이탈 시 세션 중 올린 대표·소개 이미지를 정리(브라우저 강종·네트워크 실패는 cron 몫), 취소는 작성물 있으면 확인 모달. 비로그인 접근: `/explore/share`는 `proxy.ts`로 보호(직접 URL은 로그인+복귀), 목록·상세는 공개. 로그인 필요한 동작(템플릿 사용·좋아요·댓글·공유하기)은 공용 `ExploreLoginGate`(포털 오버레이라 미리보기 위에도 겹침, 백드롭 클릭 닫힘) 모달로 안내하고 `isLoggedIn`을 서버 페이지에서 내려줌. `PagePreview` 등장은 scale+fade, 닫힘은 즉시. 곁가지: 프로필 이미지 저장 실패 시 방금 올린 이미지 정리(`SettingsProfileImage`).
+
+**둘러보기 서버 연동·템플릿 관리 완료.** Page 모델에 커뮤니티 칸 추가(`sharedToCommunity`·`allowRemix`·`category`·`communityImage`·`communityPost`·`useCount`·`likeCount`·`sharedAt`·`remixedFrom`). `actions/explore.ts`의 `shareToCommunity`(sanitize-html로 소개글 정제)를 공유 폼에 연결, 목록·상세 조회는 `lib/explore.ts`(`getSharedPosts`·`getSharedDetail`, 작성자 populate·요청 내 `cache`)로 실데이터 렌더(목록·상세 더미 교체, 댓글만 아직 더미). 소개 composer는 붙여넣기·버튼 이미지를 Cloudinary **낙관적 미리보기**(에디터 섹션 복사 스피너와 통일)로 삽입하고 편집 모드는 기존 소개글 프리필. 리믹스(`remixPage`)는 섹션 복제 + 원작자 이미지를 내 폴더로 복사 + `useCount++` + `makeCopyTitle`, 결과 페이지에 `remixedFrom`을 남겨 재공유 차단. 공유 관리는 에디터 헤더 `EditorShareButton`(공유된 페이지만 '템플릿 관리') + 공유 폼 편집(수정·삭제(unshare, 확인 모달)·상세 '수정' 진입) + 대시보드 카드 '템플릿 공개' 뱃지, 폼 이탈 가드(beforeunload·popstate). 새 추가 후 상세로 이동하고 상세에 '목록' 버튼. 화면 용어를 공유→템플릿(추가·관리·삭제·템플릿 공개), 둘러보기 목록·상세 라벨→템플릿으로 통일(랜딩 '구경하기'는 유지). 진입점 롤백(랜딩·대시보드·헤더 크로스내비 아이콘+툴팁). 테스트 시드는 임시 스크립트로 심고 지움(`pageId` `seed-ex-*`). 목록 필터(검색·카테고리·정렬)를 `history.replaceState`로 URL에 유지해 뒤로가기 복원. 곁가지: Button `loading` prop으로 로딩 시 버튼 너비 고정 전역 통일, 버튼 아이콘·텍스트 세로 정렬을 `leading-none`으로 통일, 카드 hover lift 제거, 소셜 로그인 버튼 정렬.
+
+**둘러보기 조회수(좋아요 대체).** 인기 신호를 좋아요 대신 조회수로 잡기로 해 `Like` 모델·`ExploreLikeButton`은 두지 않음. `Page.viewCount` 추가(`likeCount` 제거·기존 문서 60건 `$unset` 청소), 상세 진입 시 클라 `ExploreViewCount`가 `recordView`(`actions/explore.ts`)를 한 번 호출해 올리고 돌려받은 값으로 숫자만 낙관적 갱신(전체 refetch 없이 가볍게). 중복 집계는 `bl_views` 쿠키(pageId→시각 맵·TTL 6h·오래된 기록 프룬)로 막아 로그인·비로그인 통합 카운트, SSR·`generateMetadata` 이중집계는 클라에서 올리는 방식으로 회피. 카운트 시 `revalidatePath('/explore')`로 목록 카드도 최신화, 인기 정렬은 `viewCount + useCount` 점수(`ExploreBrowser`의 `popularScore`, 댓글 수는 댓글 붙일 때 합산). 카드·상세 하트→눈 아이콘, 조회수 도입 전 문서는 `viewCount ?? 0`으로 표시.
+
+**둘러보기 댓글.** `Comment` 모델(수 무한이라 별도 컬렉션, `pageId`·`userId`·`text`·`parentId`로 대댓글 1뎁스 강제) + `actions/comment.ts`의 `createComment`·`updateComment`·`deleteComment`. 삭제는 tombstone 정책 — 최상위 댓글에 남의 답글이 있으면 본문만 "삭제된 댓글입니다"로 바꾸고 답글은 보존, 내 답글만 있거나 없으면 완전 삭제, 답글 삭제로 tombstone의 마지막 답글이 사라지면 tombstone도 함께 정리(`getComments`가 빈 tombstone도 목록에서 제외). `Page.commentCount`로 대댓글 포함 카운트를 비정규화해 인기 정렬(`ExploreBrowser`의 `popularScore` = `viewCount + useCount + commentCount`)에 반영. 화면은 `ExploreCommentList`가 `useOptimistic`으로 등록·수정·삭제·답글을 서버와 동일한 tombstone·cascade 로직으로 즉시 반영, 등록 시 새 댓글로 부드럽게 스크롤(`data-comment-id` + rAF 두 번, 섹션 복제 스크롤과 같은 패턴). 수정 인풋은 자동높이(`hooks/useAutoResizeTextarea`, `scrollHeight`에 보더 두께를 더해 border-box 오차 보정) + 평소 텍스트와 동일한 박스 모델(패딩·투명 보더)로 토글해도 자리 이동 없음. 모바일은 스레드 간격·답글 들여쓰기를 `sm:` 기준으로 축소(`gap-6`→`gap-4`, `pt-6 pb-6`→`pt-4 pb-4`, `pl-12`→`pl-8`), 아바타 크기와 그에 맞춘 본문 들여쓰기(`INDENT_CLASS`)는 정렬 기준이라 고정. `dummyDetail.ts` 삭제로 더미 잔여 하나 정리.
+
+**로그인 콜백 복귀.** 둘러보기 로그인 안내(`ExploreLoginGate` — 템플릿 추가·사용하기·댓글·답글 공용)가 무조건 `/login`으로 보내고 로그인 폼·소셜 버튼도 무조건 대시보드로 돌려보내던 걸, 현재 경로를 `callbackUrl`로 실어 로그인 후 원래 있던 곳(둘러보기 목록·상세)으로 복귀하게 통일(`LoginForm`·`SocialButtons`·`login/page.tsx`, 오픈 리다이렉트 방지로 내부 경로만 허용). 랜딩·회원가입 등 기존 무콜백 로그인 진입은 그대로 대시보드행 유지. 곁가지: 설정 프로필 사진 변경·제거 버튼을 폭 고정 세로 배치로 정리해 업로드 전후 레이아웃 시프트 제거.
+
+**둘러보기 더미 정리·이미지 정리 누락 수정·데모 데이터 세팅.** `_data/dummyPosts.ts`의 죽은 `DUMMY_POSTS`(목록·상세가 실데이터 조회로 전환된 뒤 미사용) 삭제, 카테고리 라벨(`CATEGORIES`)은 파일 하나만 남아 있던 유일한 라우트 전용 폴더 `_data/categories.ts`를 없애고 `types/explore.ts`의 `CATEGORY_KEYS` 옆으로 합침(카테고리 키·라벨 한 곳에). `unshareFromCommunity`·`deletePage`가 섹션 이미지만 지우고 `communityImage`·`communityPost`(대표이미지·소개글 안 이미지)는 안 지우던 정리 누락 수정 — 새 헬퍼 `utils/imageUrls.ts`의 `communityImageUrls`로 수집, `unshareFromCommunity`는 관련 필드까지 전부 초기화, `shareToCommunity`(재공유·수정)는 이전·이후 URL을 diff해 안 쓰이게 된 것만 삭제. 대표이미지 기본값이 페이지 첫 이미지라 본문과 겹쳐 쓰이는 경우가 흔해, 세 경로 전부 `sectionImageUrls`로 본문에서 여전히 쓰이는 이미지는 삭제 대상에서 제외하는 보호 로직 포함. `deletePage`는 로컬 재구현이던 `collectImageUrls`를 없애고 열 칸 이미지까지 커버하는 `sectionImageUrls`로 통일. 테스트용 임시 시드·부실 페이지 정리. 목록 인피니티 스크롤 작업 전 데모 데이터 세팅 — 데모 유저 36명·페이지 36개(카테고리 6종×6개), 인기순 노출 확인을 위해 `viewCount`를 배치별로 차등 부여, 대표이미지는 Picsum 실사진을 Cloudinary에 업로드, 일부 글에 댓글(대댓글 포함) 시딩.
+
+**둘러보기 서버 페이지네이션·메이슨리·뒤로가기 복원.** 목록과 상세 인기 피드를 클라 slice에서 **서버 페이지네이션 무한 스크롤**로 전환 — `lib/explore.ts`의 `getSharedPage`가 aggregation으로 인기 점수(`viewCount+useCount+commentCount`)를 계산해 정렬(`$lookup`+`$unwind`로 탈퇴 작성자 제외, `limit+1`로 hasMore 판별, `_id` tiebreaker로 offset 안정), `actions/explore.ts`의 `fetchSharedPosts`·`fetchPopularPosts`(상세는 `exclude`로 현재 페이지 제외) 서버 액션 + 공용 훅 `hooks/useInfinitePosts`(센티넬 `IntersectionObserver` + `rootMargin` prefetch로 끊김 방지, `requestId` 세대 가드로 필터 변경 중 뒤늦게 온 응답 폐기), `EXPLORE_PAGE_SIZE` 12, 상세 30개 상한 제거. 목록 카드는 **메이슨리 갤러리형** — `hooks/useMasonryColumns`(뷰포트 1/2/3열)·`ExploreMasonry`(가장 짧은 컬럼에 순차 배치, prefix-stable이라 append 시 기존 배치 유지, 첫 로드 재배치는 reveal 게이트로 감췄다 표시)·`ExploreGalleryCard`(원본 비율 썸네일, `onLoad`로 비율 측정, 로드 전 `aspect-ratio` placeholder로 자리 확보, 콘텐츠는 hover 오버레이 `ExploreCardOverlay`·모바일 상시). 상세 인기 피드와 작성자 다른 페이지 캐러셀은 고정 4:3 `ExploreFeedCard`로 같은 오버레이 공유해 카드 언어 통일(옛 `ExploreCard` 삭제), 캐러셀은 적은 개수면 `flex-1`로 채우고 1개만 `only:max-w-md` 상한. 뒤로가기 복원 — `utils/listScrollCache`(페이지 이동 동안만 사는 모듈 스냅샷·필터키·`listHref`) + `hooks/useListScrollRestore`(맨 위 카드 anchor 기준, `useIsomorphicLayoutEffect`로 페인트 전 고정, `data-pageid`로 카드 조회)로 목록과 스크롤 되살리고, 필터는 `useSearchParams`로 시드해 Next 캐시와 무관하게 URL에서 복원, 상세 목록 버튼 `ExploreBackLink`는 스냅샷 필터를 URL로 재구성해 복귀. 메이슨리 변주를 위한 데모 대표이미지 다양한 비율 재시딩은 별도 진행. 복원 시 placeholder와 실제 높이 전환의 짧은 보정은 기능 무해라 남겨둠.
 
 ## 문서 안내
 
@@ -62,7 +74,7 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 
 | 문서                  | 내용                                     |
 | --------------------- | ---------------------------------------- |
-| `CLAUDE.md` (이 파일) | 현황 + 기술 스택 + 작업 순서 + 길잡이    |
+| `CLAUDE.md` (이 파일) | 현황 + 기술 스택 + 길잡이                |
 | `docs/AGENT.md`       | 코딩 컨벤션, 명명 규칙, Git, 초기 셋업   |
 | `docs/DECISIONS.md`   | 무엇을 왜 만들기로 했나 (제품/설계 결정) |
 
@@ -92,107 +104,3 @@ Phase 4(섹션 확장) 진행 중. 구분선(모양 실선/파선/점선·두께
 | 영문 폰트     | Inter                                                                 |
 
 > 기술 선택 이유, 서버리스 커넥션 관리, 비용 구성은 `docs/DECISIONS.md` 참고.
-
-## 작업 순서 (커밋 단위)
-
-### Phase 1: 기반 셋업
-
-**외부 셋업 (직접 실행):**
-
-- [x] MongoDB Atlas 계정 생성 + 클러스터 생성 + connection string 발급 (로컬 DNS의 SRV 거부 이슈로 non-SRV 형식 사용)
-- [x] Google Cloud Console에서 OAuth 클라이언트 등록
-- [x] Kakao Developers OAuth 등록 (이메일 미제공 → 합성 이메일로 처리)
-- [x] Naver Developers OAuth 등록
-- [x] Gmail SMTP 앱 비밀번호 발급 (비밀번호 재설정 메일 발송)
-- [x] GitHub 레포지토리 생성 (main 단일 브랜치, 바로 push·배포 — `Mirrer1/blanoir`)
-
-**코드 작업:**
-
-- [x] 프로젝트 초기화 (`create-next-app`), 라이브러리 설치
-- [x] Tailwind + shadcn 설정
-- [x] Prettier + Husky + lint-staged 설정
-- [x] 디자인 시스템 (모노톤 neutral 테마, Pretendard, next-themes 다크모드 토글)
-- [x] `.env.local` 작성, `.env.example` git에 올림
-- [x] MongoDB 연결 (`lib/mongoDB.ts`, 서버리스 커넥션 캐싱 패턴 적용)
-- [x] User/Page 스키마 (`models/`)
-- [x] NextAuth v5 셋업 (`lib/auth.ts`, `lib/authConfig.ts`, route, `proxy.ts` 가드)
-- [x] 공용 컴포넌트 (Header/Footer 등 — `(marketing)`/`(app)` 그룹 헤더로 구현)
-
-### Phase 2: 랜딩 + 인증
-
-- [x] 랜딩 UI 퍼블리싱 (Hero/Features/HowItWorks/UseCases/FAQ/FinalCTA + 헤더/푸터)
-- [x] 랜딩 인터랙션 (motion 스크롤 페이드 `FadeIn`, 호버)
-- [x] 로그인 페이지 (소셜 3종 버튼 + 이메일/비번 폼)
-- [x] 회원가입 페이지 (로컬용 — 이메일/비번/닉네임)
-- [x] 비번 bcrypt 해싱
-- [x] 첫 가입 시 handle 자동 생성 로직 (es-hangul 로마자 변환 + 중복 시 숫자 접미사)
-- [x] 비밀번호 재설정 페이지 (이메일 → 인증코드 → 새 비밀번호, Gmail SMTP, 5회 제한)
-- [x] 대시보드 UI (페이지 목록 카드)
-- [x] 대시보드 API (페이지 목록 조회, 새 페이지 생성)
-
-### Phase 3: 에디터 코어
-
-- [x] 에디터 레이아웃 (`(editor)` 그룹, 자체 EditorHeader)
-- [x] Zustand editor store (`store/editor.ts`)
-- [x] 제목 섹션 + 인라인 편집 UI (`SectionText` 공통화)
-- [x] 제목 스타일 패널 (크기/색/정렬/굵게/기울임) — **폰트는 곁가지로 미룸**
-- [x] 문단 섹션
-- [x] 섹션 추가 (`AddSectionMenu` — base-ui Menu, 종류 메뉴)
-- [x] 섹션 삭제 / 순서 변경 (dnd-kit)
-- [x] 자동저장 (5초 디바운스 + 스냅샷 변경 감지) + Server Action `savePage` (+ 수동 저장 버튼)
-- [x] 페이지 이탈 경고 (`beforeunload` + base-ui AlertDialog 확인 모달 + 언마운트 flush)
-
-**미룬 곁가지 (Phase 4 전 또는 함께):**
-
-- [x] 폰트 컨트롤 (스타일 패널 폰트 + 한글 폰트 `next/font/local` 자체 호스팅)
-- [x] 섹션 사이 호버 추가 (`AddSectionMenu`의 `index` prop 활용 — `SectionInsert`)
-- [x] 캔버스 다크모드 절연 (`.canvas-light` 토큰 재루팅 + `color-scheme: light`, 결과물 영역은 항상 라이트)
-
-### Phase 4: 섹션 확장
-
-**외부 셋업:**
-
-- [x] Cloudinary 계정 생성 + API 키 발급 (`.env.local`에 4개 키 등록 완료)
-
-**코드 작업:**
-
-- [x] 이미지 섹션 (Cloudinary 연동, 선택 즉시 자동 업로드 + 교체·삭제 시 자동 정리)
-- [x] 버튼 섹션 (외부 링크 — 텍스트·URL·크기·너비·정렬·모양·색, 패널 입력)
-- [x] 구분선 섹션 (모양·두께·색)
-- [x] 이미지 크롭/확대 (비율·cover·확대 슬라이더·드래그 초점)
-- [x] 갤러리 섹션 (한 줄 가로 캐러셀, 호버 화살표)
-- [x] 카드 섹션 (이미지+제목+설명)
-- [x] 이미지/갤러리 관리 패널 일원화 (공용 `useImageUpload` 훅)
-- [x] 공백 섹션 (섹션 사이 여백 — 높이 3단계)
-- [x] 자동/수동 저장 상태 구분 ("자동 저장됨" vs 저장 버튼 "저장됨")
-- [x] 에디터 `_components` 폴더 그룹화 (`sections`/`panels`/`shell`)
-
-### Phase 5: 공개 페이지
-
-- [x] 사용자 페이지 렌더링 (Server Component, SSR)
-- [x] SEO 메타데이터 자동 생성 (generateMetadata)
-- [ ] 사용자 프로필 페이지 (`/user/[handle]`)
-- [x] 공개/비공개 토글 + 비공개시 404 처리
-- [x] 다크모드 토글 (헤더) + 캔버스/미리보기/공개 라이트 절연
-- [x] PC/모바일 미리보기 토글 (에디터)
-- [x] 모바일에서 에디터 접속 시 미리보기 전용 모드
-
-### Phase 6: 마무리 (개발 완료 후)
-
-**코드 작업:**
-
-- [x] 에러 처리 (`error.tsx`·`not-found.tsx` 추가, `proxy.ts` 가드 + 서버 액션 try/catch → 토스트)
-- [x] 반응형 점검 — 공개영역(랜딩/로그인/대시보드) 완료. 에디터 모바일 미리보기 전용은 Phase 5와 함께
-- [x] 단위 테스트 작성 (Vitest) — 순수 유틸 5종 콜로케이트 테스트(`handle`·`colorFill`·`altFromFileName`·`pageMeta`·`imageUrls`) + 열 섹션 스토어 로직 테스트(`store/editor.test.ts`), `vitest.config.ts`(`@/` alias·node 환경)
-- [ ] E2E 테스트 작성 (Playwright 1~2개 시나리오)
-
-**외부 셋업 (직접 실행):**
-
-- [ ] 도메인 구매 (가비아 — **blanoir.com**) — 데모라 보류, `vercel.app` 사용
-- [x] Vercel 계정 + 프로젝트 연결 (`blanoir.vercel.app`)
-- [x] Vercel 대시보드에 환경변수 등록 (`.env.production` 파일 대신 대시보드 직접 등록)
-- [x] Vercel 함수 리전을 서울(`icn1`)로 — Atlas와 동일 리전, 왕복 지연 최소화
-- [ ] Vercel에 도메인 연결 — 도메인 구매 시
-- [x] 소셜 OAuth Redirect URL을 운영 도메인으로 추가 (Google/Kakao/Naver 콘솔)
-- [x] MongoDB Atlas Network Access에 Vercel IP 허용 (0.0.0.0/0)
-- [x] 검색엔진 등록 — 구글 서치콘솔 + 네이버 서치어드바이저 소유권 인증 + sitemap 제출

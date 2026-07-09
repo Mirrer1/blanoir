@@ -51,7 +51,7 @@ const ExploreCardCarousel = ({ posts }: { posts: ExplorePost[] }) => {
         className="flex [scrollbar-width:none] gap-5 overflow-x-auto [&::-webkit-scrollbar]:hidden"
       >
         {posts.map((post) => (
-          <div key={post.pageId} className="w-64 shrink-0 sm:w-72">
+          <div key={post.pageId} className="min-w-64 flex-1 only:max-w-md sm:min-w-72">
             <ExploreFeedCard post={post} />
           </div>
         ))}

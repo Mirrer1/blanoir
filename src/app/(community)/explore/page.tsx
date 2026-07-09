@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
 import ExploreBrowser from './_components/ExploreBrowser'
 import ExploreShareButton from './_components/ExploreShareButton'
@@ -34,12 +35,9 @@ const ExplorePage = async ({ searchParams }: { searchParams: Promise<SearchParam
         <ExploreShareButton isLoggedIn={isLoggedIn} />
       </div>
       <div className="mt-8">
-        <ExploreBrowser
-          initial={initial}
-          initialQuery={q}
-          initialCategory={category}
-          initialSort={sort}
-        />
+        <Suspense>
+          <ExploreBrowser initial={initial} />
+        </Suspense>
       </div>
     </div>
   )

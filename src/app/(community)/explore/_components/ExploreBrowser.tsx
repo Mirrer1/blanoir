@@ -1,6 +1,7 @@
 'use client'
 
 import { Loader2, Search } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 import ExploreCategoryBar from './ExploreCategoryBar'
@@ -9,11 +10,18 @@ import ExploreMasonry from './ExploreMasonry'
 import { fetchSharedPosts } from '@/actions/explore'
 import { Input } from '@/components/ui/input'
 import useInfinitePosts from '@/hooks/useInfinitePosts'
+import useListScrollRestore from '@/hooks/useListScrollRestore'
 import type { ExploreSort, SharedPage } from '@/lib/explore'
 import { cn } from '@/lib/utils'
-import { CATEGORIES, type ExploreCategoryKey } from '@/types/explore'
+import { CATEGORIES, CATEGORY_KEYS, type ExploreCategoryKey } from '@/types/explore'
+import { filterKeyOf, peekListSnapshot } from '@/utils/listScrollCache'
 
 const SEARCH_DEBOUNCE_MS = 300
+
+const KEY_SET = new Set<string>(CATEGORY_KEYS)
+const parseCategory = (value: string | null): ExploreCategoryKey =>
+  value && KEY_SET.has(value) ? (value as ExploreCategoryKey) : 'all'
+const parseSort = (value: string | null): ExploreSort => (value === 'recent' ? 'recent' : 'popular')
 
 const SORTS: { key: ExploreSort; label: string }[] = [
   { key: 'popular', label: '인기' },
@@ -25,18 +33,20 @@ const CATEGORY_TABS: { key: ExploreCategoryKey; label: string }[] = [
   ...CATEGORIES,
 ]
 
-interface Props {
-  initial: SharedPage
-  initialQuery: string
-  initialCategory: ExploreCategoryKey
-  initialSort: ExploreSort
-}
+const ExploreBrowser = ({ initial }: { initial: SharedPage }) => {
+  const searchParams = useSearchParams()
+  const initialQuery = searchParams.get('q') ?? ''
+  const initialCategory = parseCategory(searchParams.get('category'))
+  const initialSort = parseSort(searchParams.get('sort'))
 
-const ExploreBrowser = ({ initial, initialQuery, initialCategory, initialSort }: Props) => {
-  const [query, setQuery] = useState(initialQuery) // 입력값
-  const [search, setSearch] = useState(initialQuery) // 디바운스된 검색어
+  const [query, setQuery] = useState(initialQuery)
+  const [search, setSearch] = useState(initialQuery)
   const [category, setCategory] = useState<ExploreCategoryKey>(initialCategory)
   const [sort, setSort] = useState<ExploreSort>(initialSort)
+
+  const [restored] = useState(() =>
+    peekListSnapshot(filterKeyOf(initialCategory, initialSort, initialQuery)),
+  )
 
   // 입력이 멈추면 검색어를 반영해 조회
   useEffect(() => {
@@ -49,7 +59,17 @@ const ExploreBrowser = ({ initial, initialQuery, initialCategory, initialSort }:
     (skip: number) => fetchSharedPosts({ skip, category, sort, q: search }),
     [category, sort, search],
   )
-  const { posts, hasMore, loading, sentinelRef } = useInfinitePosts({ initial, loadPage })
+  const { posts, hasMore, loading, sentinelRef } = useInfinitePosts({
+    initial: restored ?? initial,
+    loadPage,
+  })
+
+  const rootRef = useListScrollRestore({
+    filterKey: filterKeyOf(category, sort, search),
+    posts,
+    hasMore,
+    restored,
+  })
 
   // 필터를 URL 히스토리에 반영해 복원
   const syncUrl = (next: { q: string; category: ExploreCategoryKey; sort: ExploreSort }) => {
@@ -81,7 +101,7 @@ const ExploreBrowser = ({ initial, initialQuery, initialCategory, initialSort }:
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={rootRef} className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
         <div className="relative sm:w-52 sm:shrink-0">
           <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />

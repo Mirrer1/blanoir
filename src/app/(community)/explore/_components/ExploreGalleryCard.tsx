@@ -35,6 +35,7 @@ const ExploreGalleryCard = ({ post, onRatio }: Props) => {
   return (
     <Link
       href={`/explore/${post.pageId}`}
+      data-pageid={post.pageId}
       className="group relative block overflow-hidden rounded-lg border"
     >
       {post.thumbnail ? (

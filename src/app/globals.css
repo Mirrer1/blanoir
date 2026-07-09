@@ -184,7 +184,15 @@
       color, background-color, border-color, text-decoration-color, fill, stroke, --cf-from,
       --cf-to, --cf-angle;
     transition-timing-function: ease;
-    transition-duration: 200ms;
+    transition-duration: 120ms, 200ms, 200ms, 200ms, 200ms, 200ms, 200ms, 200ms, 200ms;
+  }
+
+  @media (max-width: 1023px) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 120ms;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

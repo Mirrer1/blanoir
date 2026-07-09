@@ -64,6 +64,19 @@ export async function fetchSharedPosts(input: FetchSharedInput): Promise<SharedP
   })
 }
 
+// 상세 인기 피드 무한 스크롤용 다음 페이지 조회
+export async function fetchPopularPosts(input: {
+  skip: number
+  exclude: string
+}): Promise<SharedPage> {
+  return getSharedPage({
+    skip: input.skip,
+    limit: EXPLORE_PAGE_SIZE,
+    sort: 'popular',
+    exclude: input.exclude,
+  })
+}
+
 type ShareResult = { ok: true } | { ok: false; message: string }
 
 export async function shareToCommunity(input: ShareInput): Promise<ShareResult> {

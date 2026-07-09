@@ -99,10 +99,10 @@ const ExploreDetail = ({
         </section>
       )}
 
-      {popular.length > 0 && (
+      {popular.posts.length > 0 && (
         <section className="flex flex-col gap-4">
           <h2 className="font-heading text-lg font-semibold tracking-tight">인기 페이지</h2>
-          <ExplorePopularFeed posts={popular} />
+          <ExplorePopularFeed initial={popular} pageId={post.pageId} />
         </section>
       )}
     </article>

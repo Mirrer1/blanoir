@@ -33,7 +33,6 @@ type SharedLean = {
 type SharedCardLean = Omit<SharedLean, 'communityPost'>
 
 const AUTHOR_FIELDS = 'name handle profileImage'
-const POPULAR_LIMIT = 30
 
 export const EXPLORE_PAGE_SIZE = 12
 
@@ -45,6 +44,7 @@ export interface SharedQuery {
   category?: ExploreCategoryKey
   sort?: ExploreSort
   q?: string
+  exclude?: string // 결과에서 뺄 pageId
 }
 
 export interface SharedPage {
@@ -89,6 +89,9 @@ export async function getSharedPage(query: SharedQuery = {}): Promise<SharedPage
   }
   if (keyword) {
     match.title = { $regex: escapeRegex(keyword), $options: 'i' }
+  }
+  if (query.exclude) {
+    match.pageId = { $ne: query.exclude }
   }
 
   // 인기순은 활동 합산 점수로 정렬하고 _id로 순서 고정
@@ -149,7 +152,7 @@ export interface SharedDetail {
   communityPost: string
   sections: Section[]
   others: ExplorePost[]
-  popular: ExplorePost[]
+  popular: SharedPage
 }
 
 export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetail | null> => {
@@ -162,16 +165,12 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
     return null
   }
 
-  const [otherDocs, popularDocs] = await Promise.all([
+  const [otherDocs, popular] = await Promise.all([
     Page.find({ sharedToCommunity: true, userId: page.userId!._id, pageId: { $ne: pageId } })
       .sort({ sharedAt: -1 })
       .populate('userId', AUTHOR_FIELDS)
       .lean<SharedLean[]>(),
-    Page.find({ sharedToCommunity: true, pageId: { $ne: pageId } })
-      .sort({ viewCount: -1 })
-      .limit(POPULAR_LIMIT)
-      .populate('userId', AUTHOR_FIELDS)
-      .lean<SharedLean[]>(),
+    getSharedPage({ limit: EXPLORE_PAGE_SIZE, sort: 'popular', exclude: pageId }),
   ])
 
   const filterPosts = (docs: SharedLean[]) =>
@@ -183,7 +182,7 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
     communityPost: page.communityPost,
     sections: page.sections,
     others: filterPosts(otherDocs),
-    popular: filterPosts(popularDocs),
+    popular,
   }
 })
 

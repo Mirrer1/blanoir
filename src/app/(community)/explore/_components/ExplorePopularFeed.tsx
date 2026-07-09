@@ -3,7 +3,7 @@
 import { Loader2 } from 'lucide-react'
 import { useCallback } from 'react'
 
-import ExploreCard from './ExploreCard'
+import ExploreFeedCard from './ExploreFeedCard'
 import { fetchPopularPosts } from '@/actions/explore'
 import useInfinitePosts from '@/hooks/useInfinitePosts'
 import type { SharedPage } from '@/lib/explore'
@@ -24,7 +24,7 @@ const ExplorePopularFeed = ({ initial, pageId }: Props) => {
     <div className="flex flex-col gap-5">
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
-          <ExploreCard key={post.pageId} post={post} />
+          <ExploreFeedCard key={post.pageId} post={post} />
         ))}
       </div>
       {hasMore && (

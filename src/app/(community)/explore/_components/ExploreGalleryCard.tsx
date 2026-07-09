@@ -1,8 +1,8 @@
-import { Eye, ImageIcon, Repeat2 } from 'lucide-react'
+import { ImageIcon } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-import ExploreAvatar from './ExploreAvatar'
+import ExploreCardOverlay from './ExploreCardOverlay'
 import type { ExplorePost } from '@/types/explore'
 
 const PLACEHOLDER_RATIO = 0.75
@@ -13,7 +13,6 @@ interface Props {
 }
 
 const ExploreGalleryCard = ({ post, onRatio }: Props) => {
-  const title = post.title || '제목 없는 페이지'
   const [ratio, setRatio] = useState<number | null>(null)
 
   // aspect-ratio로 자리 확보에 쓰고 상위엔 컬럼 배치용으로 전달
@@ -53,26 +52,7 @@ const ExploreGalleryCard = ({ post, onRatio }: Props) => {
         </div>
       )}
 
-      {/* 모바일은 항상 표시하고 데스크톱은 hover 시 하단 그라데이션 위로 콘텐츠 표시 */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 pt-12 opacity-100 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100">
-        <span className="line-clamp-2 text-sm font-medium text-white">{title}</span>
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <ExploreAvatar src={post.authorImage} className="size-5" />
-            <span className="truncate text-xs text-white/80">{post.authorName}</span>
-          </div>
-          <div className="flex shrink-0 items-center gap-3 text-xs text-white/80">
-            <span className="flex items-center gap-1">
-              <Eye className="size-3.5" />
-              {post.viewCount}
-            </span>
-            <span className="flex items-center gap-1">
-              <Repeat2 className="size-3.5" />
-              {post.useCount}
-            </span>
-          </div>
-        </div>
-      </div>
+      <ExploreCardOverlay post={post} />
     </Link>
   )
 }

@@ -62,7 +62,7 @@ const SectionImageView = ({
     <>
       {cropped ? (
         <img
-          src={optimizedImageUrl(displaySrc)}
+          src={optimizedImageUrl(displaySrc, 1600)}
           alt={alt}
           draggable={false}
           style={{
@@ -74,7 +74,7 @@ const SectionImageView = ({
         />
       ) : (
         <img
-          src={optimizedImageUrl(displaySrc)}
+          src={optimizedImageUrl(displaySrc, 1600)}
           alt={alt}
           draggable={false}
           style={{ transform: `scale(${zoom})`, transformOrigin: `${focusX}% ${focusY}%` }}

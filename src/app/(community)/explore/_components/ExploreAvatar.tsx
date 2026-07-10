@@ -6,7 +6,7 @@ import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 const ExploreAvatar = ({ src, className }: { src: string; className?: string }) =>
   src ? (
     <img
-      src={optimizedImageUrl(src)}
+      src={optimizedImageUrl(src, 150)}
       alt=""
       className={cn('bg-muted shrink-0 rounded-full object-cover', className)}
     />

@@ -34,7 +34,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
       >
         {page.thumbnail ? (
           <img
-            src={optimizedImageUrl(page.thumbnail)}
+            src={optimizedImageUrl(page.thumbnail, 640)}
             alt=""
             className="bg-muted/40 aspect-video w-full rounded object-cover"
           />

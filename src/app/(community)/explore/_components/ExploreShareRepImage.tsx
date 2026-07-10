@@ -58,7 +58,7 @@ const ExploreShareRepImage = ({
       <input ref={inputRef} type="file" accept="image/*" hidden onChange={handleFile} />
       <div className="bg-muted/40 relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border">
         {shown ? (
-          <img src={optimizedImageUrl(shown)} alt="" className="h-full w-full object-cover" />
+          <img src={optimizedImageUrl(shown, 500)} alt="" className="h-full w-full object-cover" />
         ) : (
           <ImageIcon className="text-muted-foreground/40 size-8" strokeWidth={1.5} />
         )}

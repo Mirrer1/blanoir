@@ -71,7 +71,7 @@ const EditorCardItem = ({
       {card.image ? (
         <div className="bg-muted relative overflow-hidden rounded-md border">
           <img
-            src={optimizedImageUrl(card.image)}
+            src={optimizedImageUrl(card.image, 500)}
             alt={card.alt}
             className="aspect-video w-full object-cover"
           />

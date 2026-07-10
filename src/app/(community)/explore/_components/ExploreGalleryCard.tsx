@@ -42,7 +42,7 @@ const ExploreGalleryCard = ({ post, onRatio, uniform = false }: Props) => {
       {post.thumbnail ? (
         <img
           ref={measure}
-          src={optimizedImageUrl(post.thumbnail)}
+          src={optimizedImageUrl(post.thumbnail, 640)}
           alt=""
           onLoad={(e) => report(e.currentTarget)}
           style={{

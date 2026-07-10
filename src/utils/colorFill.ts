@@ -54,7 +54,7 @@ export const containerBackground = (section: Section): CSSProperties => {
   if (url) {
     return {
       backgroundColor: color && !isGradient(color) ? color : undefined,
-      backgroundImage: `url(${optimizedImageUrl(url)})`,
+      backgroundImage: `url(${optimizedImageUrl(url, 1920)})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }

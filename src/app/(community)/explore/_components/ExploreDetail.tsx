@@ -77,7 +77,7 @@ const ExploreDetail = ({
 
       {post.thumbnail && (
         <img
-          src={optimizedImageUrl(post.thumbnail)}
+          src={optimizedImageUrl(post.thumbnail, 1200)}
           alt=""
           className="bg-muted aspect-video w-full rounded-xl border object-cover"
         />

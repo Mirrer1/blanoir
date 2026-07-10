@@ -88,7 +88,7 @@ const SectionGalleryView = ({
     const linked = !!live && !!image.link
     const img = (
       <img
-        src={optimizedImageUrl(image.url)}
+        src={optimizedImageUrl(image.url, 800)}
         alt={image.alt}
         className="h-full w-full object-cover"
       />
@@ -122,7 +122,7 @@ const SectionGalleryView = ({
         {imageNodes}
         {pendingUrls.map((url) => (
           <div key={url} style={itemStyle} className={cn(CELL_CLASS, SHAPE_CLASS[shape])}>
-            <img src={optimizedImageUrl(url)} alt="" className="h-full w-full object-cover" />
+            <img src={optimizedImageUrl(url, 800)} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <Loader2 className="size-5 animate-spin text-white" />
             </div>

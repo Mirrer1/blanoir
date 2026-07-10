@@ -18,7 +18,7 @@ const DashboardPendingCard = ({ item }: DashboardPendingCardProps) => {
       <div className="flex flex-col gap-3 rounded-lg border p-4 opacity-80">
         {item.thumbnail ? (
           <img
-            src={optimizedImageUrl(item.thumbnail)}
+            src={optimizedImageUrl(item.thumbnail, 640)}
             alt=""
             className="bg-muted/40 aspect-video w-full rounded object-cover"
           />

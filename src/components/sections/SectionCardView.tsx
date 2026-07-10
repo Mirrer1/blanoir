@@ -99,7 +99,7 @@ const SectionCardView = ({
       <>
         {card.image && (
           <img
-            src={optimizedImageUrl(card.image)}
+            src={optimizedImageUrl(card.image, 800)}
             alt={card.alt}
             className={cn(
               'object-cover',
@@ -169,7 +169,7 @@ const SectionCardView = ({
               isHorizontal ? 'aspect-square w-2/5 shrink-0' : 'aspect-video w-full',
             )}
           >
-            <img src={optimizedImageUrl(url)} alt="" className="h-full w-full object-cover" />
+            <img src={optimizedImageUrl(url, 800)} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <Loader2 className="size-5 animate-spin text-white" />
             </div>

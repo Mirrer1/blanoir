@@ -56,7 +56,7 @@ const EditorImageField = ({
         <>
           <div className="bg-muted relative overflow-hidden rounded-lg border">
             <img
-              src={optimizedImageUrl(url)}
+              src={optimizedImageUrl(url, 500)}
               alt={alt}
               className="aspect-video w-full object-cover"
             />

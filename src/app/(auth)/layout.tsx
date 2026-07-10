@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import AuthCardMotion from './_components/AuthCardMotion'
 import ThemeToggle from '@/components/common/ThemeToggle'
+import { Toaster } from '@/components/ui/sonner'
 
 // 인증 화면은 검색에 미노출
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         Blanoir
       </Link>
       <AuthCardMotion>{children}</AuthCardMotion>
+      <Toaster />
     </div>
   )
 }

@@ -3,7 +3,6 @@ import { Geist_Mono } from 'next/font/google'
 import localFont from 'next/font/local'
 
 import './globals.css'
-import { Toaster } from '@/components/ui/sonner'
 import { koreanFontVariables } from '@/lib/fonts'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from '@/lib/site'
 import Providers from '@/providers/Providers'
@@ -70,7 +69,6 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
     >
       <body className="flex min-h-full flex-col">
         <Providers>{children}</Providers>
-        <Toaster />
       </body>
     </html>
   )

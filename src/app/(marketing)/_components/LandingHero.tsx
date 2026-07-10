@@ -45,7 +45,7 @@ const LandingHero = () => {
           </LandingBrowseButton>
         </div>
       </FadeIn>
-      <div className="relative mt-20 aspect-[4/3] w-full overflow-hidden rounded-lg border">
+      <div className="animate-in fade-in-0 slide-in-from-bottom-8 relative mt-20 aspect-[4/3] w-full overflow-hidden rounded-lg border duration-700 ease-out">
         <Image
           src="/hero.jpg"
           alt="Blanoir 에디터 미리보기"

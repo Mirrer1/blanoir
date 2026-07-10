@@ -1,10 +1,12 @@
 'use client'
 
-import { ChevronLeft, LayoutTemplate, RotateCcw } from 'lucide-react'
+import { ChevronLeft, Compass, LayoutTemplate, RotateCcw } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { EDITOR_TEMPLATES, type EditorTemplate } from '../../templates'
+import EditorLeaveDialog from './EditorLeaveDialog'
 import { deleteImage } from '@/actions/upload'
+import useEditorLeaveGuard from '@/hooks/useEditorLeaveGuard'
 import useEditorStore from '@/store/editor'
 import { sectionImageUrls } from '@/utils/imageUrls'
 
@@ -17,6 +19,7 @@ const EditorTemplatePanel = ({
 }) => {
   const sections = useEditorStore((s) => s.sections)
   const replaceSections = useEditorStore((s) => s.replaceSections)
+  const { open, setOpen, leaving, requestLeave, confirmLeave } = useEditorLeaveGuard('/explore')
 
   // 템플릿 적용은 즉시 덮어쓴 뒤 실행취소 토스트
   const handleApply = (template: EditorTemplate) => {
@@ -82,7 +85,27 @@ const EditorTemplatePanel = ({
             </span>
           </button>
         ))}
+        <button
+          onClick={requestLeave}
+          className="hover:border-foreground/30 hover:bg-muted/50 mt-1 flex cursor-pointer items-start gap-3 rounded-lg border border-dashed p-3 text-left transition-colors"
+        >
+          <span className="bg-muted text-foreground flex size-9 shrink-0 items-center justify-center rounded-md">
+            <Compass className="size-4.5" />
+          </span>
+          <span className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">다른 템플릿</span>
+            <span className="text-muted-foreground text-xs leading-snug">
+              여러 사용자의 다양한 템플릿
+            </span>
+          </span>
+        </button>
       </div>
+      <EditorLeaveDialog
+        open={open}
+        onOpenChange={setOpen}
+        leaving={leaving}
+        onConfirm={confirmLeave}
+      />
     </div>
   )
 }

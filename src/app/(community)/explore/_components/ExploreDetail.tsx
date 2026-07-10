@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react'
+import { Pencil, Repeat2 } from 'lucide-react'
 import Link from 'next/link'
 
 import ExploreAvatar from './ExploreAvatar'
@@ -30,22 +30,32 @@ const ExploreDetail = ({
   const { post, communityPost, sections, others, popular } = detail
 
   return (
-    <article className="flex flex-col gap-12">
+    <article className="flex flex-col gap-8 sm:gap-12">
       <ExploreBackLink />
       <div className="flex flex-col gap-5">
-        <h1 className="font-heading text-2xl font-extrabold tracking-tight">{post.title}</h1>
         <div className="flex items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <ExploreAvatar src={post.authorImage} className="size-10" />
-            <div className="min-w-0">
-              <p className="truncate font-medium">{post.authorName}</p>
-              <p className="text-muted-foreground truncate text-sm">@{post.authorHandle}</p>
-            </div>
-          </div>
+          <h1 className="font-heading min-w-0 text-2xl font-extrabold tracking-tight">
+            {post.title}
+          </h1>
           <div className="flex shrink-0 items-center gap-3">
             <ExploreViewCount pageId={post.pageId} initialCount={post.viewCount} />
+            <span className="text-muted-foreground flex items-center gap-1 text-base leading-none">
+              <Repeat2 className="size-4.5" />
+              {post.useCount}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <ExploreAvatar src={post.authorImage} className="size-12 sm:size-14" />
+            <div className="min-w-0">
+              <p className="truncate font-medium">{post.authorName}</p>
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <ExplorePreview
               pageId={post.pageId}
+              title={post.title}
               sections={sections}
               allowRemix={post.allowRemix}
               isOwner={isOwner}
@@ -54,10 +64,11 @@ const ExploreDetail = ({
             {isOwner && (
               <Link
                 href={`/explore/share?pageId=${post.pageId}&from=detail`}
+                aria-label="수정"
                 className={cn(buttonVariants())}
               >
                 <Pencil className="size-4" />
-                수정
+                <span className="hidden sm:inline">수정</span>
               </Link>
             )}
           </div>

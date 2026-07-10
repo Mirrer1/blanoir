@@ -36,6 +36,7 @@ const DashboardPageCard = ({ page, onDuplicate }: DashboardPageCardProps) => {
           <img
             src={optimizedImageUrl(page.thumbnail, 640)}
             alt=""
+            loading="lazy"
             className="bg-muted/40 aspect-video w-full rounded object-cover"
           />
         ) : (

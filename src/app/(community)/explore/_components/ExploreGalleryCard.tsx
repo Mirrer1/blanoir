@@ -44,6 +44,7 @@ const ExploreGalleryCard = ({ post, onRatio, uniform = false }: Props) => {
           ref={measure}
           src={optimizedImageUrl(post.thumbnail, 640)}
           alt=""
+          loading="lazy"
           onLoad={(e) => report(e.currentTarget)}
           style={{
             aspectRatio: uniform ? `1 / ${PLACEHOLDER_RATIO}` : `1 / ${ratio ?? PLACEHOLDER_RATIO}`,

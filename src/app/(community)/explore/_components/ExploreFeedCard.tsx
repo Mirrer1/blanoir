@@ -15,6 +15,7 @@ const ExploreFeedCard = ({ post }: { post: ExplorePost }) => {
         <img
           src={optimizedImageUrl(post.thumbnail, 640)}
           alt=""
+          loading="lazy"
           className="bg-muted/40 block aspect-[4/3] w-full object-cover"
         />
       ) : (

@@ -95,7 +95,7 @@ const ExploreCommentForm = ({
         className="border-input focus-visible:border-ring focus-visible:ring-ring/20 w-full resize-none rounded-lg border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-1"
       />
       <div className="flex justify-end">
-        <Button size="sm" onClick={handleSubmit} loading={pending}>
+        <Button onClick={handleSubmit} loading={pending}>
           등록
         </Button>
       </div>

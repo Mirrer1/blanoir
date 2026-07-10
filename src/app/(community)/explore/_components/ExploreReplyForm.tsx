@@ -94,10 +94,10 @@ const ExploreReplyForm = ({
         className="border-input focus-visible:border-ring focus-visible:ring-ring/20 w-full resize-none overflow-hidden rounded-lg border bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-1"
       />
       <div className="flex justify-end gap-2">
-        <Button variant="outline" size="sm" onClick={onClose}>
+        <Button variant="outline" onClick={onClose}>
           취소
         </Button>
-        <Button size="sm" onClick={handleSubmit} loading={pending}>
+        <Button onClick={handleSubmit} loading={pending}>
           등록
         </Button>
       </div>

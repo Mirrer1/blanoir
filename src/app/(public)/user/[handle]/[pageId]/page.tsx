@@ -4,11 +4,11 @@ import { notFound } from 'next/navigation'
 
 import PublicPageBody from '@/components/sections/PublicPageBody'
 import { connectDB } from '@/lib/mongoDB'
-import { SITE_NAME } from '@/lib/site'
+import { SITE_DESCRIPTION, SITE_NAME } from '@/lib/site'
 import Page from '@/models/Page'
 import User from '@/models/User'
 import type { Section } from '@/types/section'
-import { firstImageUrl, firstParagraphText } from '@/utils/pageMeta'
+import { firstImageUrl, firstParagraphText, firstTextContent } from '@/utils/pageMeta'
 
 interface PublicPageProps {
   params: Promise<{ handle: string; pageId: string }>
@@ -49,7 +49,8 @@ export async function generateMetadata({ params }: PublicPageProps): Promise<Met
   }
 
   const title = page.title || '제목 없는 페이지'
-  const description = firstParagraphText(page.sections) || undefined
+  const description =
+    firstParagraphText(page.sections) || firstTextContent(page.sections) || SITE_DESCRIPTION
   const image = firstImageUrl(page.sections)
   const url = `/user/${handle}/${pageId}`
 

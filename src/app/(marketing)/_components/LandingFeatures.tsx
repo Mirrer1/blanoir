@@ -31,7 +31,7 @@ const LandingFeatures = () => {
                 <div className="bg-background flex size-12 items-center justify-center rounded-lg border">
                   <Icon className="size-6" />
                 </div>
-                <h3 className="font-heading text-xl font-bold">{title}</h3>
+                <h2 className="font-heading text-xl font-bold">{title}</h2>
                 <p className="text-muted-foreground leading-7">{description}</p>
               </div>
             </FadeIn>

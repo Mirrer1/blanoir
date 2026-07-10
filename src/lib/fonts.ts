@@ -7,6 +7,7 @@ const notoSansKr = localFont({
   ],
   variable: '--font-noto-sans-kr',
   display: 'swap',
+  preload: false,
 })
 
 const nanumGothic = localFont({
@@ -16,6 +17,7 @@ const nanumGothic = localFont({
   ],
   variable: '--font-nanum-gothic',
   display: 'swap',
+  preload: false,
 })
 
 const nanumMyeongjo = localFont({
@@ -25,6 +27,7 @@ const nanumMyeongjo = localFont({
   ],
   variable: '--font-nanum-myeongjo',
   display: 'swap',
+  preload: false,
 })
 
 const gowunDodum = localFont({
@@ -32,6 +35,7 @@ const gowunDodum = localFont({
   weight: '400',
   variable: '--font-gowun-dodum',
   display: 'swap',
+  preload: false,
 })
 
 const gowunBatang = localFont({
@@ -41,6 +45,7 @@ const gowunBatang = localFont({
   ],
   variable: '--font-gowun-batang',
   display: 'swap',
+  preload: false,
 })
 
 export const koreanFontVariables = [

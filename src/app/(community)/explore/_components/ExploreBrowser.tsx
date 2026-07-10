@@ -135,7 +135,7 @@ const ExploreBrowser = ({ initial }: { initial: SharedPage }) => {
                   'h-7 cursor-pointer rounded-md px-3 text-sm font-medium transition-colors',
                   sort === option.key
                     ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    : 'hover:text-foreground dark:text-muted-foreground text-neutral-600',
                 )}
               >
                 {option.label}

@@ -200,6 +200,7 @@
     *::before,
     *::after {
       transition-duration: 0.01ms;
+      animation-duration: 0.01ms;
     }
   }
 

@@ -1,7 +1,6 @@
 'use client'
 
-import { motion, useReducedMotion } from 'motion/react'
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import useIsSmallScreen from '@/hooks/useIsSmallScreen'
 
@@ -11,24 +10,40 @@ interface FadeInProps {
   className?: string
 }
 
-// 스크롤로 화면에 들어올 때 한 번 페이드업. 서버 컴포넌트 콘텐츠를 감싸는 용도.
+// 초기 뷰포트 페이드업 래퍼
 const FadeIn = ({ children, delay = 0, className }: FadeInProps) => {
-  const reduceMotion = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
   const isSmall = useIsSmallScreen()
-
   const effectiveDelay = isSmall ? 0 : delay
-  const offset = reduceMotion ? 0 : 24
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '-80px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  const style = {
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.5s ease-out ${effectiveDelay}s, transform 0.5s ease-out ${effectiveDelay}s`,
+  }
 
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: offset }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.5, delay: effectiveDelay, ease: 'easeOut' }}
-    >
+    <div ref={ref} className={className} style={style}>
       {children}
-    </motion.div>
+    </div>
   )
 }
 

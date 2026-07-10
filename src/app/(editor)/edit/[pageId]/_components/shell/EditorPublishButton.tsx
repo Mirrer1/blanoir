@@ -9,7 +9,11 @@ import { togglePagePublic } from '@/actions/page'
 import { Button } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
 
-const EditorPublishButton = () => {
+interface EditorPublishButtonProps {
+  compact?: boolean
+}
+
+const EditorPublishButton = ({ compact = false }: EditorPublishButtonProps = {}) => {
   const pageId = useEditorStore((s) => s.pageId)
   const handle = useEditorStore((s) => s.handle)
   const isPublic = useEditorStore((s) => s.isPublic)
@@ -39,9 +43,17 @@ const EditorPublishButton = () => {
 
   return (
     <Popover.Root>
-      <Popover.Trigger render={<Button size="sm" variant={isPublic ? 'default' : 'outline'} />}>
+      <Popover.Trigger
+        render={
+          <Button
+            size={compact ? 'icon-sm' : 'sm'}
+            variant={compact ? 'ghost' : isPublic ? 'default' : 'outline'}
+            aria-label={compact ? (isPublic ? '공개' : '비공개') : undefined}
+          />
+        }
+      >
         {isPublic ? <Globe /> : <Lock />}
-        {isPublic ? '공개' : '비공개'}
+        {!compact && (isPublic ? '공개' : '비공개')}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner sideOffset={6} align="end" className="z-50">

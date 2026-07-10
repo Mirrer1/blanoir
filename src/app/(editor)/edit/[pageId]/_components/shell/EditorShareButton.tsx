@@ -6,7 +6,11 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
 
-const EditorShareButton = () => {
+interface EditorShareButtonProps {
+  compact?: boolean
+}
+
+const EditorShareButton = ({ compact = false }: EditorShareButtonProps = {}) => {
   const router = useRouter()
   const pageId = useEditorStore((s) => s.pageId)
   const sharedToCommunity = useEditorStore((s) => s.sharedToCommunity)
@@ -17,9 +21,14 @@ const EditorShareButton = () => {
   }
 
   return (
-    <Button size="sm" onClick={() => router.push(`/explore/share?pageId=${pageId}`)}>
+    <Button
+      size={compact ? 'icon-sm' : 'sm'}
+      variant={compact ? 'ghost' : 'default'}
+      aria-label={compact ? '템플릿 관리' : undefined}
+      onClick={() => router.push(`/explore/share?pageId=${pageId}`)}
+    >
       <Share2 />
-      템플릿 관리
+      {!compact && '템플릿 관리'}
     </Button>
   )
 }

@@ -4,6 +4,7 @@ import { ArrowLeft, Monitor } from 'lucide-react'
 import Link from 'next/link'
 
 import EditorPublishButton from './EditorPublishButton'
+import EditorShareButton from './EditorShareButton'
 import PublicPageBody from '@/components/sections/PublicPageBody'
 import { buttonVariants } from '@/components/ui/button'
 import useEditorStore from '@/store/editor'
@@ -14,7 +15,7 @@ const EditorMobilePreview = () => {
 
   return (
     <div className="min-h-screen">
-      <header className="bg-background sticky top-0 z-10 flex items-center justify-between gap-2 border-b px-3 py-2.5">
+      <header className="bg-background sticky top-0 z-10 flex h-14 shrink-0 items-center justify-between gap-2 border-b px-3">
         <div className="flex min-w-0 items-center gap-1">
           <Link
             href="/dashboard"
@@ -28,7 +29,10 @@ const EditorMobilePreview = () => {
             <span className="truncate">페이지 편집은 PC를 이용해주세요</span>
           </span>
         </div>
-        <EditorPublishButton />
+        <div className="flex shrink-0 items-center gap-2">
+          <EditorPublishButton compact />
+          <EditorShareButton compact />
+        </div>
       </header>
       <div className="canvas-light text-foreground bg-background">
         <PublicPageBody sections={sections} />

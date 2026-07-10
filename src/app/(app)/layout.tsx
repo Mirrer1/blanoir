@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-[100dvh] flex-col">
+      <link rel="preconnect" href="https://res.cloudinary.com" />
       <AppHeader />
       <main className="flex-1 [scrollbar-gutter:stable] overflow-y-auto">{children}</main>
       <Toaster />

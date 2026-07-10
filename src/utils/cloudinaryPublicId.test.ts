@@ -13,6 +13,22 @@ describe('publicIdFromUrl', () => {
     expect(publicIdFromUrl(url)).toBe('blanoir/u1/abc123')
   })
 
+  it('변환 세그먼트가 붙은 URL에서도 public_id를 추출', () => {
+    const url =
+      'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_640/v1234567890/blanoir/u1/abc123.jpg'
+    expect(publicIdFromUrl(url)).toBe('blanoir/u1/abc123')
+  })
+
+  it('버전 없이 변환만 붙은 URL에서도 public_id를 추출', () => {
+    const url = 'https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/blanoir/u1/abc123.png'
+    expect(publicIdFromUrl(url)).toBe('blanoir/u1/abc123')
+  })
+
+  it('단일 파라미터 변환 세그먼트도 제거', () => {
+    const url = 'https://res.cloudinary.com/demo/image/upload/w_500/blanoir/u1/abc123.jpg'
+    expect(publicIdFromUrl(url)).toBe('blanoir/u1/abc123')
+  })
+
   it('/upload/ 세그먼트가 없으면 null', () => {
     expect(publicIdFromUrl('https://example.com/blanoir/u1/abc123.jpg')).toBeNull()
   })

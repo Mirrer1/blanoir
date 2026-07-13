@@ -316,20 +316,23 @@ npx husky init
 
 ### Import 순서 (4그룹, 그룹 사이 빈 줄)
 
+<!-- prettier-ignore -->
 ```tsx
 // 1. 외부 라이브러리 (react, next, zod 등)
 import Link from 'next/link'
 import { useState } from 'react'
 import { z } from 'zod'
 
-// 4. 스타일
-import './styles.css'
-import { formatDate } from './utils'
 // 2. 내부 파일 (@/ 절대경로 + ./ 상대경로)
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
+import { formatDate } from './utils'
+
 // 3. 타입 (import type)
 import type { User } from '@/types/user'
+
+// 4. 스타일
+import './styles.css'
 ```
 
 → trivago plugin이 `import type`을 자동으로 일반 import 뒤로 정렬.

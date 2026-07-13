@@ -31,16 +31,16 @@ const ExploreDetail = ({
 
   return (
     <article className="flex flex-col gap-8 sm:gap-12">
-      <ExploreBackLink />
       <div className="flex flex-col gap-5">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="font-heading min-w-0 text-2xl font-extrabold tracking-tight">
+        <div className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-4 [grid-template-areas:'back_stats'_'title_title'] lg:gap-y-6 lg:[grid-template-areas:'back_back'_'title_stats']">
+          <ExploreBackLink className="[grid-area:back]" />
+          <h1 className="font-heading min-w-0 text-2xl font-extrabold tracking-tight [grid-area:title]">
             {post.title}
           </h1>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3 justify-self-end [grid-area:stats]">
             <ExploreViewCount pageId={post.pageId} initialCount={post.viewCount} />
-            <span className="text-muted-foreground flex items-center gap-1 text-base leading-none">
-              <Repeat2 className="size-4.5" />
+            <span className="text-muted-foreground flex items-center gap-1 text-sm leading-none lg:text-base">
+              <Repeat2 className="size-4 lg:size-4.5" />
               {post.useCount}
             </span>
           </div>

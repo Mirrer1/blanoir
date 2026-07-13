@@ -23,8 +23,8 @@ const ExploreViewCount = ({ pageId, initialCount }: { pageId: string; initialCou
   }, [pageId])
 
   return (
-    <span className="text-muted-foreground flex items-center gap-1 text-base leading-none">
-      <Eye className="size-4.5" />
+    <span className="text-muted-foreground flex items-center gap-1 text-sm leading-none lg:text-base">
+      <Eye className="size-4 lg:size-4.5" />
       {count}
     </span>
   )

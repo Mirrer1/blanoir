@@ -1,5 +1,6 @@
 'use client'
 
+import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
@@ -30,8 +31,19 @@ const ExploreTemplateButton = ({ pageId, isLoggedIn }: { pageId: string; isLogge
 
   return (
     <>
-      <Button onClick={handleClick} loading={pending}>
-        템플릿 사용하기
+      <Button onClick={handleClick} loading={pending} className="hidden lg:inline-flex">
+        <Plus className="size-4" />
+        템플릿 사용
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleClick}
+        loading={pending}
+        aria-label="템플릿 사용"
+        className="lg:hidden"
+      >
+        <Plus />
       </Button>
       <ExploreLoginGate
         open={gateOpen}

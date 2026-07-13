@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef } from 'react'
 
@@ -8,6 +8,7 @@ import EditorStylePanel from '../panels/EditorStylePanel'
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorTemplatePanel from './EditorTemplatePanel'
+import EditorTemplateRail from './EditorTemplateRail'
 import useAutoSave from '@/hooks/useAutoSave'
 import useDualPanel from '@/hooks/useDualPanel'
 import useTemplatePanel from '@/hooks/useTemplatePanel'
@@ -69,32 +70,42 @@ const EditorShell = () => {
   return (
     <div className="flex h-screen flex-col">
       <EditorHeader />
-      <div className="flex flex-1 overflow-hidden">
-        <AnimatePresence initial={false}>
-          {showTemplate && (
-            <motion.aside
-              initial={{ width: 0 }}
-              animate={{ width: 256 }}
-              exit={{ width: 0 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="h-full shrink-0 overflow-hidden"
-            >
-              <EditorTemplatePanel
-                onCollapse={() => setTemplateOpen(false)}
-                onApplied={scrollCanvasToTop}
-              />
-            </motion.aside>
-          )}
-        </AnimatePresence>
-        {!showTemplate && (
-          <button
-            onClick={handleExpandTemplate}
-            aria-label="템플릿 펼치기"
-            className="border-border bg-background text-muted-foreground hover:text-foreground flex h-full w-9 shrink-0 cursor-pointer items-start justify-center border-r pt-4 transition-colors"
+      <div className="relative flex flex-1 overflow-hidden">
+        <motion.aside
+          initial={false}
+          animate={{ width: showTemplate ? 256 : 56 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="border-border relative h-full shrink-0 overflow-hidden border-r"
+        >
+          <motion.div
+            animate={{ opacity: showTemplate ? 1 : 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className={`absolute inset-y-0 left-0 ${showTemplate ? '' : 'pointer-events-none'}`}
           >
-            <ChevronRight className="size-4" />
-          </button>
-        )}
+            <EditorTemplatePanel onApplied={scrollCanvasToTop} />
+          </motion.div>
+          <motion.div
+            animate={{ opacity: showTemplate ? 0 : 1 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className={`absolute inset-y-0 left-0 ${showTemplate ? 'pointer-events-none' : ''}`}
+          >
+            <EditorTemplateRail onApplied={scrollCanvasToTop} />
+          </motion.div>
+        </motion.aside>
+        <motion.button
+          onClick={showTemplate ? () => setTemplateOpen(false) : handleExpandTemplate}
+          aria-label={showTemplate ? '템플릿 접기' : '템플릿 펼치기'}
+          initial={false}
+          animate={{ left: showTemplate ? 256 : 56 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="border-border bg-background text-muted-foreground hover:text-foreground absolute top-1/2 z-10 flex size-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border transition-colors"
+        >
+          {showTemplate ? (
+            <ChevronLeft className="size-3.5" />
+          ) : (
+            <ChevronRight className="size-3.5" />
+          )}
+        </motion.button>
         <EditorCanvas scrollRef={canvasScrollRef} />
         <AnimatePresence>
           {selectedNode && showStylePanel && (

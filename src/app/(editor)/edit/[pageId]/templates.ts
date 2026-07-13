@@ -1,4 +1,4 @@
-import { Briefcase, FileText, Heart, type LucideIcon, Store, User } from 'lucide-react'
+import { Briefcase, File, FileText, Heart, type LucideIcon, Store, User } from 'lucide-react'
 import { nanoid } from 'nanoid'
 
 import type {
@@ -90,6 +90,13 @@ export interface EditorTemplate {
 }
 
 export const EDITOR_TEMPLATES: EditorTemplate[] = [
+  {
+    id: 'blank',
+    label: '빈 페이지',
+    description: '처음부터 직접 만들기',
+    icon: File,
+    build: () => [],
+  },
   {
     id: 'profile',
     label: '프로필',

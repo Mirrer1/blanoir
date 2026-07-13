@@ -33,7 +33,7 @@ const DashboardDeleteButton = ({ pageId, title }: DashboardDeleteButtonProps) =>
       <button
         onClick={() => setOpen(true)}
         aria-label="페이지 삭제"
-        className="bg-background/90 text-muted-foreground hover:text-destructive absolute top-2 right-2 z-10 flex size-8 cursor-pointer items-center justify-center rounded-md border opacity-0 backdrop-blur transition-all group-hover:opacity-100"
+        className="bg-background/90 text-muted-foreground hover:text-destructive absolute top-2 right-2 z-10 flex size-8 cursor-pointer items-center justify-center rounded-md border opacity-0 backdrop-blur transition-all group-hover:opacity-100 pointer-coarse:opacity-100"
       >
         <Trash2 className="size-4" />
       </button>

@@ -7,7 +7,7 @@ const ExploreCardOverlay = ({ post }: { post: ExplorePost }) => {
   const title = post.title || '제목 없는 페이지'
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 pt-12 opacity-100 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col gap-2 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3 pt-12 opacity-0 transition-opacity duration-200 group-hover:opacity-100 pointer-coarse:opacity-100">
       <span className="line-clamp-2 text-sm font-medium text-white">{title}</span>
       <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">

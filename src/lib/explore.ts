@@ -152,7 +152,7 @@ export interface SharedDetail {
   communityPost: string
   sections: Section[]
   others: ExplorePost[]
-  popular: SharedPage
+  popular: ExplorePost[]
 }
 
 export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetail | null> => {
@@ -165,7 +165,7 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
     return null
   }
 
-  const [otherDocs, popular] = await Promise.all([
+  const [otherDocs, popularPage] = await Promise.all([
     Page.find({ sharedToCommunity: true, userId: page.userId!._id, pageId: { $ne: pageId } })
       .sort({ sharedAt: -1 })
       .populate('userId', AUTHOR_FIELDS)
@@ -182,7 +182,7 @@ export const getSharedDetail = cache(async (pageId: string): Promise<SharedDetai
     communityPost: page.communityPost,
     sections: page.sections,
     others: filterPosts(otherDocs),
-    popular,
+    popular: popularPage.posts,
   }
 })
 

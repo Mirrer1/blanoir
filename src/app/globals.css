@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* 그레디언트 색/각도 변수 등록 */
+/* 그레디언트 전환용 변수 등록 */
 @property --cf-from {
   syntax: '<color>';
   inherits: false;
@@ -66,7 +66,7 @@
   --default-transition-duration: 200ms;
 }
 
-/* .canvas-light는 .dark 아래여도 라이트 토큰을 쓰도록 :root 값을 공유 */
+/* .canvas-light가 .dark 아래에서도 라이트 토큰을 쓰도록 :root 값 공유 */
 :root,
 .canvas-light {
   --background: oklch(1 0 0);
@@ -137,7 +137,7 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* 폼 컨트롤, 스크롤바 등 시스템 색도 라이트로 */
+/* 브라우저 기본 요소 색도 라이트로 고정 */
 .canvas-light {
   color-scheme: light;
 }
@@ -165,6 +165,17 @@
   background-color: color-mix(in oklab, var(--foreground) 38%, transparent);
 }
 
+/* 특정 스크롤 영역 스크롤바 비표시 */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -176,7 +187,7 @@
     @apply font-sans;
   }
 
-  /* 다크모드 전환과 호버 시 색상이 부드럽게 바뀌도록 (레이아웃·모션엔 영향 X) */
+  /* 다크모드 전환과 호버에서 색상만 부드럽게 전환 */
   *,
   *::before,
   *::after {
@@ -215,7 +226,7 @@
   .cn-toast [data-icon] {
     color: var(--muted-foreground);
   }
-  /* 실행취소 등 액션 버튼을 또렷한 채움 버튼으로 */
+  /* 실행취소 등 액션 버튼을 채움 버튼으로 표시 */
   .cn-toast [data-button] {
     display: inline-flex;
     align-items: center;

@@ -28,24 +28,37 @@ const FAQS = [
 
 const LandingFAQ = () => {
   return (
-    <section className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-      <FadeIn>
-        <h2 className="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">
-          자주 묻는 질문
-        </h2>
-      </FadeIn>
-      <FadeIn delay={0.1}>
-        <Accordion multiple={false} className="mt-16">
-          {FAQS.map(({ question, answer }, index) => (
-            <AccordionItem key={question} value={`faq-${index}`}>
-              <AccordionTrigger className="py-5 text-base">{question}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground text-base leading-7">
-                {answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </FadeIn>
+    <section className="border-t">
+      <div className="mx-auto grid max-w-5xl gap-10 px-6 py-24 sm:grid-cols-3 sm:gap-16 sm:py-32">
+        <div className="flex flex-col sm:col-span-1">
+          <div className="flex items-start gap-3">
+            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+              05
+            </span>
+            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+              FAQ
+            </span>
+          </div>
+          <FadeIn>
+            <h2 className="font-heading mt-10 text-3xl leading-tight font-extrabold tracking-tight text-balance break-keep sm:text-4xl">
+              자주 묻는 질문
+            </h2>
+          </FadeIn>
+        </div>
+
+        <FadeIn delay={0.1} className="min-w-0 sm:col-span-2 sm:min-h-[21rem]">
+          <Accordion multiple={false}>
+            {FAQS.map(({ question, answer }, index) => (
+              <AccordionItem key={question} value={`faq-${index}`}>
+                <AccordionTrigger className="py-5 text-base">{question}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground text-base leading-7 text-pretty break-keep">
+                  {answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </FadeIn>
+      </div>
     </section>
   )
 }

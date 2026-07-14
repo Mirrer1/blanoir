@@ -1,37 +1,38 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
-import LandingBrowseButton from './LandingBrowseButton'
 import FadeIn from '@/components/common/FadeIn'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 const LandingFinalCTA = () => {
   return (
-    <section className="bg-muted/30 border-t">
-      <FadeIn className="mx-auto flex max-w-5xl flex-col items-center px-6 py-24 text-center sm:py-32">
-        <h2 className="font-heading max-w-2xl text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl">
-          지금 바로,
-          <br />
-          당신의 페이지를 시작하세요
-        </h2>
-        <p className="text-muted-foreground mt-6 text-lg">무료로 시작하고, 5분 만에 완성하세요.</p>
-        <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Link
-            href="/login"
-            className={cn(
-              buttonVariants({ variant: 'ghost', size: 'lg' }),
-              'border-foreground/30 h-12 min-w-36 px-8 text-base',
-            )}
-          >
-            로그인
-          </Link>
-          <LandingBrowseButton
-            className={buttonVariants({ size: 'lg', className: 'h-12 min-w-36 px-8 text-base' })}
-          >
-            구경하러 가기
-          </LandingBrowseButton>
-        </div>
-      </FadeIn>
+    <section className="relative overflow-hidden">
+      <Image
+        src="/cta.webp"
+        alt=""
+        fill
+        sizes="100vw"
+        className="absolute inset-0 object-cover dark:brightness-[0.45]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
+
+      <div className="relative mx-auto max-w-xl px-6 py-24 sm:py-36">
+        <FadeIn>
+          <div className="rounded-2xl border border-white/15 bg-white/10 p-10 text-center text-white backdrop-blur-md sm:p-14">
+            <h2 className="font-heading text-3xl leading-tight font-extrabold tracking-tight text-balance break-keep sm:text-4xl">
+              지금 바로, 당신의 페이지를 시작하세요
+            </h2>
+            <p className="mt-5 text-pretty break-keep text-white/80">
+              무료로 시작하고, 5분 만에 완성하세요.
+            </p>
+            <Link
+              href="/login"
+              className="mt-9 inline-flex h-12 items-center justify-center rounded-lg bg-white px-8 text-base font-medium text-black transition-colors hover:bg-white/90"
+            >
+              무료로 시작하기
+            </Link>
+          </div>
+        </FadeIn>
+      </div>
     </section>
   )
 }

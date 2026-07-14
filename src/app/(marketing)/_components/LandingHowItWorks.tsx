@@ -23,14 +23,16 @@ const LandingHowItWorks = () => {
     <section className="border-t">
       <div className="mx-auto grid max-w-5xl gap-12 px-6 py-24 sm:grid-cols-2 sm:gap-16 sm:py-32">
         <div className="flex flex-col sm:order-2 sm:items-end sm:justify-center sm:text-right">
-          <div className="flex items-start gap-3">
-            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
-              Steps
-            </span>
-            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
-              04
-            </span>
-          </div>
+          <FadeIn>
+            <div className="flex items-start gap-3">
+              <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+                Steps
+              </span>
+              <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+                04
+              </span>
+            </div>
+          </FadeIn>
           <FadeIn>
             <h2 className="font-heading mt-10 text-3xl leading-tight font-extrabold tracking-tight text-balance break-keep sm:text-5xl">
               생각보다, 훨씬 간단해요.

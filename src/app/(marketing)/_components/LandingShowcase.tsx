@@ -35,14 +35,16 @@ const LandingShowcase = ({ posts }: { posts: ExplorePost[] }) => {
     <section className="border-t">
       <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-start gap-3">
-            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
-              03
-            </span>
-            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
-              Templates
-            </span>
-          </div>
+          <FadeIn>
+            <div className="flex items-start gap-3">
+              <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+                03
+              </span>
+              <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+                Templates
+              </span>
+            </div>
+          </FadeIn>
           <div className="sm:max-w-md sm:text-right">
             <FadeIn>
               <h2 className="font-heading text-2xl leading-snug font-extrabold tracking-tight text-balance break-keep sm:text-4xl">
@@ -87,7 +89,7 @@ const LandingShowcase = ({ posts }: { posts: ExplorePost[] }) => {
                   </span>
                   <span className="text-muted-foreground group-hover:text-foreground flex shrink-0 items-center gap-1 text-sm transition-colors">
                     보러 가기
-                    <ArrowUpRight className="size-4" />
+                    <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
                 </div>
               </Link>

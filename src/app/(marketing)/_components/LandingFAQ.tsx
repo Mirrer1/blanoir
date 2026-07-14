@@ -31,14 +31,16 @@ const LandingFAQ = () => {
     <section className="border-t">
       <div className="mx-auto grid max-w-5xl gap-10 px-6 py-24 sm:grid-cols-3 sm:gap-16 sm:py-32">
         <div className="flex flex-col sm:col-span-1">
-          <div className="flex items-start gap-3">
-            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
-              05
-            </span>
-            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
-              FAQ
-            </span>
-          </div>
+          <FadeIn>
+            <div className="flex items-start gap-3">
+              <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+                05
+              </span>
+              <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+                FAQ
+              </span>
+            </div>
+          </FadeIn>
           <FadeIn>
             <h2 className="font-heading mt-10 text-3xl leading-tight font-extrabold tracking-tight text-balance break-keep sm:text-4xl">
               자주 묻는 질문

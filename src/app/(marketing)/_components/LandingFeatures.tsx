@@ -22,14 +22,16 @@ const LandingFeatures = () => {
     <section className="border-t">
       <div className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <div className="flex flex-col gap-8 sm:flex-row-reverse sm:items-start sm:justify-between">
-          <div className="flex items-start gap-3">
-            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
-              Features
-            </span>
-            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
-              02
-            </span>
-          </div>
+          <FadeIn>
+            <div className="flex items-start gap-3">
+              <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+                Features
+              </span>
+              <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+                02
+              </span>
+            </div>
+          </FadeIn>
           <FadeIn>
             <h2 className="font-heading max-w-md text-2xl leading-snug font-extrabold tracking-tight text-balance break-keep sm:text-4xl">
               직접 보면서 만들고 확인하고

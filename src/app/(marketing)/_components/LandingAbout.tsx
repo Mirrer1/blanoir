@@ -5,19 +5,21 @@ import FadeIn from '@/components/common/FadeIn'
 const LandingAbout = () => {
   return (
     <section className="mx-auto max-w-5xl px-6 py-24 sm:py-32">
-      <div className="flex items-start justify-between gap-8">
-        <div className="flex items-start gap-3">
-          <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
-            01
-          </span>
-          <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
-            About
-          </span>
+      <FadeIn>
+        <div className="flex items-start justify-between gap-8">
+          <div className="flex items-start gap-3">
+            <span className="font-heading text-5xl leading-none font-extrabold tracking-tight sm:text-6xl">
+              01
+            </span>
+            <span className="text-muted-foreground pt-1.5 text-xs font-medium tracking-widest uppercase">
+              About
+            </span>
+          </div>
+          <p className="text-muted-foreground hidden max-w-52 text-right text-sm leading-6 text-balance break-keep sm:block">
+            만들기의 문턱을 없앴어요. 당신의 이야기를 담을 한 페이지.
+          </p>
         </div>
-        <p className="text-muted-foreground hidden max-w-52 text-right text-sm leading-6 text-balance break-keep sm:block">
-          만들기의 문턱을 없앴어요. 당신의 이야기를 담을 한 페이지.
-        </p>
-      </div>
+      </FadeIn>
 
       <FadeIn>
         <h2 className="font-heading mt-12 max-w-2xl text-3xl leading-tight font-extrabold tracking-tight text-balance break-keep sm:mt-16 sm:pl-[18%] sm:text-5xl">
@@ -39,7 +41,7 @@ const LandingAbout = () => {
       </FadeIn>
 
       <div className="relative mt-16 sm:mt-28">
-        <FadeIn className="sm:ml-auto sm:w-[64%]">
+        <FadeIn delay={0.1} className="sm:ml-auto sm:w-[64%]">
           <figure>
             <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-lg border shadow-sm">
               <Image
@@ -56,10 +58,7 @@ const LandingAbout = () => {
           </figure>
         </FadeIn>
 
-        <FadeIn
-          delay={0.1}
-          className="mt-6 sm:absolute sm:top-[-2.5rem] sm:left-0 sm:z-10 sm:mt-0 sm:w-[52%]"
-        >
+        <FadeIn className="mt-6 sm:absolute sm:top-[-2.5rem] sm:left-0 sm:z-10 sm:mt-0 sm:w-[52%]">
           <figure>
             <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-lg border shadow-xl">
               <Image

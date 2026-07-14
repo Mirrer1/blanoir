@@ -5,11 +5,16 @@ import LandingBrowseButton from './LandingBrowseButton'
 import FadeIn from '@/components/common/FadeIn'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import type { ExplorePost } from '@/types/explore'
+import { CATEGORIES, type ExploreCategory, type ExplorePost } from '@/types/explore'
 import { optimizedImageUrl } from '@/utils/cloudinaryOptimize'
 
 // 카테고리 값 태그로 노출
 const FALLBACK = ['portfolio', 'store', 'wedding', 'resume']
+
+// 한글 카테고리 라벨
+const KO_LABEL = new Map(CATEGORIES.map((c) => [c.key, c.label]))
+const altFor = (label: string) =>
+  `${KO_LABEL.get(label as ExploreCategory) ?? label} 템플릿으로 만든 페이지`
 
 interface ShowcaseCard {
   href: string
@@ -78,7 +83,7 @@ const LandingShowcase = ({ posts }: { posts: ExplorePost[] }) => {
                 <div className="bg-muted relative aspect-[4/3] w-full overflow-hidden rounded-lg border">
                   <img
                     src={optimizedImageUrl(card.thumbnail, 640)}
-                    alt={card.label}
+                    alt={altFor(card.label)}
                     loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] dark:brightness-[0.85]"
                   />

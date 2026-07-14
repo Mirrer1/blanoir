@@ -51,8 +51,14 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
+    images: [{ url: '/hero.webp', width: 1200, height: 800, alt: SITE_TITLE }],
   },
-  twitter: { card: 'summary_large_image', title: SITE_TITLE, description: SITE_DESCRIPTION },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ['/hero.webp'],
+  },
   robots: { index: true, follow: true },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,

@@ -46,7 +46,7 @@ const LandingAbout = () => {
             <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-lg border shadow-sm">
               <Image
                 src="/editor.webp"
-                alt="Editor"
+                alt="블라누아 에디터 편집 화면"
                 fill
                 sizes="(max-width: 640px) 100vw, 640px"
                 className="object-cover object-right dark:brightness-[0.85]"
@@ -63,7 +63,7 @@ const LandingAbout = () => {
             <div className="bg-muted relative aspect-[16/10] w-full overflow-hidden rounded-lg border shadow-xl">
               <Image
                 src="/live.webp"
-                alt="Live Page"
+                alt="블라누아로 만든 공개 페이지"
                 fill
                 sizes="(max-width: 640px) 100vw, 520px"
                 className="object-cover dark:brightness-[0.85]"

@@ -26,9 +26,24 @@ const FAQS = [
   },
 ]
 
+// SEO용 FAQ 구조화 데이터
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map(({ question, answer }) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: { '@type': 'Answer', text: answer },
+  })),
+}
+
 const LandingFAQ = () => {
   return (
     <section className="border-t">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="mx-auto grid max-w-5xl gap-10 px-6 py-24 sm:grid-cols-3 sm:gap-16 sm:py-32">
         <div className="flex flex-col sm:col-span-1">
           <FadeIn>

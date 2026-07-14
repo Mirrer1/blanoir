@@ -20,9 +20,9 @@ const LandingHero = () => {
 
       <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-10 md:flex-row md:items-end md:justify-between md:gap-16">
         <FadeIn>
-          <span className="font-heading block text-6xl leading-none font-extrabold tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
+          <h1 className="font-heading block text-6xl leading-none font-extrabold tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
             Blanoir
-          </span>
+          </h1>
         </FadeIn>
 
         <FadeIn delay={0.15}>

@@ -78,7 +78,7 @@ const LandingShowcase = ({ posts }: { posts: ExplorePost[] }) => {
                     src={optimizedImageUrl(card.thumbnail, 640)}
                     alt={card.label}
                     loading="lazy"
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] dark:brightness-[0.85]"
                   />
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-4">

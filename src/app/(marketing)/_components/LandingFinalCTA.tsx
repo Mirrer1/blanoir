@@ -11,7 +11,7 @@ const LandingFinalCTA = () => {
         alt=""
         fill
         sizes="100vw"
-        className="absolute inset-0 object-cover dark:brightness-[0.45]"
+        className="absolute inset-0 object-cover dark:brightness-[0.85]"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/55 to-black/70" />
 

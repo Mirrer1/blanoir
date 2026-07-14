@@ -47,7 +47,7 @@ const LandingAbout = () => {
                 alt="Editor"
                 fill
                 sizes="(max-width: 640px) 100vw, 640px"
-                className="object-cover object-right"
+                className="object-cover object-right dark:brightness-[0.85]"
               />
             </div>
             <figcaption className="text-muted-foreground mt-3 text-xs font-medium tracking-widest uppercase">
@@ -67,7 +67,7 @@ const LandingAbout = () => {
                 alt="Live Page"
                 fill
                 sizes="(max-width: 640px) 100vw, 520px"
-                className="object-cover"
+                className="object-cover dark:brightness-[0.85]"
               />
             </div>
             <figcaption className="text-muted-foreground mt-3 text-xs font-medium tracking-widest uppercase">

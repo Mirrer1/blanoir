@@ -61,7 +61,7 @@ const LandingFeatures = () => {
               alt="Blanoir 미리보기 화면"
               fill
               sizes="(max-width: 1024px) 100vw, 976px"
-              className="object-cover"
+              className="object-cover dark:brightness-[0.85]"
             />
           </div>
         </FadeIn>

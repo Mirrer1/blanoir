@@ -105,7 +105,9 @@ const EditorCanvas = ({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement
             </SortableContext>
             <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2">
               <div className="bg-border h-px flex-1" />
-              <AddSectionMenu onAdded={scrollToBottom} />
+              <span data-tour="add-section" className="inline-flex">
+                <AddSectionMenu onAdded={scrollToBottom} />
+              </span>
               <div className="bg-border h-px flex-1" />
             </div>
             <DragOverlay dropAnimation={null}>

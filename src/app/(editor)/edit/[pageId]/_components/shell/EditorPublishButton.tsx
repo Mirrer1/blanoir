@@ -46,6 +46,7 @@ const EditorPublishButton = ({ compact = false }: EditorPublishButtonProps = {})
       <Popover.Trigger
         render={
           <Button
+            data-tour="publish"
             size={compact ? 'icon-sm' : 'sm'}
             variant={compact ? 'ghost' : isPublic ? 'default' : 'outline'}
             aria-label={compact ? (isPublic ? '공개' : '비공개') : undefined}

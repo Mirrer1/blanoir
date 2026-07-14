@@ -13,7 +13,7 @@ const EditorPreviewButton = () => {
 
   return (
     <>
-      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+      <Button data-tour="preview" size="sm" variant="outline" onClick={() => setOpen(true)}>
         미리보기
       </Button>
       <PagePreview open={open} onOpenChange={setOpen} sections={sections} title={title} />

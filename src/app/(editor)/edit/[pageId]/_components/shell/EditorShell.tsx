@@ -2,16 +2,15 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import EditorStylePanel from '../panels/EditorStylePanel'
 import EditorCanvas from './EditorCanvas'
 import EditorHeader from './EditorHeader'
 import EditorTemplatePanel from './EditorTemplatePanel'
-import EditorTemplateRail from './EditorTemplateRail'
+import EditorTour from './EditorTour'
 import useAutoSave from '@/hooks/useAutoSave'
 import useDualPanel from '@/hooks/useDualPanel'
-import useTemplatePanel from '@/hooks/useTemplatePanel'
 import useUnsavedGuard from '@/hooks/useUnsavedGuard'
 import useEditorStore, { findContainerSection, findNode } from '@/store/editor'
 
@@ -21,12 +20,12 @@ const EditorShell = () => {
     findContainerSection(s.sections, s.selectedSectionId),
   )
   const selectSection = useEditorStore((s) => s.selectSection)
-  const pageId = useEditorStore((s) => s.pageId)
   const initiallyEmpty = useEditorStore((s) => s.sections.length === 0)
 
-  const [templateOpen, setTemplateOpen] = useTemplatePanel(pageId, initiallyEmpty)
+  const [templateOpen, setTemplateOpen] = useState(initiallyEmpty)
   const canFitBoth = useDualPanel()
   const canvasScrollRef = useRef<HTMLDivElement>(null)
+  const [tourOpen, setTourOpen] = useState(false)
 
   const showTemplate = templateOpen && (canFitBoth || !selectedNode)
   // 업로드 전 비어 있는 이미지, 갤러리, 카드는 패널 미표시
@@ -42,6 +41,12 @@ const EditorShell = () => {
     if (!canFitBoth) {
       selectSection(null)
     }
+  }
+
+  // 투어 시작 시 템플릿 스텝 포커스
+  const startTour = () => {
+    handleExpandTemplate()
+    setTourOpen(true)
   }
 
   // 템플릿 적용 시 페이지 스크롤 맨 위로 이동
@@ -75,28 +80,19 @@ const EditorShell = () => {
           initial={false}
           animate={{ width: showTemplate ? 256 : 56 }}
           transition={{ duration: 0.22, ease: 'easeOut' }}
-          className="border-border relative h-full shrink-0 overflow-hidden border-r"
+          className="border-border h-full shrink-0 overflow-hidden border-r"
         >
-          <motion.div
-            animate={{ opacity: showTemplate ? 1 : 0 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className={`absolute inset-y-0 left-0 ${showTemplate ? '' : 'pointer-events-none'}`}
-          >
-            <EditorTemplatePanel onApplied={scrollCanvasToTop} />
-          </motion.div>
-          <motion.div
-            animate={{ opacity: showTemplate ? 0 : 1 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className={`absolute inset-y-0 left-0 ${showTemplate ? 'pointer-events-none' : ''}`}
-          >
-            <EditorTemplateRail onApplied={scrollCanvasToTop} />
-          </motion.div>
+          <EditorTemplatePanel
+            collapsed={!showTemplate}
+            onApplied={scrollCanvasToTop}
+            onHelp={startTour}
+          />
         </motion.aside>
         <motion.button
           onClick={showTemplate ? () => setTemplateOpen(false) : handleExpandTemplate}
           aria-label={showTemplate ? '템플릿 접기' : '템플릿 펼치기'}
           initial={false}
-          animate={{ left: showTemplate ? 256 : 56 }}
+          animate={{ left: showTemplate ? 256 : 60 }}
           transition={{ duration: 0.22, ease: 'easeOut' }}
           className="border-border bg-background text-muted-foreground hover:text-foreground absolute top-1/2 z-10 flex size-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border transition-colors"
         >
@@ -125,6 +121,7 @@ const EditorShell = () => {
           )}
         </AnimatePresence>
       </div>
+      {tourOpen && <EditorTour onClose={() => setTourOpen(false)} />}
     </div>
   )
 }

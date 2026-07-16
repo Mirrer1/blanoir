@@ -68,7 +68,7 @@ const AddSectionMenu = ({
         </Menu.Trigger>
       ) : (
         <Menu.Trigger
-          render={<Button variant="outline" size="sm" />}
+          render={<Button variant="outline" size="sm" className="text-muted-foreground" />}
           onClick={(e) => e.stopPropagation()}
         >
           <Plus className="size-4" />

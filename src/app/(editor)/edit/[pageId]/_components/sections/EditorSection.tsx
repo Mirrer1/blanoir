@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 
 import { COLOR_TRANSITION, SORTABLE_TRANSITION } from '../../controlStyles'
 import EditorSectionContent from './EditorSectionContent'
+import SectionTypeBadge from './SectionTypeBadge'
 import { copyImages, deleteImage } from '@/actions/upload'
 import SectionReveal from '@/components/sections/SectionReveal'
 import useDualPanel from '@/hooks/useDualPanel'
@@ -220,6 +221,7 @@ const EditorSection = ({ section, index }: { section: Section; index: number }) 
           isDragging && 'opacity-0',
         )}
       >
+        <SectionTypeBadge section={section} show={isSelected || ownsSelection} />
         <div
           ref={columnRef}
           data-content
